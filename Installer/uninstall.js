@@ -6,12 +6,14 @@ const Installer = require('./util');
 var appPath;
 
 function closeClient(proc) {
-    console.log('Closing client...');
-    for (const pid of proc.pid) {
-        process.kill(pid);
-    }
-    appPath = proc.command;
-    return path.join(proc.command, '..', 'resources', 'original_app.asar');
+    return new Promise((resolve, reject) => {
+        console.log('Closing client...');
+        for (const pid of proc.pid) {
+            process.kill(pid);
+        }
+        appPath = proc.command;
+        resolve(path.join(proc.command, '..', 'resources', 'original_app.asar'));
+    });
 }
 
 var deleteFolderRecursive = function (path) {
