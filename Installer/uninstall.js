@@ -3,16 +3,27 @@ const fs = require('fs');
 const asar = require('asar');
 const childProcess = require('child_process');
 const Installer = require('./util');
+const ps = require('ps-node');
 var appPath;
 
 function closeClient(proc) {
     return new Promise((resolve, reject) => {
         console.log('Closing client...');
-        for (const pid of proc.pid) {
-            process.kill(pid);
-        }
-        appPath = proc.command;
-        resolve(path.join(proc.command, '..', 'resources', 'original_app.asar'));
+        ps.lookup({}, function (err, res) {
+            if (err) reject(err);
+            else {
+                const procs = res.filter(p => p.command == proc.command);
+                for (const { pid } of procs) {
+                    try {
+                        process.kill(pid);
+                    } catch (err) {
+                        console.error(err);
+                    }
+                }
+                appPath = proc.command;
+                resolve(path.join(proc.command, '..', 'resources', 'original_app.asar'));
+            }
+        });
     });
 }
 
