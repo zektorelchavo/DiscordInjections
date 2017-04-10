@@ -12,7 +12,7 @@ This script aims to pick up where [BeautifulDiscord](https://github.com/leovoel/
 ## Installation
 
 1. Go to the directory you would like to install this module in.
-2. Type `git clone https://github.com/Ratismal/DiscordInjections folderName`
+2. Type `git clone https://github.com/DiscordInjections/DiscordInjections folderName`
 3. Run `npm install`
 4. Run `npm run install`
 
