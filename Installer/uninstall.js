@@ -53,7 +53,7 @@ function relaunchClient() {
 }
 
 module.exports = function (proc) {
-    closeClient(proc)
+    return closeClient(proc)
         .then(restoreClient)
         .then(relaunchClient)
         .catch(err => {

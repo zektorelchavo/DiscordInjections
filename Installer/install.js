@@ -66,7 +66,7 @@ function relaunchClient() {
 }
 
 module.exports = function (proc) {
-    closeClient(proc)
+    return closeClient(proc)
         .then(extractClient)
         .then(injectClient)
         .then(relaunchClient)
