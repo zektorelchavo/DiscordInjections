@@ -20,9 +20,15 @@ To uninstall, run `npm run uninstall`
 
 To reinstall, run `npm run reinstall`
 
+## Updating
+
+To update, run `git pull origin master`.
+
 ## Requirements
 
-This module requires you to have node.js installed with ES6 support. [Install](https://nodejs.org/en/download/)
+This module requires you to have [node.js](https://nodejs.org/en/download/) installed with ES6 support.
+
+This module also requires [git](https://git-scm.com/downloads). 
 
 ## Usage
 
