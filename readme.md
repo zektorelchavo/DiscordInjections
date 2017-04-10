@@ -30,7 +30,7 @@ All usage takes place in the folder you installed DiscordInjections into.
 
 ### CSS
 
-By default, DiscordInjections comes with a blank `style.css` file within the `CSS` folder. It is recommended to put your custom CSS in this file.
+By default, DiscordInjections comes with a blank `style.css` file within the `CSS` folder. It is recommended to put in this folder, but in a different file (to prevent update conflicts).
 
 For a custom location, open Content Inspector (`ctrl` + `shift` + `I`) and type
 ```
