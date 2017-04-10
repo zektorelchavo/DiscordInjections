@@ -45,13 +45,19 @@ There are two segments of JS that get injected.
 
 This is content that gets injected before anything else in the discord client. It is what enables us to intercept the WS and localStorage objects. Put things that need to be loaded first here.
 
-#### DomReady/index.js
+#### Plugins
 
-This is content that gets injected after the DOM is ready. Place everything else in here.
+For extensibility, DiscordInjections uses a simply plugin system. Plugins are placed in the `Plugins/` directory.
+
+To create a plugin, you must extend the `Structures/Plugin` class. See the `Plugins/SamplePlugin.js.EXAMPLE` file for an example.
+
+##### WARNING
+
+Plugins can be dangerous. Please read the disclaimer.
 
 #### Note
 
-Do not touch the `DomReady/inject.js` file, as it is what handles the custom CSS and JS injections.
+Do not touch the `DomReady` directory, as it is what handles the custom CSS injections and plugins.
 
 ### WebSockets and localStorage
 
@@ -70,3 +76,11 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## Disclaimer
+
+DiscordInjections is not responsible for any plugins created by a third party. Needless to say, running plugins can be ***extremely dangerous*** as it exposes your entire discord client, as well as localStorage.
+
+Before adding a plugin, be sure to thoroughly check its code to see what it does.
+
+Stay safe.

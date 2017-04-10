@@ -13,6 +13,8 @@
   "license": "ISC",
   "dependencies": {
     "asar": "^0.13.0",
-    "ps-node": "^0.1.5"
+    "discord.js": "github:hydrabolt/discord.js",
+    "ps-node": "^0.1.5",
+    "require-reload": "^0.2.2"
   }
 }
