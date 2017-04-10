@@ -47,7 +47,7 @@ This is content that gets injected before anything else in the discord client. I
 
 #### Plugins
 
-For extensibility, DiscordInjections uses a simply plugin system. Plugins are placed in the `Plugins/` directory.
+For extensibility, DiscordInjections uses a simple plugin system. Plugins are placed in the `Plugins/` directory.
 
 To create a plugin, you must extend the `Structures/Plugin` class. See the `Plugins/SamplePlugin.js.EXAMPLE` file for an example.
 
