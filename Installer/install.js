@@ -63,9 +63,8 @@ function relaunchClient() {
     });
 }
 
-module.exports = function () {
-    return Installer.getDiscordProcess()
-        .then(closeClient)
+module.exports = function (proc) {
+    closeClient(proc)
         .then(extractClient)
         .then(injectClient)
         .then(relaunchClient)
