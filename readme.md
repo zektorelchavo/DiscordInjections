@@ -57,6 +57,8 @@ For extensibility, DiscordInjections uses a simple plugin system. Plugins are pl
 
 To create a plugin, you must extend the `Structures/Plugin` class. See the `Plugins/SamplePlugin.js.EXAMPLE` file for an example.
 
+For a list of plugins, visit [Plugins](https://github.com/DiscordInjections/Plugins)
+
 ##### WARNING
 
 Plugins can be dangerous. Please read the disclaimer.
