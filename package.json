@@ -11,6 +11,7 @@
   },
   "author": "stupid cat",
   "license": "ISC",
+  "repository": "https://github.com/DiscordInjections/DiscordInjections",
   "dependencies": {
     "asar": "^0.13.0",
     "discord.js": "github:hydrabolt/discord.js",
