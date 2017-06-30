@@ -13,17 +13,21 @@ Object.defineProperty(Discord.Guild.prototype, 'element', {
 });
 
 Discord.PacketManager = require('discord.js/src/client/websocket/packets/WebSocketPacketManager');
+Discord.Websocket = require('discord.js/src/client/websocket/WebSocketConnection');
+Discord.Constants = require('discord.js/src/util/Constants');
 
 // just requiring erlpack using electron remote would result in a shitload of proxies which are VERY SLOW
 const erlpack = require(require('electron').remote.require('erlpack').path);
-
 class BridgedWS {
     constructor(client) {
         this.client = client;
         this.packetManager = new Discord.PacketManager(this);
-        this.eventMessageBound = this.eventMessage.bind(this);
+        this.eventMessageBound = this.onMessage.bind(this);
         this.ws = null;
         this.disabledEvents = [];
+
+        this.connection = {};
+        this.sequence = -1;
     }
 
     set(ws) {
@@ -33,17 +37,19 @@ class BridgedWS {
         }
         this.ws = ws;
         ws.addEventListener('message', this.eventMessageBound);
+        this.status = Discord.Constants.Status.READY;
     }
 
-    eventMessage(event) {
+    onMessage(event) {
         let data = event.data;
         try {
             if (typeof data === 'string') data = JSON.parse(data);
             else data = erlpack.unpack(Buffer.from(data));
         } catch (err) {
+            console.log(err);
             return;
         }
-
+        this.client.emit('raw', data);
         this.packetManager.handle(data);
     }
 
@@ -52,8 +58,11 @@ class BridgedWS {
     destroy() { } // eslint-disable-line no-empty-function
     send() { } // eslint-disable-line no-empty-function
     heartbeat() { } // eslint-disable-line no-empty-function
+    setSequence(s) {
+        this.sequence = s > this.sequence ? s : this.sequence;
+    }
     _emitReady() {
-        this.status = Discord.Constants.Status.READY;
+        this.connection.status = Discord.Constants.Status.READY;
         this.client.emit(Discord.Constants.Events.READY);
     }
     checkIfReady() {
@@ -64,7 +73,7 @@ class BridgedWS {
 class BridgedClient extends Discord.Client {
     constructor(options) {
         super(options);
-        this.ws = new BridgedWS(this);
+        this.ws.connection = new BridgedWS(this);
     }
 
     get token() {
