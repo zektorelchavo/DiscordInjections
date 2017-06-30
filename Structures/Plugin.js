@@ -45,10 +45,6 @@ class Plugin {
         return this.info.color || 0x444444;
     }
 
-    get filePath() {
-        return __filename;
-    }
-
     log(...args) {
         console.log(`%c[${this.name}]`, `color: #${this.color}; font-weight: bold;`, ...args);
     }
