@@ -14,5 +14,5 @@ window.client = new Client();
 
 // Bridges the websocket to Discord.JS (courtesy of GusCaplan)
 window.onWebsocketReload = function (newWs) {
-    window.client.ws.set(newWs);
+    window.client.ws.connection.set(newWs);
 };
