@@ -10,21 +10,35 @@ class PluginManager {
         this.classes = {};
         this.plugins = {};
 
-        window._fs.readdir(window._path.join(__dirname, '..', 'Plugins'), (err, files) => {
+        this.walk(window._path.join(__dirname, '..', 'Plugins'));
+    }
+
+    walk(directory) {
+        window._fs.readdir(directory, (err, files) => {
             for (const file of files) {
-                if (file.endsWith('.js'))
-                    this.load(file);
+                switch (window._path.extname(file)) {
+                    case '.js':
+                        this.load(window._path.join(directory, file));
+                        break;
+                    case '':
+                        this.walk(window._path.join(directory, file));
+                        break;
+                }
             }
         });
     }
 
     load(file) {
-        const Plugin = require('../Plugins/' + file);
-        if (Plugin.prototype instanceof PluginStruct) {
-            const plugin = new Plugin();
-            const name = plugin.name;
-            this.classes[name] = Plugin;
-            this.plugins[name] = plugin;
+        const Plugin = require(file);
+        if (Plugin && Plugin.constructor) {
+            if (Plugin.prototype instanceof PluginStruct && Plugin.prototype.constructor.name === window._path.basename(file, '.js')) {
+                const plugin = new Plugin();
+                plugin.filePath = file;
+                const name = plugin.name;
+                this.classes[name] = Plugin;
+                this.plugins[name] = plugin;
+                plugin.log('Loaded!');
+            }
         }
     }
 
@@ -34,12 +48,15 @@ class PluginManager {
     }
 
     reload(name) {
-        const file = this.plugins[name].constructor.name;
+        const file = this.plugins[name].filePath;
+        console.log(file);
         this.plugins[name].unload();
         delete this.plugins[name];
-        this.classes[name] = reload('../Plugins/' + file);
-        if (this.classes[name].prototype instanceof PluginStruct)
+        this.classes[name] = reload(file);
+        if (this.classes[name].prototype instanceof PluginStruct) {
             this.plugins[name] = new this.classes[name]();
+            this.plugins[name].filePath = file;
+        }
     }
 }
 
