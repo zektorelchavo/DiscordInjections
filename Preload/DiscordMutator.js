@@ -53,14 +53,6 @@ module.exports = (Discord) => {
         }
     });
 
-    Object.defineProperty(Discord.TextChannel.prototype, 'muted', {
-        get: function () {
-            if(!this.element) return null;
-            let reactInst = (node)=>node[Object.keys(node).find((key) => key.startsWith("__reactInternalInstance"))];
-            return reactInst(this.element)._currentElement.props.children.props.muted;
-        }
-    });
-
     Object.defineProperty(Discord.TextChannel.prototype, 'unread', {
         get: function () {
             if(!this.element) return null;
