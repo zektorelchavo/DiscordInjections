@@ -52,4 +52,42 @@ module.exports = (Discord) => {
             return this.permissionsFor(this.client.user).has("READ_MESSAGES");
         }
     });
+
+    Object.defineProperty(Discord.TextChannel.prototype, 'muted', {
+        get: function () {
+            if(!this.element) return null;
+            let reactInst = (node)=>node[Object.keys(node).find((key) => key.startsWith("__reactInternalInstance"))];
+            return reactInst(this.element)._currentElement.props.children.props.muted;
+        }
+    });
+
+    Object.defineProperty(Discord.TextChannel.prototype, 'unread', {
+        get: function () {
+            if(!this.element) return null;
+            let reactInst = (node)=>node[Object.keys(node).find((key) => key.startsWith("__reactInternalInstance"))];
+            return reactInst(this.element)._currentElement.props.children.props.unread;
+        }
+    });
+
+    Object.defineProperty(Discord.GuildChannel.prototype, 'element', {
+        get: function () {
+            let reactInst = (node)=>node[Object.keys(node).find((key) => key.startsWith("__reactInternalInstance"))];
+            let channels = document.querySelectorAll(".channels-wrap .scroller-fzNley .containerDefault-7RImuF");
+            for(let i in channels){
+                let channel = channels[i];
+                let react = reactInst(channel);
+                if(!react) continue;
+                if(react._currentElement.props.children[0]){
+                    if(react._currentElement.props.children[0].props.channel.id === this.id){
+                        return channel;
+                    }
+                }else{
+                    if(react._currentElement.props.children.props.channel.id === this.id){
+                        return channel;
+                    }
+                }
+            }
+            return null;
+        }
+    });
 };
