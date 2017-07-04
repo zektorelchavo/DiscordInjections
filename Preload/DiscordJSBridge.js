@@ -12,6 +12,36 @@ Object.defineProperty(Discord.Guild.prototype, 'element', {
     }
 });
 
+Object.defineProperty(Discord.DMChannel.prototype, 'element', {
+    get: function () {
+        return document.querySelector(`a[href="/channels/@me/${this.id}"]`) ? document.querySelector(`a[href="/channels/@me/${this.id}"]`).parentNode : null;
+    }
+});
+
+Object.defineProperty(Discord.GroupDMChannel.prototype, 'element', {
+    get: function () {
+        return document.querySelector(`a[href="/channels/@me/${this.id}"]`) ? document.querySelector(`a[href="/channels/@me/${this.id}"]`).parentNode : null;
+    }
+});
+
+Object.defineProperty(Discord.Guild.prototype, 'selected', {
+    get: function () {
+        return this.element.className.includes("selected");
+    }
+});
+
+Object.defineProperty(Discord.DMChannel.prototype, 'selected', {
+    get: function () {
+        return this.element.className.includes("selected");
+    }
+});
+
+Object.defineProperty(Discord.GroupDMChannel.prototype, 'selected', {
+    get: function () {
+        return this.element.className.includes("selected");
+    }
+});
+
 Discord.PacketManager = require('discord.js/src/client/websocket/packets/WebSocketPacketManager');
 Discord.Websocket = require('discord.js/src/client/websocket/WebSocketConnection');
 Discord.Constants = require('discord.js/src/util/Constants');
