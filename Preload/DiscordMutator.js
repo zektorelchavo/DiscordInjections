@@ -82,4 +82,20 @@ module.exports = (Discord) => {
             return null;
         }
     });
+
+    Object.defineProperty(Discord.Message.prototype, 'element', {
+        get: function () {
+            let reactInst = (node)=>node[Object.keys(node).find((key) => key.startsWith("__reactInternalInstance"))];
+            let messages = document.querySelectorAll(".message");
+            for(let i in messages){
+                let message = messages[i];
+                let react = reactInst(message);
+                if(!react) continue;
+                if(react._currentElement.props.children[0].props.children[1].props.children[1].props.subscribeTo.split("_")[3] === this.id){
+                    return message;
+                }
+            }
+            return null;
+        }
+    });
 };
