@@ -6,11 +6,7 @@
 
 const Discord = require('discord.js');
 
-Object.defineProperty(Discord.Guild.prototype, 'element', {
-    get: function () {
-        return document.getElementsByClassName("scroller guilds")[0].childNodes[this.position + 4];
-    }
-});
+(require('./DiscordMutator'))(Discord);
 
 Discord.PacketManager = require('discord.js/src/client/websocket/packets/WebSocketPacketManager');
 Discord.Websocket = require('discord.js/src/client/websocket/WebSocketConnection');
@@ -74,6 +70,18 @@ class BridgedClient extends Discord.Client {
     constructor(options) {
         super(options);
         this.ws.connection = new BridgedWS(this);
+        let lastpath = window.location.pathname;
+        this.setInterval(()=>{
+            if(lastpath === window.location.pathname) return;
+            this.emit('selectedUpdate', {
+                guild: this.guilds.get(lastpath.split("/")[2]),
+                channel: lastpath.split("/")[3] ? this.channels.get(lastpath.split("/")[3]) : undefined
+            }, {
+                guild: this.guilds.get(window.location.pathname.split("/")[2]),
+                channel: window.location.pathname.split("/")[3] ? this.channels.get(window.location.pathname.split("/")[3]) : undefined
+            });
+            lastpath = window.location.pathname;
+        }, 100)
     }
 
     get token() {
