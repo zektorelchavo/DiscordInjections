@@ -27,7 +27,7 @@ class Plugin {
     }
 
     _loadPackage(pack) {
-        this.pack = require(window._path.join(this.path, 'package'));
+        this.pack = require(window._path.join(this.path, 'package.json'));
         if (!this.pack.hasOwnProperty('author') || !this.pack.hasOwnProperty('version') || !this.pack.hasOwnProperty('description')) {
             throw new Error('A plugin must have an author, version, and description');
         }
@@ -44,33 +44,37 @@ class Plugin {
     }
 
     _loadCss() {
-        let cssElement = this._styleTag;
-        if (!cssElement) {
-            cssElement = document.getElementById(`CSS-${this.name}`) || document.createElement('style');
-            cssElement.id = `CSS-${this.name}`;
-            this._styleTag = cssElement;
-            document.head.appendChild(this._styleTag);
-        }
-        let cssDir = window._path.join(this.path, 'css');
-        if (window._fs.lstatSync(cssDir).isDirectory()) {
-            let files = window._fs.readdirSync(cssDir);
-            let css = '';
-            for (const file of files) {
-                if (window._path.extname(file) !== '.css') continue;
-                css += `/* ${file} */\n\n`;
-                let content = window._fs.readFileSync(window._path.join(cssDir, file), { encoding: 'UTF8' });
-                css += content + '\n\n';
+        try {
+            let cssElement = this._styleTag;
+            if (!cssElement) {
+                cssElement = document.getElementById(`CSS-${this.name}`) || document.createElement('style');
+                cssElement.id = `CSS-${this.name}`;
+                this._styleTag = cssElement;
+                document.head.appendChild(this._styleTag);
             }
-            cssElement.innerHTML = css;
-        }
+            let cssDir = window._path.join(this.path, 'css');
+            if (window._fs.lstatSync(cssDir).isDirectory()) {
+                let files = window._fs.readdirSync(cssDir);
+                let css = '';
+                for (const file of files) {
+                    if (window._path.extname(file) !== '.css') continue;
+                    css += `/* ${file} */\n\n`;
+                    let content = window._fs.readFileSync(window._path.join(cssDir, file), { encoding: 'UTF8' });
+                    css += content + '\n\n';
+                }
+                cssElement.innerHTML = css;
+            }
 
-        if (!this._cssWatcher) {
-            this._cssWatcher = window._fs.watch(this.path, { encoding: 'utf-8' },
-                eventType => {
-                    if (eventType == 'change') {
-                        this._loadCss();
-                    }
-                });
+            if (!this._cssWatcher) {
+                this._cssWatcher = window._fs.watch(this.path, { encoding: 'utf-8' },
+                    eventType => {
+                        if (eventType == 'change') {
+                            this._loadCss();
+                        }
+                    });
+            }
+        } catch (err) {
+            this.log('Skipping CSS injection')
         }
     }
 
