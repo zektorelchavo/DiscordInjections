@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "install": "node install.js install",
     "reinstall": "node install.js reinstall",
-    "uninstall": "node install.js uninstall"
+    "uninstall": "node install.js uninstall",
+    "install-plugins": "node install-plugins.js"
   },
   "author": "stupid cat",
   "license": "ISC",

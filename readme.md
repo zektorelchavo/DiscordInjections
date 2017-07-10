@@ -15,6 +15,7 @@ This script aims to pick up where [BeautifulDiscord](https://github.com/leovoel/
 2. Type `git clone https://github.com/DiscordInjections/DiscordInjections folderName`
 3. Type `cd folderName`
 4. Run `npm install`
+5. Install any desired plugins, and then run `npm run install-plugins`
 
 To uninstall, run `npm run uninstall`
 
