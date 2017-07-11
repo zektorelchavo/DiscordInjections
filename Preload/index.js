@@ -5,6 +5,10 @@
 const DI = window.DI = {
     ws: null,
     client: null,
+    localStorage: null,
+    PluginManager: null,
+    CssInjector: null,
+    StateWatcher: null,
 
     // Bridges the websocket to Discord.JS (courtesy of GusCaplan)    
     onWebsocketReload(ws) {
