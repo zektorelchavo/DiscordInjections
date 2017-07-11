@@ -55,26 +55,26 @@ module.exports = (Discord) => {
 
     Object.defineProperty(Discord.TextChannel.prototype, 'unread', {
         get: function () {
-            if(!this.element) return null;
-            let reactInst = (node)=>node[Object.keys(node).find((key) => key.startsWith("__reactInternalInstance"))];
+            if (!this.element) return null;
+            let reactInst = (node) => node[Object.keys(node).find((key) => key.startsWith("__reactInternalInstance"))];
             return reactInst(this.element)._currentElement.props.children.props.unread;
         }
     });
 
     Object.defineProperty(Discord.GuildChannel.prototype, 'element', {
         get: function () {
-            let reactInst = (node)=>node[Object.keys(node).find((key) => key.startsWith("__reactInternalInstance"))];
+            let reactInst = (node) => node[Object.keys(node).find((key) => key.startsWith("__reactInternalInstance"))];
             let channels = document.querySelectorAll(".channels-wrap .scroller-fzNley .containerDefault-7RImuF");
-            for(let i in channels){
+            for (let i in channels) {
                 let channel = channels[i];
                 let react = reactInst(channel);
-                if(!react) continue;
-                if(react._currentElement.props.children[0]){
-                    if(react._currentElement.props.children[0].props.channel.id === this.id){
+                if (!react) continue;
+                if (react._currentElement.props.children[0]) {
+                    if (react._currentElement.props.children[0].props.channel.id === this.id) {
                         return channel;
                     }
-                }else{
-                    if(react._currentElement.props.children.props.channel.id === this.id){
+                } else {
+                    if (react._currentElement.props.children.props.channel.id === this.id) {
                         return channel;
                     }
                 }
@@ -85,13 +85,13 @@ module.exports = (Discord) => {
 
     Object.defineProperty(Discord.Message.prototype, 'element', {
         get: function () {
-            let reactInst = (node)=>node[Object.keys(node).find((key) => key.startsWith("__reactInternalInstance"))];
+            let reactInst = (node) => node[Object.keys(node).find((key) => key.startsWith("__reactInternalInstance"))];
             let messages = document.querySelectorAll(".message");
-            for(let i in messages){
+            for (let i in messages) {
                 let message = messages[i];
                 let react = reactInst(message);
-                if(!react) continue;
-                if(react._currentElement.props.children[0].props.children[1].props.children[1].props.subscribeTo.split("_")[3] === this.id){
+                if (!react) continue;
+                if (react._currentElement.props.children[0].props.children[1].props.children[1].props.subscribeTo.split("_")[3] === this.id) {
                     return message;
                 }
             }
