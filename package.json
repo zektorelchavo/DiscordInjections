@@ -1,6 +1,6 @@
 {
   "name": "discord-injections",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "description": "Injects CSS and JS into the discord client, and piggybacks the websocket for later use.",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,9 @@
   "repository": "https://github.com/DiscordInjections/DiscordInjections",
   "dependencies": {
     "asar": "^0.13.0",
+    "bluebird": "^3.5.0",
     "discord.js": "^11.1.0",
+    "eventemitter3": "^2.0.3",
     "ps-node": "^0.1.5",
     "require-reload": "^0.2.2"
   }
