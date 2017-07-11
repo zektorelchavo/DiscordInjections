@@ -3,7 +3,6 @@ const EventEmitter = require('eventemitter3');
 class StateWatcher extends EventEmitter {
     constructor() {
         super();
-        global.StateWatcher = this;
         this.observer = new MutationObserver(this._onMutation.bind(this));
         let mutation = { childList: true, subtree: true };
         this.observer.observe(document.querySelector(".app .layers"), mutation);
@@ -29,12 +28,12 @@ class StateWatcher extends EventEmitter {
             'Language': 'languageSettings',
             'Change Log': 'changelog',
             'Log Out': 'logout'
-        }
+        };
     }
 
     _onMutation(muts) {
         for (const mut of muts) {
-            
+
             let changed = [];
             let added = true;
             if (mut.addedNodes.length > 0) {
@@ -46,7 +45,7 @@ class StateWatcher extends EventEmitter {
                 // NOTHING CHANGED?!?!?!11?!!?!?!?
                 return;
             }
-            
+
             // Settings
             if (changed[0] && changed[0].classList && changed[0].classList.contains('layer')) {
                 let node = changed[0];
@@ -55,7 +54,7 @@ class StateWatcher extends EventEmitter {
                     if (child.className === 'ui-standard-sidebar-view') {
                         if (added) {
                             this.emit('settingsOpened', mut);
-                            
+
                         } else {
                             this.emit('settingsClosed', mut);
                         }
@@ -77,7 +76,7 @@ class StateWatcher extends EventEmitter {
                     this.emit('chatClosed', mut);
                 }
             }
-            
+
             // FriendsList
             else if (changed[0].id === 'friends') {
                 if (added) {

@@ -3,15 +3,16 @@
  */
 
 global.Promise = require('bluebird');
+
+const DI = window.DI;
 const CssInjector = require('./CssInjector');
 const PluginManager = require('./PluginManager');
 const StateWatcher = require('./StateWatcher');
 
-if (!window.$localStorage.getItem('customCss')) {
-    window.$localStorage.setItem('customCss', window._path.join(window._injectDir, 'CSS', 'style.css'));
+if (!DI.localStorage.getItem('customCss')) {
+    DI.localStorage.setItem('customCss', window._path.join(window._injectDir, 'CSS', 'style.css'));
 }
 
-window._cssInjector = new CssInjector();
-window._pluginManager = new PluginManager();
-
-const watcher = new StateWatcher();
+DI.CssInjector = new CssInjector();
+DI.PluginManager = new PluginManager();
+DI.StateWatcher = new StateWatcher();

@@ -4,7 +4,7 @@ const util = Installer.util;
 util.getDiscordProcess().then((proc) => {
     var args = process.argv;
     switch (args[2]) {
-        case 'install':
+        case 'inject':
             Installer.install(proc);
             break;
         case 'uninstall':

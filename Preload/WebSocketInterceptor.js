@@ -9,9 +9,9 @@ class WebSocket extends window.WebSocket {
         super(url, protocols);
 
         if (url.includes('encoding')) {
-            window.$ws = this;
-            if (typeof window.onWebsocketReload == 'function') {
-                window.onWebsocketReload(this);
+            window.DI.ws = this;
+            if (typeof window.DI.onWebsocketReload === 'function') {
+                window.DI.onWebsocketReload(this);
             }
         }
     }
