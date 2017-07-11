@@ -60,12 +60,12 @@ class CssInjector {
 
     setPath(location) {
         if (location.endsWith('.css'))
-            window.$localStorage.setItem('customCss', location);
+            window.DI.localStorage.setItem('customCss', location);
         else throw new Error('Invalid CSS File');
     }
 
     get path() {
-        return window.$localStorage.getItem('customCss');
+        return window.DI.localStorage.getItem('customCss');
     }
 }
 

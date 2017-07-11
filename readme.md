@@ -71,7 +71,7 @@ Do not touch the `DomReady` directory, as it is what handles the custom CSS inje
 
 ### WebSockets and localStorage
 
-Discord deletes its websocket and localStorage references to prevent tampering. In order to prevent deletion, these variables are stored to `window.$ws` and `window.$localStorage` respectively.
+Discord deletes its websocket and localStorage references to prevent tampering. In order to prevent deletion, these variables are stored to `DI.ws` and `DI.localStorage` respectively.
 
 Additionally, Discord initiates a new websocket object every reconnect. To ensure that your implementation works properly, you should define a `window.onWebsocketReload` function, that takes a websocket as an input.
 

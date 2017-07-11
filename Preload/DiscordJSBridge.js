@@ -71,22 +71,22 @@ class BridgedClient extends Discord.Client {
         super(options);
         this.ws.connection = new BridgedWS(this);
         let lastpath = window.location.pathname;
-        this.setInterval(()=>{
-            if(lastpath === window.location.pathname) return;
+        this.setInterval(() => {
+            if (lastpath === window.location.pathname) return;
             this.emit('selectedUpdate', {
                 guild: this.guilds.get(lastpath.split("/")[2]),
                 channel: lastpath.split("/")[3] ? this.channels.get(lastpath.split("/")[3]) : undefined
             }, {
-                guild: this.guilds.get(window.location.pathname.split("/")[2]),
-                channel: window.location.pathname.split("/")[3] ? this.channels.get(window.location.pathname.split("/")[3]) : undefined
-            });
+                    guild: this.guilds.get(window.location.pathname.split("/")[2]),
+                    channel: window.location.pathname.split("/")[3] ? this.channels.get(window.location.pathname.split("/")[3]) : undefined
+                });
             lastpath = window.location.pathname;
-        }, 100)
+        }, 100);
     }
 
     get token() {
         try {
-            return window.$localStorage.getItem('token').replace(/"/g, '');
+            return window.DI.localStorage.getItem('token').replace(/"/g, '');
         } catch (err) {
             return null;
         }
