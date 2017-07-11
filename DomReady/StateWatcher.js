@@ -33,7 +33,6 @@ class StateWatcher extends EventEmitter {
     }
 
     _onMutation(muts) {
-        console.log(muts);
         for (const mut of muts) {
             
             let changed = [];
