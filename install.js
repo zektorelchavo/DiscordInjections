@@ -14,8 +14,12 @@ util.getDiscordProcess().then((proc) => {
             Installer.reinstall(proc);
             break;
         default:
-            console.log('invalid');
+            console.log('Invalid command - valid commands are: inject, uninstall, reinstall');
+            process.exit(0);
             break;
     }
+}).catch(err => {
+    console.log('No discord process was found. Please open your discord client and try again.');
+    process.exit(0);
 });
 

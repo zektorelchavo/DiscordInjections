@@ -23,7 +23,7 @@ module.exports = {
     },
     reinstall(proc) {
         console.log('Reinstalling');
-        Uninstall(proc).then(() => Install(proc)).then(exit).catch(err);
+        Uninstall(proc, true).then(() => Install(proc, false, true)).then(exit).catch(err);
     },
     util: require('./util')
 };

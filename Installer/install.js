@@ -5,28 +5,30 @@ const childProcess = require('child_process');
 const Installer = require('./util');
 const ps = require('ps-node');
 var appPath;
+var isReinstall = false;
 
 const preloadPath = path.join(__dirname, '..', 'Preload', 'index.js').replace(/\\/g, '/');
 const domPath = path.join(__dirname, '..', 'DomReady', 'inject.js').replace(/\\/g, '/');
 
-function closeClient(proc) {
+function closeClient(proc, close) {
+    if (!close) return new Promise((res => res(path.join(proc.command, '..', 'resources', 'app.asar'))));
     return new Promise((resolve, reject) => {
         console.log('Closing client...');
-        ps.lookup({}, function (err, res) {
-            if (err) reject(err);
-            else {
-                const procs = res.filter(p => p.command == proc.command);
-                for (const { pid } of procs) {
-                    try {
-                        process.kill(pid);
-                    } catch (err) {
-                        console.error(err);
-                    }
+        if (process.platform === 'win32') {
+            for (const pid of proc.pid) {
+                try {
+                    process.kill(pid);
+                } catch (err) {
+                    console.error(err);
                 }
-                appPath = proc.command;
-                resolve(path.join(proc.command, '..', 'resources', 'app.asar'));
             }
-        });
+            resolve(path.join(proc.command, '..', 'resources', 'app.asar'));
+        } else {
+            childProcess.exec('killall -9 ' + proc.command, (err, stdout, stderr) => {
+                if (err) reject(err);
+                resolve(path.join(proc.command, '..', 'resources', 'app.asar'));
+            });
+        }
     });
 }
 
@@ -38,7 +40,13 @@ function extractClient(_path) {
             asar.extractAll(_path, folder);
             console.log('Renaming the original ASAR...');
             fs.renameSync(_path, path.join(_path, '..', 'original_app.asar'));
-        } else console.log('ASAR already extracted, skipping...');
+        } else if (isReinstall) {
+            console.log('ASAR already extracted, skipping...\n');
+        } else {
+            console.log('ASAR already extracted, aborting.\nYou should run the following command instead:\nnpm run reinstall');
+            relaunchClient().then(() => reject(false));
+            return;
+        }
         resolve(path.join(folder, 'index.js'));
     });
 }
@@ -76,13 +84,17 @@ function relaunchClient() {
     });
 }
 
-module.exports = function (proc) {
-    return closeClient(proc)
+module.exports = function (proc, close = true, reinstall = false) {
+    appPath = proc.command;
+    isReinstall = reinstall;
+    return closeClient(proc, close)
         .then(extractClient)
         .then(injectClient)
         .then(relaunchClient)
+        .then(() => console.log('Install complete.'))
         .catch(err => {
-            console.error('An error has occurred. ' + err.message);
+            if (err === false) return 0;
+            console.error('An error has occurred. ' + err.stack);
             return 1;
         });
 };

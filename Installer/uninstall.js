@@ -5,25 +5,26 @@ const childProcess = require('child_process');
 const Installer = require('./util');
 const ps = require('ps-node');
 var appPath;
+var isReinstall = false;
 
 function closeClient(proc) {
     return new Promise((resolve, reject) => {
         console.log('Closing client...');
-        ps.lookup({}, function (err, res) {
-            if (err) reject(err);
-            else {
-                const procs = res.filter(p => p.command == proc.command);
-                for (const { pid } of procs) {
-                    try {
-                        process.kill(pid);
-                    } catch (err) {
-                        console.error(err);
-                    }
+        if (process.platform === 'win32') {
+            for (const pid of proc.pid) {
+                try {
+                    process.kill(pid);
+                } catch (err) {
+                    console.error(err);
                 }
-                appPath = proc.command;
-                resolve(path.join(proc.command, '..', 'resources', 'original_app.asar'));
             }
-        });
+            resolve(path.join(proc.command, '..', 'resources', 'original_app.asar'));
+        } else {
+            childProcess.exec('killall -9 ' + proc.command, (err, stdout, stderr) => {
+                if (err) reject(err);
+                resolve(path.join(proc.command, '..', 'resources', 'original_app.asar'));
+            });
+        }
     });
 }
 
@@ -56,17 +57,24 @@ function restoreClient(_path) {
 
 function relaunchClient() {
     return new Promise((resolve, reject) => {
-        console.log('Relaunching client...');
-        let child = childProcess.spawn(appPath, { detached: true });
-        child.unref();
+        if (isReinstall) {
+            console.log('Not relaunching client yet, because reinstalling.');
+        } else {
+            console.log('Relaunching client...');
+            let child = childProcess.spawn(appPath, { detached: true });
+            child.unref();
+        }
         resolve();
     });
 }
 
-module.exports = function (proc) {
+module.exports = function (proc, reinstall = false) {
+    isReinstall = reinstall;
+    appPath = proc.command;
     return closeClient(proc)
         .then(restoreClient)
         .then(relaunchClient)
+        .then(() => console.log('Uninstall complete.'))
         .catch(err => {
             console.error('An error has occurred. ' + err.message);
             return 1;

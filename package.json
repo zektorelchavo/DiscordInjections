@@ -1,11 +1,11 @@
 {
   "name": "discord-injections",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Injects CSS and JS into the discord client, and piggybacks the websocket for later use.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "inject": "node install.js install",
+    "inject": "node install.js inject",
     "reinstall": "node install.js reinstall",
     "uninstall": "node install.js uninstall",
     "install-plugins": "node install-plugins.js"
