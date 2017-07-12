@@ -91,7 +91,8 @@ module.exports = (Discord) => {
                 let message = messages[i];
                 let react = reactInst(message);
                 if (!react) continue;
-                if (react._currentElement.props.children[0].props.children[1].props.children[1].props.subscribeTo.split("_")[3] === this.id) {
+                let id = message.parentNode.parentNode.classList.contains('compact') ? react._currentElement.props.children[0].props.children[1].props.subscribeTo.split("_")[3] : react._currentElement.props.children[0].props.children[1].props.children[1].props.subscribeTo.split("_")[3];
+                if(id === this.id){
                     return message;
                 }
             }
