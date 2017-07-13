@@ -59,9 +59,17 @@ class CssInjector {
     }
 
     setPath(location) {
-        if (location.endsWith('.css'))
-            window.DI.localStorage.setItem('customCss', location);
-        else throw new Error('Invalid CSS File');
+        if (!window._path.isAbsolute(location))
+            location = window._path.join(__dirname, '..', 'CSS', location);
+        try {
+            window._fs.statSync(location);
+            if (location.endsWith('.css')) {
+                window.DI.localStorage.setItem('customCss', location);
+            }
+            else throw new Error('Invalid CSS File');
+        } catch (err) {
+            throw new Error('CSS File did not exist');
+        }
     }
 
     get path() {
