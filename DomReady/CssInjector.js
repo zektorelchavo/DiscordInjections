@@ -16,6 +16,16 @@ class CssInjector {
         this.watch();
         this.watcher = null;
         this.styleTag = null;
+
+        try {
+            window._fs.statSync(this.path);
+        } catch (err) {
+            try {
+                window._fs.writeFileSync(this.path, '');
+            } catch (err) {
+                console.log('Could not generate an empty CSS file in the provided path.');
+            }
+        }
     }
 
     destroy() {
