@@ -33,7 +33,7 @@ const css = `
 
 class CommandHandler {
     constructor() {
-        if (!this.prefix) {
+        if (!window.DI.localStorage.getItem('customPrefix')) {
             window.DI.localStorage.setItem('customPrefix', '//');
         }
 
