@@ -6,7 +6,8 @@ This script aims to pick up where [BeautifulDiscord](https://github.com/leovoel/
 
 1. Custom CSS
 2. CSS hot-loading and watching
-3. Custom JS
+3. Custom JS in the form of Plugins
+5. Custom commands
 4. Exposes the native Discord WebSocket and localStorage
 
 ## Installation
