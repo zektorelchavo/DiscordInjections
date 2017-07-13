@@ -24,6 +24,12 @@ class PluginManager {
     }
 
     load(name) {
+        if (Array.isArray(name)) {
+            name = name.map(this.constructPath);
+            let loaded = [];
+            for (const nam of name) if (this.load(nam)) loaded.push(nam);
+            return loaded;
+        }
         try {
             let pack;
             try {
@@ -36,10 +42,11 @@ class PluginManager {
             let entryPoint = pack.main || 'index';
             const Plugin = reload(this.constructPath(name, entryPoint));
             if (Plugin && Plugin.constructor && Plugin.prototype instanceof PluginStruct) {
-                const plugin = new Plugin(this.constructPath(name));
-                this.classes[name] = Plugin;
-                this.plugins[name] = plugin;
+                const plugin = new Plugin(this.constructPath(name), name);
+                this.classes[name.toLowerCase()] = Plugin;
+                this.plugins[name.toLowerCase()] = plugin;
                 plugin.log('Loaded!');
+                return true;
             } else {
                 console.error(`Plugin '${name}''s entry point was not an instance of the Plugin structure, skipping`);
             }
@@ -49,16 +56,33 @@ class PluginManager {
     }
 
     unload(name) {
-        this.plugins[name].unload();
-        delete this.plugins[name];
-        console.log(`Plugin ${name} has been unloaded.`);
+        if (Array.isArray(name)) {
+            let loaded = [];
+            for (const nam of name) if (this.unload(nam) === true) loaded.push(nam);
+            return loaded;
+        }
+        try {
+            this.plugins[name.toLowerCase()]._unload();
+            delete this.plugins[name.toLowerCase()];
+            delete this.classes[name.toLowerCase()];
+            console.log(`Plugin ${name} has been unloaded.`);
+            return true;
+        } catch (err) {
+            console.error('Failed to unload plugin', window._path.basename(name), err);
+        }
     }
 
     reload(name) {
+        if (Array.isArray(name)) {
+            let loaded = [];
+            for (const nam of name) if (this.reload(nam)) loaded.push(nam);
+            return loaded;
+        }
         try {
-            this.unload(name);
-            this.load(name);
+            this.unload(name.toLowerCase());
+            this.load(name.toLowerCase());
             console.log(`Plugin ${name} has been reloaded.`);
+            return true;
         } catch (err) {
             console.error('Failed to reload plugin', window._path.basename(name), err);
         }

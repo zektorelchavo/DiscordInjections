@@ -1,3 +1,5 @@
+const Command = require('./Command');
+
 class Plugin {
     /**
      * Plugin constructor
@@ -6,17 +8,37 @@ class Plugin {
      * @param {String} [config.color] - An optional log colour
      * @param {Any} [...] - Any other config fields
      */
-    constructor(path) {
+    constructor(path, name) {
         if (this.constructor == Plugin) {
             throw new Error('Cannot instantiate an abstract class!');
         }
+        this._name = name;
+        this._commands = [];
         this._load(path);
     }
 
     get configTemplate() {
         return {
-            color: 0x444444
+            color: 0x444444,
+            iconURL: this.defaultIconURL()
         };
+    }
+
+    get defaultIconURL() {
+        if (!this.hash) this.hash = this.name.split('').reduce(function (a, b) {
+            a = ((a << 5) - a) + b.charCodeAt(0);
+            return a & a;
+        }, 0) % 4;
+        switch (this.hash) {
+            case 0: return `https://discordinjections.xyz/img/logo-alt-green.svg`;
+            case 1: return `https://discordinjections.xyz/img/logo-alt-grey.svg`;
+            case 2: return `https://discordinjections.xyz/img/logo-alt-red.svg`;
+            case 3: return `https://discordinjections.xyz/img/logo-alt-yellow.svg`;
+        }
+    }
+
+    get iconURL() {
+        return this.config.iconURL || this.defaultIconURL;
     }
 
     _load(path) {
@@ -36,6 +58,15 @@ class Plugin {
     _loadConfig() {
         try {
             this.config = require(window._path.join(this.path, 'config'));
+            let save = false;
+            for (const key in this.configTemplate) {
+                if (!this.config.hasOwnProperty(key)) {
+                    this.config[key] = this.configTemplate[key];
+                    save = true;
+                }
+            }
+            if (save)
+                window._fs.writeFile(window._path.join(this.path, 'config.json'), JSON.stringify(config, null, 2));
         } catch (err) {
             let config = this.configTemplate;
             window._fs.writeFile(window._path.join(this.path, 'config.json'), JSON.stringify(config, null, 2));
@@ -74,8 +105,19 @@ class Plugin {
                     });
             }
         } catch (err) {
-            this.log('Skipping CSS injection')
+            this.log('Skipping CSS injection');
         }
+    }
+
+    _unload() {
+        for (const command of this._commands) {
+            window.DI.CommandHandler.unhookCommand(command.name);
+        }
+        if (this._cssWatcher) this._cssWatcher.close();
+        let cssElement = document.getElementById(`CSS-${this.name}`);
+        if (cssElement) cssElement.parentElement.removeChild(cssElement);
+
+        this.unload();
     }
 
     /**
@@ -86,7 +128,7 @@ class Plugin {
     }
 
     get name() {
-        return this.pack ? this.pack.name || this.constructor.name : this.constructor.name;
+        return this._name || this.pack ? this.pack.name || this.constructor.name : this.constructor.name;
     }
 
     get author() {
@@ -106,11 +148,21 @@ class Plugin {
     }
 
     log(...args) {
-        console.log(`%c[${this.name}]`, `color: #${this.color}; font-weight: bold;`, ...args);
+        console.log(`%c[${this.name}]`, `color: #${this.color}; font - weight: bold; `, ...args);
     }
 
     error(...args) {
-        console.error(`%c[${this.name}]`, `color: #${this.color}; font-weight: bold;`, ...args);
+        console.error(`%c[${this.name}]`, `color: #${this.color}; font - weight: bold; `, ...args);
+    }
+
+    registerCommand(options) {
+        let command = new Command(this, options);
+        window.DI.CommandHandler.hookCommand(command);
+        this._commands.push(command);
+    }
+
+    sendLocalMessage(message, sanitize) {
+        return window.DI.Helpers.sendLog(this.name, message, this.iconURL, sanitize);
     }
 }
 

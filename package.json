@@ -1,6 +1,6 @@
 {
   "name": "discord-injections",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Injects CSS and JS into the discord client, and piggybacks the websocket for later use.",
   "main": "index.js",
   "scripts": {
