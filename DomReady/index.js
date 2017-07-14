@@ -19,3 +19,6 @@ DI.CssInjector = new CssInjector();
 DI.PluginManager = new PluginManager();
 DI.StateWatcher = new StateWatcher();
 DI.CommandHandler = new CommandHandler();
+DI.require = (path) => {
+    return require('../' + path);
+};

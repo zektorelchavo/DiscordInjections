@@ -270,6 +270,7 @@ class CommandHandler {
                     let command = this.textarea.value;
                     command = command.substring(this.prefix.length).trim();
                     this.textarea.value = '';
+
                     this.onInput();
                     event.preventDefault();
 
@@ -277,8 +278,12 @@ class CommandHandler {
                     name = name.toLowerCase();
                     if (this.commands[name]) {
                         let output = this.commands[name]._execute(args);
-                        if (output)
-                            window.DI.client.selectedChannel.send(output);
+                        if (output) {
+                            if (output instanceof Promise)
+                                output.then(out => window.DI.client.selectedChannel.send(out));
+                            else
+                                window.DI.client.selectedChannel.send(output);
+                        }
                     } else {
                         window.DI.Helpers.sendDI(`A command with the name <code class='inline'>${name}</code> could not be found. If you meant to send a regular message, please insert a space in front of your content.
                         <br>For reference, the command you tried to execute was:<br><pre><code class='hljs'>${command}</code></pre>`, false);
