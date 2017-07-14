@@ -156,6 +156,10 @@ class CommandHandler {
             content = content.substring(this.prefix.length).trim();
             let [command, ...others] = content.split(' ');
             this.currentSet = Object.keys(this.commands).filter(k => k.includes(command));
+            if (this.currentSet.length === 0) {
+                this.removeAC();
+                return;
+            }
             let exact = this.currentSet.find(k => k === command);
             if (exact && others.length > 0) {
                 this.currentSet = [exact];
@@ -269,14 +273,15 @@ class CommandHandler {
                     if (event.shiftKey) return;
                     let command = this.textarea.value;
                     command = command.substring(this.prefix.length).trim();
-                    this.textarea.value = '';
-
-                    this.onInput();
-                    event.preventDefault();
-
                     let [name, ...args] = command.split(' ');
                     name = name.toLowerCase();
                     if (this.commands[name]) {
+                        this.textarea.value = '';
+                        let inProgress = window.DI.localStorage.getItem('InProgressText');
+                        delete inProgress[window.DI.client.selectedChannel.id];
+                        window.DI.localStorage.setItem('InProgressText', inProgress);
+                        this.onInput();
+                        event.preventDefault();
                         let output = this.commands[name]._execute(args);
                         if (output) {
                             if (output instanceof Promise)
@@ -284,11 +289,8 @@ class CommandHandler {
                             else
                                 window.DI.client.selectedChannel.send(output);
                         }
-                    } else {
-                        window.DI.Helpers.sendDI(`A command with the name <code class='inline'>${name}</code> could not be found. If you meant to send a regular message, please insert a space in front of your content.
-                        <br>For reference, the command you tried to execute was:<br><pre><code class='hljs'>${command}</code></pre>`, false);
+                        break;
                     }
-                    break;
             }
     }
 
