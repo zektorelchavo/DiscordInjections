@@ -156,6 +156,10 @@ class CommandHandler {
             content = content.substring(this.prefix.length).trim();
             let [command, ...others] = content.split(' ');
             this.currentSet = Object.keys(this.commands).filter(k => k.includes(command));
+            if (this.currentSet.length === 0) {
+                this.removeAC();
+                return;
+            }
             let exact = this.currentSet.find(k => k === command);
             if (exact && others.length > 0) {
                 this.currentSet = [exact];
