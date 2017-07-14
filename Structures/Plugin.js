@@ -20,7 +20,7 @@ class Plugin {
     get configTemplate() {
         return {
             color: 0x444444,
-            iconURL: this.defaultIconURL()
+            iconURL: this.defaultIconURL
         };
     }
 

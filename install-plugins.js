@@ -27,6 +27,7 @@ function npmInstall(name) {
             });
         } else {
             console.log('File ' + name + ' was not a directory.');
+            res();
         }
     });
 }
