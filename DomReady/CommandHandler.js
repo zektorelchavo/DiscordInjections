@@ -249,6 +249,10 @@ class CommandHandler {
 
     onKeyDown(event) {
         let ac;
+        if (event.target === this.textarea && event.key === 'Enter' && this.textarea.value === '') {
+            event.preventDefault();
+            return;
+        };
         if (this.textarea.value.toLowerCase().startsWith(this.prefix))
             switch (event.key) {
                 case 'ArrowUp':
@@ -276,10 +280,16 @@ class CommandHandler {
                     let [name, ...args] = command.split(' ');
                     name = name.toLowerCase();
                     if (this.commands[name]) {
-                        this.textarea.value = '';
-                        let inProgress = window.DI.localStorage.getItem('InProgressText');
-                        delete inProgress[window.DI.client.selectedChannel.id];
-                        window.DI.localStorage.setItem('InProgressText', inProgress);
+                        this.textarea.textContent = this.textarea.value = '';
+
+                        try {
+                            let inProgress = JSON.parse(window.DI.localStorage.getItem('InProgressText'));
+                            inProgress[window.DI.client.selectedChannel.id] = undefined;
+                            window.DI.localStorage.setItem('InProgressText', JSON.stringify(inProgress));
+                        } catch (err) {
+                            console.error(err);
+                        }
+
                         this.onInput();
                         event.preventDefault();
                         let output = this.commands[name]._execute(args);
