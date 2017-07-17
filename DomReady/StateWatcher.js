@@ -6,6 +6,7 @@ class StateWatcher extends EventEmitter {
         this.observer = new MutationObserver(this._onMutation.bind(this));
         let mutation = { childList: true, subtree: true };
         this.observer.observe(document.querySelector(".app .layers"), mutation);
+
     }
 
     get settingsTabs() {
@@ -32,6 +33,8 @@ class StateWatcher extends EventEmitter {
     }
 
     _onMutation(muts) {
+        //console.log(muts);
+
         for (const mut of muts) {
 
             let changed = [];
@@ -45,6 +48,8 @@ class StateWatcher extends EventEmitter {
                 // NOTHING CHANGED?!?!?!11?!!?!?!?
                 return;
             }
+
+            //      console.log(changed);
 
             // Settings
             if (changed[0] && changed[0].classList && changed[0].classList.contains('layer')) {
@@ -75,6 +80,8 @@ class StateWatcher extends EventEmitter {
                 } else {
                     this.emit('chatClosed', mut);
                 }
+            } else if (changed[0] && changed[0].classList && changed[0].classList.contains('channelTextArea-1HTP3C') && added) {
+                this.emit('channelChanged', mut);
             }
 
             // FriendsList
