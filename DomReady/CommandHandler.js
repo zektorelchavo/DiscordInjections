@@ -44,6 +44,7 @@ class CommandHandler {
         this.hookCommand(new CommandStruct(null, { name: 'unload', info: 'Unloads a plugin.', usage: '<name>...', func: this.unloadPlugin }));
         this.hookCommand(new CommandStruct(null, { name: 'reload', info: 'Reloads a plugin.', usage: '<name>...', func: this.reloadPlugin }));
         this.hookCommand(new CommandStruct(null, { name: 'setprefix', info: 'Sets the custom command prefix.', usage: '<prefix>', func: this.commandSetPrefix.bind(this) }));
+        this.hookCommand(new CommandStruct(null, { name: 'setcss', info: 'Sets the custom css path.', usage: '<path>', func: this.setCssPath.bind(this) }));
         this.hookCommand(new CommandStruct(null, { name: 'echo', info: 'Is there an echo in here?', usage: '<text>', func: this.commandEcho }));
 
         document.addEventListener('input', this.onInput.bind(this));
@@ -80,6 +81,14 @@ class CommandHandler {
         else
             window.DI.Helpers.sendDI(`Reloaded the plugin${plugins.length > 1 ? 's' : ''} ${plugins.join(', ')}.`);
     }
+    setCssPath(args) {
+        try {
+            window.DI.CssInjector.set(args.join(' '));
+            window.DI.Helpers.sendDI(`Changed the CSS path!`);
+        } catch (err) {
+            window.DI.Helpers.sendDI(`Error: ${err.message}`);
+        }
+    }
     commandEcho(args) {
         window.DI.Helpers.sendLog(window.DI.client.user.username, args.join(' '), window.DI.client.user.avatarURL);
     }
@@ -93,7 +102,7 @@ class CommandHandler {
         } else {
             this.setPrefix(prefix);
         }
-        window.DI.Helpers.sendDI(`Set the custom prefix to <code class='inline'>${prefix}</code>.<br>${slashWarning ? `Warning: Setting the prefix to <code class="inline">/</code> may have undesired consequences due to conflict with the actual client. If you run into issues, you may reset your prefix by opening the console (ctrl+shift+i) and typing:<br><pre><code class='hljs'>DI.CommandHelper.setPrefix('//')</code></pre>` : ''}`, false);
+        window.DI.Helpers.sendDI(`Set the custom prefix to \`${prefix}\`.\n${slashWarning ? `Warning: Setting the prefix to \`/\` may have undesired consequences due to conflict with the actual client. If you run into issues, you may reset your prefix by opening the console (ctrl+shift+i) and typing:\n\`\`\`\nDI.CommandHelper.setPrefix('//')\n\`\`\`` : ''}`);
     }
     setPrefix(prefix) {
         window.DI.localStorage.setItem('customPrefix', prefix);
