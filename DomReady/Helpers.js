@@ -1,4 +1,5 @@
 const moment = require('moment');
+const resolver = new (require("discord.js/src/client/ClientDataResolver"))(window.DI.client);
 
 class Helpers {
 
@@ -125,6 +126,27 @@ class Helpers {
             document.querySelector(`.${className}:last-child .local-bot-message a`).innerHTML = 'delete these messages';
         }
         document.querySelector('.messages').scrollTop = elem.offsetTop;
+    }
+
+    escape(s) {
+        return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    }
+
+    resolveUser(query){
+        return window.DI.client.users.find("tag", query.slice(1));
+    }
+
+    resolveMention(query){
+        let res = query.match(/<@!?[0-9]+>/g);
+        if(!res) return null;
+        return resolver.resolveUser(res[0].replace(/<|!|>|@/g, ''));
+    }
+
+    filterMessage(message){
+        window.DI.client.users.forEach(u=>message=message.replace(new RegExp(this.escape(`@${u.tag}`), "g"), u.toString()));
+        if(window.DI.client.selectedGuild) window.DI.client.selectedGuild.roles.forEach(r=>{if(r.mentionable) message=message.replace(new RegExp(this.escape(`@${r.name}`), "g"), r.toString())});
+        if(window.DI.client.selectedGuild) window.DI.client.selectedGuild.channels.forEach(c=>message=message.replace(new RegExp(this.escape(`#${c.name}`), "g"), c.toString()));
+        return message;
     }
 }
 
