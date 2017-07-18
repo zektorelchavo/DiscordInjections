@@ -25,7 +25,6 @@ class PluginManager {
 
     load(name) {
         if (Array.isArray(name)) {
-            name = name.map(this.constructPath);
             let loaded = [];
             for (const nam of name) if (this.load(nam)) loaded.push(nam);
             return loaded;
