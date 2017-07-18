@@ -288,6 +288,7 @@ class CommandHandler {
                     command = command.substring(this.prefix.length).trim();
                     let [name, ...args] = command.split(' ');
                     name = name.toLowerCase();
+                    args = window.DI.Helpers.filterMessage(args.join(' ')).split(' ');
                     if (this.commands[name]) {
                         this.textarea.textContent = this.textarea.value = '';
 
