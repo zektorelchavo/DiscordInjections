@@ -1,6 +1,6 @@
 {
-  "name": "discord-injections",
-  "version": "2.1.7",
+  "name": "discordinjections",
+  "version": "2.1.8",
   "description": "Injects CSS and JS into the discord client, and piggybacks the websocket for later use.",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,7 @@
     "install-plugins": "node install-plugins.js"
   },
   "author": "stupid cat",
-  "license": "ISC",
+  "license": "MIT",
   "repository": "https://github.com/DiscordInjections/DiscordInjections",
   "dependencies": {
     "asar": "^0.13.0",

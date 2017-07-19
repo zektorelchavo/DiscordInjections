@@ -119,7 +119,7 @@ class Helpers {
             document.querySelector(`.${className}:last-child .avatar-large`).setAttribute('style', `background-image: url('${avatarURL}');`);
 
             let delElem = this.createElement(`<div class="local-bot-message">Only you can see this —
-             <a onclick="this.parentNode.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode.parentNode)">
+             <a onclick="DI.Helpers.deleteLocalMessages()">
              delete this message</a>.</div>`);
             document.querySelector(`.${className}:last-child .comment`).appendChild(delElem);
         } else {
@@ -132,20 +132,20 @@ class Helpers {
         return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
     }
 
-    resolveUser(query){
+    resolveUser(query) {
         return window.DI.client.users.find("tag", query.slice(1));
     }
 
-    resolveMention(query){
+    resolveMention(query) {
         let res = query.match(/<@!?[0-9]+>/g);
-        if(!res) return null;
+        if (!res) return null;
         return resolver.resolveUser(res[0].replace(/<|!|>|@/g, ''));
     }
 
-    filterMessage(message){
-        window.DI.client.users.forEach(u=>message=message.replace(new RegExp(this.escape(`@${u.tag}`), "g"), u.toString()));
-        if(window.DI.client.selectedGuild) window.DI.client.selectedGuild.roles.forEach(r=>{if(r.mentionable) message=message.replace(new RegExp(this.escape(`@${r.name}`), "g"), r.toString())});
-        if(window.DI.client.selectedGuild) window.DI.client.selectedGuild.channels.forEach(c=>message=message.replace(new RegExp(this.escape(`#${c.name}`), "g"), c.toString()));
+    filterMessage(message) {
+        window.DI.client.users.forEach(u => message = message.replace(new RegExp(this.escape(`@${u.tag}`), "g"), u.toString()));
+        if (window.DI.client.selectedGuild) window.DI.client.selectedGuild.roles.forEach(r => { if (r.mentionable) message = message.replace(new RegExp(this.escape(`@${r.name}`), "g"), r.toString()); });
+        if (window.DI.client.selectedGuild) window.DI.client.selectedGuild.channels.forEach(c => message = message.replace(new RegExp(this.escape(`#${c.name}`), "g"), c.toString()));
         return message;
     }
 }
