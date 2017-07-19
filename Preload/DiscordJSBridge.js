@@ -6,7 +6,7 @@
 
 const Discord = require('discord.js');
 
-(require('./DiscordMutator'))(Discord);
+require('./DiscordMutator');
 
 Discord.PacketManager = require('discord.js/src/client/websocket/packets/WebSocketPacketManager');
 Discord.Websocket = require('discord.js/src/client/websocket/WebSocketConnection');
