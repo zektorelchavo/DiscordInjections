@@ -9,6 +9,8 @@ const CommandHandler = require('./CommandHandler');
 const CssInjector = require('./CssInjector');
 const PluginManager = require('./PluginManager');
 const StateWatcher = require('./StateWatcher');
+const SettingsSync = require('./SettingsSync');
+
 DI.StateWatcher = new StateWatcher();
 
 DI.Helpers = new (require('./Helpers'))();
@@ -17,6 +19,7 @@ if (!DI.localStorage.getItem('customCss')) {
     DI.localStorage.setItem('customCss', window._path.join(window._injectDir, 'CSS', 'style.css'));
 }
 
+DI.SettingsSync = new SettingsSync();
 DI.CssInjector = new CssInjector();
 DI.PluginManager = new PluginManager();
 DI.CommandHandler = new CommandHandler();
