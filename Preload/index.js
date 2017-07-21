@@ -13,6 +13,10 @@ const DI = window.DI = {
     // Bridges the websocket to Discord.JS (courtesy of GusCaplan)    
     onWebsocketReload(ws) {
         DI.client.ws.connection.set(ws);
+    },
+
+    getReactInstance(node) {
+        return node[Object.keys(node).find((key) => key.startsWith("__reactInternalInstance"))];
     }
 };
 
