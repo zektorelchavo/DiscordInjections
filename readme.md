@@ -2,7 +2,7 @@
 
 This script aims to pick up where [BeautifulDiscord](https://github.com/leovoel/BeautifulDiscord) ends. Not only does it support custom CSS injections, but it also gives you the ability for custom JavaScript.
 
-##
+## DTinker
 
 Need help installing? Want to give a suggestion? Want to just chat? I'm using DTinker as a hub for DiscordInjections! Click right on Lil' Bub's face to go there!
 
