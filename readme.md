@@ -5,7 +5,9 @@ This script aims to pick up where [BeautifulDiscord](https://github.com/leovoel/
 ##
 
 Need help installing? Want to give a suggestion? Want to just chat? I'm using DTinker as a hub for DiscordInjections! Click right on Lil' Bub's face to go there!
+
 [![LIL BUB!!!](http://akns-images.eonline.com/eol_images/Entire_Site/201478/rs_500x270-140808102736-tumblr_my2hi3c3em1ruw1vso1_500.gif)](https://discord.gg/EDwd5wr)
+
 [(Or click here if you're boring)](https://discord.gg/EDwd5wr)
 
 ## Features
