@@ -7,8 +7,9 @@ This script aims to pick up where [BeautifulDiscord](https://github.com/leovoel/
 1. Custom CSS
 2. CSS hot-loading and watching
 3. Custom JS in the form of Plugins
-5. Custom commands
-4. Exposes the native Discord WebSocket and localStorage
+4. Custom commands
+5. Custom settings
+6. Exposes the native Discord WebSocket and localStorage
 
 ## Installation
 
@@ -39,12 +40,9 @@ All usage takes place in the folder you installed DiscordInjections into.
 
 ### CSS
 
-By default, DiscordInjections comes with a blank `style.css` file within the `CSS` folder. It is recommended to put in this folder, but in a different file (to prevent update conflicts).
+By default, DiscordInjections looks for a `style.css` file within the `CSS` folder. This file is not provided.
 
-For a custom location, open Content Inspector (`ctrl` + `shift` + `I`) and type
-```
-_cssInjector.set("path/to/css");
-```
+For a custom location, open the `General Settings` DiscordInjections settings tab in the user settings.
 
 ### JavaScript
 
@@ -52,7 +50,7 @@ There are two segments of JS that get injected.
 
 #### Preload/index.js
 
-This is content that gets injected before anything else in the discord client. It is what enables us to intercept the WS and localStorage objects. Put things that need to be loaded first here.
+This is content that gets injected before anything else in the discord client. It is what enables us to intercept the WS and localStorage objects. Put things that need to be loaded first here. Generally, this should not be modified.
 
 #### Plugins
 
