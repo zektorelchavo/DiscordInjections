@@ -1,13 +1,13 @@
 const e = window.DI.React.createElement;
 
-const SettingsOption = require('./SettingsOption');
+const SettingsOptionToggle = require('./SettingsOptionToggle');
 
 class SettingsSync extends window.DI.React.Component {
     render() {
-        return e('div', {},
-            e(SettingsOption, { title: 'Keybinds' }),
-            e(SettingsOption, { title: 'Emote Usage' }),
-            e(SettingsOption, { title: 'In Progress Messages' }));
+        return e('div', { className: 'expandableSection-1QgO0O user-settings-notifications' },
+            e(SettingsOptionToggle, { title: 'Keybinds' }),
+            e(SettingsOptionToggle, { title: 'Emote Usage' }),
+            e(SettingsOptionToggle, { title: 'In Progress Messages' }));
     }
 }
 

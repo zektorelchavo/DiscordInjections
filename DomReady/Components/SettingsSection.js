@@ -51,17 +51,17 @@ class SettingsSection extends window.DI.React.Component {
 
     render() {
         return e('div', {
-            className: 'ui-form-item',
-            onMouseOver: this.mouseOver.bind(this),
-            onMouseOut: this.mouseOut.bind(this),
-            onClick: this.click.bind(this)
+            className: 'ui-form-item sound-list'
         },
             e('div', {},
                 e('div', {
                     className: titleDivClass,
                     style: {
                         flex: '1 1 auto'
-                    }
+                    },
+                    onClick: this.click.bind(this),
+                    onMouseOver: this.mouseOver.bind(this),
+                    onMouseOut: this.mouseOut.bind(this)
                 },
                     e('h2', {
                         className: this.h2Class,
