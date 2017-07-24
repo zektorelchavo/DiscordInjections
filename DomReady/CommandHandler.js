@@ -37,8 +37,16 @@ const css = `
 
 class CommandHandler {
     constructor() {
-        if (!window.DI.localStorage.getItem('customPrefix')) {
-            window.DI.localStorage.setItem('customPrefix', '//');
+        let diNode = window.DI.localStorage.getItem('DiscordInjections');
+        if (diNode === null) {
+            let path = window.DI.localStorage.getItem('customPrefix') || '//';
+            window.DI.localStorage.setItem('DiscordInjections', JSON.stringify({ cssPath: path }));
+        } else {
+            let diNode = JSON.parse(window.DI.localStorage.getItem('DiscordInjections'));
+            if (!diNode.commandPrefix) {
+                diNode.commandPrefix = '//';
+                window.DI.localStorage.setItem('DiscordInjections', JSON.stringify(diNode));
+            }
         }
 
         this.commands = {};
@@ -108,13 +116,16 @@ class CommandHandler {
         }
         window.DI.Helpers.sendDI(`Set the custom prefix to \`${prefix}\`.\n${slashWarning ? `Warning: Setting the prefix to \`/\` may have undesired consequences due to conflict with the actual client. If you run into issues, you may reset your prefix by opening the console (ctrl+shift+i) and typing:\n\`\`\`\nDI.CommandHelper.setPrefix('//')\n\`\`\`` : ''}`);
     }
+
     setPrefix(prefix) {
-        window.DI.localStorage.setItem('customPrefix', prefix);
+        let diNode = JSON.parse(window.DI.localStorage.getItem('DiscordInjections'));
+        diNode.commandPrefix = prefix;
+        window.DI.localStorage.setItem('DiscordInjections', JSON.stringify(diNode));
         console.log('The prefix has been changed to', prefix);
     }
 
     get prefix() {
-        return window.DI.localStorage.getItem('customPrefix').toLowerCase();
+        return JSON.parse(window.DI.localStorage.getItem('DiscordInjections')).commandPrefix.toLowerCase();
     }
 
     hookCommand(command) {

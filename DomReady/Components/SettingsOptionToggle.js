@@ -1,17 +1,20 @@
 const e = window.DI.React.createElement;
 
-class SettingsOption extends window.DI.React.Component {
+const Base = require('./SettingsOptionBase');
+
+class SettingsOptionToggle extends Base {
     constructor(props) {
         super(props);
 
         this.state = {
-            checked: this.props.checked === undefined ? false : this.props.checked
+            checked: this.getProp()
         };
     }
 
     click() {
+        this.setProp(!this.getProp());
         this.setState(prev => ({
-            checked: !prev.checked
+            checked: this.getProp()
         }));
     }
 
@@ -59,4 +62,4 @@ class SettingsOption extends window.DI.React.Component {
     }
 }
 
-module.exports = SettingsOption;
+module.exports = SettingsOptionToggle;

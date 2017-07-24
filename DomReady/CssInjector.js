@@ -13,6 +13,16 @@ function readFile(path, encoding = 'utf-8') {
 
 class CssInjector {
     constructor() {
+        let diNode = window.DI.localStorage.getItem('DiscordInjections');
+        if (diNode === null) {
+            let path = window.DI.localStorage.getItem('customCss') || 'style.css';
+            window.DI.localStorage.setItem('DiscordInjections', JSON.stringify({ cssPath: path }));
+        } else if (!this.path) {
+            let diNode = JSON.parse(window.DI.localStorage.getItem('DiscordInjections'));
+            diNode.cssPath = 'style.css';
+            window.DI.localStorage.setItem('DiscordInjections', JSON.stringify(diNode));
+        }
+
         this.watch();
         this.watcher = null;
         this.styleTag = null;
@@ -39,7 +49,11 @@ class CssInjector {
     }
 
     watch() {
-        readFile(this.path).then(css => {
+        let location = this.path;
+        if (!window._path.isAbsolute(location))
+            location = window._path.join(__dirname, '..', 'CSS', location);
+
+        readFile(location).then(css => {
             this.rawCss = css;
 
             if (this.styleTag == null) {
@@ -49,10 +63,10 @@ class CssInjector {
             this.styleTag.innerHTML = this.rawCss;
 
             if (this.watcher == null) {
-                this.watcher = window._fs.watch(this.path, { encoding: 'utf-8' },
+                this.watcher = window._fs.watch(location, { encoding: 'utf-8' },
                     eventType => {
                         if (eventType == 'change') {
-                            readFile(this.path).then(css => {
+                            readFile(location).then(css => {
                                 this.rawCss = css;
                                 this.styleTag.innerHTML = this.rawCss;
                             });
@@ -68,13 +82,20 @@ class CssInjector {
         this.watch();
     }
 
+    refresh() {
+        this.destroy();
+        this.watch();
+    }
+
     setPath(location) {
         if (!window._path.isAbsolute(location))
             location = window._path.join(__dirname, '..', 'CSS', location);
         try {
             window._fs.statSync(location);
             if (location.endsWith('.css')) {
-                window.DI.localStorage.setItem('customCss', location);
+                let diNode = JSON.parse(window.DI.localStorage.getItem('DiscordInjections'));
+                diNode.cssPath = location;
+                window.DI.localStorage.setItem('DiscordInjections', JSON.stringify(diNode));
             }
             else throw new Error('Invalid CSS File');
         } catch (err) {
@@ -83,7 +104,7 @@ class CssInjector {
     }
 
     get path() {
-        return window.DI.localStorage.getItem('customCss');
+        return JSON.parse(window.DI.localStorage.getItem('DiscordInjections')).cssPath;
     }
 }
 
