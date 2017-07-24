@@ -13,14 +13,14 @@ function readFile(path, encoding = 'utf-8') {
 
 class CssInjector {
     constructor() {
-        let diNode = window.DI.localStorage.getItem('DiscordInjections');
+        let diNode = window.DI.localStorage.getItem('DI-DiscordInjections');
         if (diNode === null) {
             let path = window.DI.localStorage.getItem('customCss') || 'style.css';
-            window.DI.localStorage.setItem('DiscordInjections', JSON.stringify({ cssPath: path }));
+            window.DI.localStorage.setItem('DI-DiscordInjections', JSON.stringify({ cssPath: path }));
         } else if (!this.path) {
-            let diNode = JSON.parse(window.DI.localStorage.getItem('DiscordInjections'));
+            let diNode = JSON.parse(window.DI.localStorage.getItem('DI-DiscordInjections'));
             diNode.cssPath = 'style.css';
-            window.DI.localStorage.setItem('DiscordInjections', JSON.stringify(diNode));
+            window.DI.localStorage.setItem('DI-DiscordInjections', JSON.stringify(diNode));
         }
 
         this.watch();
@@ -93,9 +93,9 @@ class CssInjector {
         try {
             window._fs.statSync(location);
             if (location.endsWith('.css')) {
-                let diNode = JSON.parse(window.DI.localStorage.getItem('DiscordInjections'));
+                let diNode = JSON.parse(window.DI.localStorage.getItem('DI-DiscordInjections'));
                 diNode.cssPath = location;
-                window.DI.localStorage.setItem('DiscordInjections', JSON.stringify(diNode));
+                window.DI.localStorage.setItem('DI-DiscordInjections', JSON.stringify(diNode));
             }
             else throw new Error('Invalid CSS File');
         } catch (err) {
@@ -104,7 +104,7 @@ class CssInjector {
     }
 
     get path() {
-        return JSON.parse(window.DI.localStorage.getItem('DiscordInjections')).cssPath;
+        return JSON.parse(window.DI.localStorage.getItem('DI-DiscordInjections')).cssPath;
     }
 }
 

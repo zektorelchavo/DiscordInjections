@@ -37,15 +37,15 @@ const css = `
 
 class CommandHandler {
     constructor() {
-        let diNode = window.DI.localStorage.getItem('DiscordInjections');
+        let diNode = window.DI.localStorage.getItem('DI-DiscordInjections');
         if (diNode === null) {
             let path = window.DI.localStorage.getItem('customPrefix') || '//';
-            window.DI.localStorage.setItem('DiscordInjections', JSON.stringify({ cssPath: path }));
+            window.DI.localStorage.setItem('DI-DiscordInjections', JSON.stringify({ cssPath: path }));
         } else {
-            let diNode = JSON.parse(window.DI.localStorage.getItem('DiscordInjections'));
+            diNode = JSON.parse(diNode);
             if (!diNode.commandPrefix) {
                 diNode.commandPrefix = '//';
-                window.DI.localStorage.setItem('DiscordInjections', JSON.stringify(diNode));
+                window.DI.localStorage.setItem('DI-DiscordInjections', JSON.stringify(diNode));
             }
         }
 
@@ -118,14 +118,14 @@ class CommandHandler {
     }
 
     setPrefix(prefix) {
-        let diNode = JSON.parse(window.DI.localStorage.getItem('DiscordInjections'));
+        let diNode = JSON.parse(window.DI.localStorage.getItem('DI-DiscordInjections'));
         diNode.commandPrefix = prefix;
-        window.DI.localStorage.setItem('DiscordInjections', JSON.stringify(diNode));
+        window.DI.localStorage.setItem('DI-DiscordInjections', JSON.stringify(diNode));
         console.log('The prefix has been changed to', prefix);
     }
 
     get prefix() {
-        return JSON.parse(window.DI.localStorage.getItem('DiscordInjections')).commandPrefix.toLowerCase();
+        return JSON.parse(window.DI.localStorage.getItem('DI-DiscordInjections')).commandPrefix.toLowerCase();
     }
 
     hookCommand(command) {

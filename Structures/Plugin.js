@@ -161,6 +161,10 @@ class Plugin {
         this._commands.push(command);
     }
 
+    registerSettingsTab(name, component) {
+        window.DI.DISettings.registerSettingsTab(this, name, component);
+    }
+
     sendLocalMessage(message, sanitize) {
         return window.DI.Helpers.sendLog(this.name, message, this.iconURL, sanitize);
     }

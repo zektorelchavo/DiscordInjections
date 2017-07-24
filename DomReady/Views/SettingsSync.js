@@ -1,7 +1,8 @@
 const e = window.DI.React.createElement;
 
 const { SettingsOptionToggle, SettingsExpandableSection, SettingsOptionButton,
-    SettingsOptionDescription } = require('../Components');
+    SettingsOptionDescription } = window.DI.require('./Structures/Components');
+
 
 const Components = [
     {
