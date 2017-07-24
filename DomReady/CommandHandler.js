@@ -262,8 +262,7 @@ class CommandHandler {
 
     onKeyDown(event) {
         let ac;
-        if (event.target === this.textarea && event.key === 'Enter' && this.textarea.value === '') {
-            event.preventDefault();
+        if (!this.textarea || (event.target === this.textarea && event.key === 'Enter' && this.textarea.value === '')) {
             return;
         };
         if (this.textarea.value.toLowerCase().startsWith(this.prefix))
@@ -351,14 +350,14 @@ class CommandHandler {
 
     makeACRow(command) {
         const h2rgb = hex => {
-          var result = /^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-          return result ? [
-            parseInt(result[1], 16),
-            parseInt(result[2], 16),
-            parseInt(result[3], 16)
-          ] : null;
+            var result = /^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? [
+                parseInt(result[1], 16),
+                parseInt(result[2], 16),
+                parseInt(result[3], 16)
+            ] : null;
         };
-        const isDark = c => (c[ 0 ] * 0.299 + c[ 1 ] * 0.587 + c[ 2 ] * 0.114) > 150 ? false : true
+        const isDark = c => (c[0] * 0.299 + c[1] * 0.587 + c[2] * 0.114) > 150 ? false : true;
         let element = this.createElement(`<div class="autocompleteRowVertical-3_UxVA autocompleteRow-31UJBI command">
             <div class="selector-nbyEfM selectable-3iSmAf" onclick="DI.CommandHandler.makeSelection('${command.name}');"
             onmouseover="DI.CommandHandler.onHover(this);">
