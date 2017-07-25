@@ -13,9 +13,11 @@ class SettingsSync {
                     token: msg.content,
                     key
                 };
-                // This checks it's a DM, if the author is the bot, and if it's the token being provided (confirmation message contains spaces)
-                if (!msg.guild && msg.author.id === '336957616527900672' && !msg.content.includes(' ')) {
-                    window.DI.client.rest.makeRequest('put', '/users/@me/notes/336957616527900672', true, { note: JSON.stringify(note) });
+                // This checks it's a DM, if the author is the bot, and if it's the token being provided
+                // (confirmation message contains spaces)
+                if (!msg.guild && msg.author.id === window.DI.Constants.DIBot && !msg.content.includes(' ')) {
+                    window.DI.client.rest.makeRequest('put', `/users/@me/notes/${window.DI.Constants.DIBot}`,
+                        true, { note: JSON.stringify(note) });
                 }
             });
         });
@@ -24,7 +26,11 @@ class SettingsSync {
     }
 
     get note() {
-        return window.DI.client.user.notes.get('336957616527900672');
+        try {
+            return window.DI.client.user.notes.get('336957616527900672') || '{}';
+        } catch (err) {
+            return '{}';
+        }
     }
 
     get key() {

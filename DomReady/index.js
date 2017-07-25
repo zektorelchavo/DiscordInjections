@@ -5,6 +5,7 @@
 global.Promise = require('bluebird');
 
 const DI = window.DI;
+DI.Constants = require('./Constants');
 
 DI.require = (path) => {
     return require('../' + path);

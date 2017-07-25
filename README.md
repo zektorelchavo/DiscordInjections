@@ -60,7 +60,7 @@ There are two segments of JS that get injected.
 
 #### Preload/index.js
 
-This is content that gets injected before anything else in the discord client. It is what enables us to intercept the WS and localStorage objects. Put things that need to be loaded first here.
+This is content that gets injected before anything else in the discord client. It is what enables us to intercept the WS and localStorage objects. Put things that need to be loaded first here. Generally, this should not be modified.
 
 #### Plugins
 

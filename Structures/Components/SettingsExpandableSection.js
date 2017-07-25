@@ -1,14 +1,24 @@
 const e = window.DI.React.createElement;
 
+const SettingsDivider = require('./SettingsDivider');
+
 const titleDivClass = 'flex-lFgbSz flex-3B1Tl4 horizontal-2BEEBe horizontal-2VE-Fw flex-3B1Tl4 directionRow-yNbSvJ justifyStart-2yIZo0 alignCenter-3VxkQP noWrap-v6g9vO header-qR6-lU foldableHeaderExpanded-3g_WYd';
 
-function InnerSection(props) {
+function generateInnerSection(props) {
+    let output = [];
     if (props.state.expanded) {
-        return e(props.props.component, { className: 'di-settings-inner-section' });
-    } else return e('div');
+        if (props.props.components) {
+            for (const comp of props.props.components)
+                if (window.DI.React.isValidElement(comp))
+                    output.push(comp);
+                else
+                    output.push(e(comp.component, comp));
+        }
+    }
+    return output;
 }
 
-class SettingsSection extends window.DI.React.Component {
+class SettingsExpandableSection extends window.DI.React.Component {
     constructor(props) {
         super(props);
 
@@ -51,17 +61,17 @@ class SettingsSection extends window.DI.React.Component {
 
     render() {
         return e('div', {
-            className: 'ui-form-item',
-            onMouseOver: this.mouseOver.bind(this),
-            onMouseOut: this.mouseOut.bind(this),
-            onClick: this.click.bind(this)
+            className: 'ui-form-item sound-list expandableSection-1QgO0O user-settings-notifications'
         },
             e('div', {},
                 e('div', {
                     className: titleDivClass,
                     style: {
                         flex: '1 1 auto'
-                    }
+                    },
+                    onClick: this.click.bind(this),
+                    onMouseOver: this.mouseOver.bind(this),
+                    onMouseOut: this.mouseOut.bind(this)
                 },
                     e('h2', {
                         className: this.h2Class,
@@ -91,10 +101,11 @@ class SettingsSection extends window.DI.React.Component {
                         )
                     )
                 ),
-                e(InnerSection, { state: this.state, props: this.props })
-            )
+                ...generateInnerSection(this)
+            ),
+            e(SettingsDivider)
         );
     }
 }
 
-module.exports = SettingsSection;
+module.exports = SettingsExpandableSection;

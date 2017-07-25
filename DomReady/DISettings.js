@@ -1,23 +1,57 @@
 const DI = window.DI;
 
-const SettingsMenu = require('./Components/SettingsMenu');
+const SettingsGeneral = require('./Views/SettingsGeneral');
+const SettingsBase = require('./Views/SettingsBase');
 
 class DISettings {
     constructor() {
         DI.StateWatcher.on('settingsOpened', this.injectSettingsTab.bind(this));
         DI.StateWatcher.on('settingsTab', type => {
-            if (type === 'discordInjections') {
+            if (this.map.hasOwnProperty(type)) {
                 let element = document.querySelector('.layer .sidebar .selected-eNoxEK');
                 element.className = this.unselectedCss;
-                this.settingsTab.className = this.selectedCss;
+                this.map[type].tab.className = this.selectedCss;
 
-            } else this.settingsTab.className = this.unselectedCss;
+                DI.ReactDOM.render(DI.React.createElement(SettingsBase, {
+                    component: this.map[type].component,
+                    title: this.map[type].name
+                }),
+                    document.querySelector('.layer .content-column div'));
+
+            } else {
+                for (const key in this.map)
+                    this.map[key].tab.className = this.unselectedCss;
+            }
         });
-        this.settingsTab = document.createElement('div');
-        this.settingsTab.className = this.unselectedCss;
-        this.settingsTab.innerText = 'Discord Injections';
-        this.settingsTab.onclick = this.settingsTabClicked.bind(this);
 
+        this.header = document.createElement('div');
+        this.header.className = 'header-1-f9X5';
+        this.header.innerText = 'Discord Injections';
+
+        this.divider = document.createElement('div');
+        this.divider.className = 'separator-3z7STW marginTop8-2gOa2N marginBottom8-1mABJ4';
+
+        this.map = {};
+
+        this.registerSettingsTab(null, 'General Settings', SettingsGeneral);
+    }
+
+    registerSettingsTab(plugin, name, component) {
+        if (name && !component) { component = name; name = plugin ? plugin.name : 'undefined'; }
+
+        let id = 'di-';
+        if (plugin) id += plugin.name + '-';
+        id += name;
+        let tab = document.createElement('div');
+        tab.className = this.unselectedCss;
+        tab.innerText = name;
+        tab.onclick = event => {
+            DI.StateWatcher.emit('settingsTab', id);
+        };
+
+        this.map[id] = {
+            tab, component, id, name
+        };
     }
 
     get unselectedCss() {
@@ -33,14 +67,13 @@ class DISettings {
     }
 
     injectSettingsTab() {
-        this.settingsTab.className = this.unselectedCss;
-        let header = this.settingsTabs.querySelectorAll('.header-1-f9X5')[1];
-        this.settingsTabs.insertBefore(this.settingsTab, header.nextSibling);
-    }
-
-    settingsTabClicked(e) {
-        DI.StateWatcher.emit('settingsTab', 'discordInjections', {});
-        DI.ReactDOM.render(DI.React.createElement(SettingsMenu), document.querySelector('.layer .content-column div'));
+        if (this.settingsTabs.childNodes[0].innerHTML !== 'User Settings') return;
+        let header = this.settingsTabs.querySelectorAll('.separator-3z7STW')[3];
+        this.settingsTabs.insertBefore(this.divider, header);
+        this.settingsTabs.insertBefore(this.header, header);
+        for (const key in this.map) {
+            this.settingsTabs.insertBefore(this.map[key].tab, header);
+        }
     }
 }
 
