@@ -2,13 +2,22 @@
 
 This script aims to pick up where [BeautifulDiscord](https://github.com/leovoel/BeautifulDiscord) ends. Not only does it support custom CSS injections, but it also gives you the ability for custom JavaScript.
 
+## DTinker
+
+Need help installing? Want to give a suggestion? Want to just chat? I'm using DTinker as a hub for DiscordInjections! Click right on Lil' Bub's face to go there!
+
+[![LIL BUB!!!](http://akns-images.eonline.com/eol_images/Entire_Site/201478/rs_500x270-140808102736-tumblr_my2hi3c3em1ruw1vso1_500.gif)](https://discord.gg/EDwd5wr)
+
+[(Or click here if you're boring)](https://discord.gg/EDwd5wr)
+
 ## Features
 
 1. Custom CSS
 2. CSS hot-loading and watching
 3. Custom JS in the form of Plugins
-5. Custom commands
-4. Exposes the native Discord WebSocket and localStorage
+4. Custom commands
+5. Custom settings
+6. Exposes the native Discord WebSocket and localStorage
 
 ## Installation
 
@@ -25,6 +34,8 @@ To reinstall, run `npm run reinject`
 
 ## Updating
 
+**WARNING**: If you currently have version 1.X.X or 2.X.X installed, you *must* run `npm run uninject` before doing this step, and then `npm run inject` afterwards!
+
 To update, run `git pull origin master`.
 
 ## Requirements
@@ -39,12 +50,9 @@ All usage takes place in the folder you installed DiscordInjections into.
 
 ### CSS
 
-By default, DiscordInjections comes with a blank `style.css` file within the `CSS` folder. It is recommended to put in this folder, but in a different file (to prevent update conflicts).
+By default, DiscordInjections looks for a `style.css` file within the `CSS` folder. This file is not provided.
 
-For a custom location, open Content Inspector (`ctrl` + `shift` + `I`) and type
-```
-_cssInjector.set("path/to/css");
-```
+For a custom location, open the `General Settings` DiscordInjections settings tab in the user settings.
 
 ### JavaScript
 
@@ -75,18 +83,6 @@ Do not touch the `DomReady` directory, as it is what handles the custom CSS inje
 Discord deletes its websocket and localStorage references to prevent tampering. In order to prevent deletion, these variables are stored to `DI.ws` and `DI.localStorage` respectively.
 
 Additionally, Discord initiates a new websocket object every reconnect. To ensure that your implementation works properly, you should define a `window.onWebsocketReload` function, that takes a websocket as an input.
-
-## License
-
-DiscordInjections is open-source under the MIT license.
-
-Copyright 2017 stupid cat
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## Disclaimer
 
