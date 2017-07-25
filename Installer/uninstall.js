@@ -18,11 +18,11 @@ function closeClient(proc) {
                     console.error(err);
                 }
             }
-            resolve(path.join(proc.command, '..', 'resources', 'original_app.asar'));
+            resolve(path.join(proc.command, '..', 'resources'));
         } else {
             childProcess.exec('killall -9 ' + proc.command, (err, stdout, stderr) => {
                 if (err) reject(err);
-                resolve(path.join(proc.command, '..', 'resources', 'original_app.asar'));
+                resolve(path.join(proc.command, '..', 'resources'));
             });
         }
     });
@@ -44,13 +44,11 @@ var deleteFolderRecursive = function (path) {
 
 function restoreClient(_path) {
     return new Promise((resolve, reject) => {
-        if (fs.existsSync(_path)) {
-            const folder = path.join(_path, '..', 'app');
+        const folder = path.join(_path, 'app', 'DiscordInjections');
+        if (fs.existsSync(folder)) {
             console.log('Deleting the app folder...');
             deleteFolderRecursive(folder);
-            console.log('Renaming the asar...');
-            fs.renameSync(_path, path.join(_path, '..', 'app.asar'));
-        } else console.log('ASAR does not exist, skipping...');
+        } else console.log('DI folder does not exist, skipping...');
         resolve();
     });
 }
