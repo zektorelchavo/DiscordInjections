@@ -37,8 +37,16 @@ const css = `
 
 class CommandHandler {
     constructor() {
-        if (!window.DI.localStorage.getItem('customPrefix')) {
-            window.DI.localStorage.setItem('customPrefix', '//');
+        let diNode = window.DI.localStorage.getItem('DI-DiscordInjections');
+        if (diNode === null) {
+            let path = window.DI.localStorage.getItem('customPrefix') || '//';
+            window.DI.localStorage.setItem('DI-DiscordInjections', JSON.stringify({ cssPath: path }));
+        } else {
+            diNode = JSON.parse(diNode);
+            if (!diNode.commandPrefix) {
+                diNode.commandPrefix = '//';
+                window.DI.localStorage.setItem('DI-DiscordInjections', JSON.stringify(diNode));
+            }
         }
 
         this.commands = {};
@@ -108,13 +116,16 @@ class CommandHandler {
         }
         window.DI.Helpers.sendDI(`Set the custom prefix to \`${prefix}\`.\n${slashWarning ? `Warning: Setting the prefix to \`/\` may have undesired consequences due to conflict with the actual client. If you run into issues, you may reset your prefix by opening the console (ctrl+shift+i) and typing:\n\`\`\`\nDI.CommandHelper.setPrefix('//')\n\`\`\`` : ''}`);
     }
+
     setPrefix(prefix) {
-        window.DI.localStorage.setItem('customPrefix', prefix);
+        let diNode = JSON.parse(window.DI.localStorage.getItem('DI-DiscordInjections'));
+        diNode.commandPrefix = prefix;
+        window.DI.localStorage.setItem('DI-DiscordInjections', JSON.stringify(diNode));
         console.log('The prefix has been changed to', prefix);
     }
 
     get prefix() {
-        return window.DI.localStorage.getItem('customPrefix').toLowerCase();
+        return JSON.parse(window.DI.localStorage.getItem('DI-DiscordInjections')).commandPrefix.toLowerCase();
     }
 
     hookCommand(command) {
@@ -262,8 +273,7 @@ class CommandHandler {
 
     onKeyDown(event) {
         let ac;
-        if (event.target === this.textarea && event.key === 'Enter' && this.textarea.value === '') {
-            event.preventDefault();
+        if (!this.textarea || (event.target === this.textarea && event.key === 'Enter' && this.textarea.value === '')) {
             return;
         };
         if (this.textarea.value.toLowerCase().startsWith(this.prefix))
@@ -351,14 +361,14 @@ class CommandHandler {
 
     makeACRow(command) {
         const h2rgb = hex => {
-          var result = /^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-          return result ? [
-            parseInt(result[1], 16),
-            parseInt(result[2], 16),
-            parseInt(result[3], 16)
-          ] : null;
+            var result = /^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? [
+                parseInt(result[1], 16),
+                parseInt(result[2], 16),
+                parseInt(result[3], 16)
+            ] : null;
         };
-        const isDark = c => (c[ 0 ] * 0.299 + c[ 1 ] * 0.587 + c[ 2 ] * 0.114) > 150 ? false : true
+        const isDark = c => (c[0] * 0.299 + c[1] * 0.587 + c[2] * 0.114) > 150 ? false : true;
         let element = this.createElement(`<div class="autocompleteRowVertical-3_UxVA autocompleteRow-31UJBI command">
             <div class="selector-nbyEfM selectable-3iSmAf" onclick="DI.CommandHandler.makeSelection('${command.name}');"
             onmouseover="DI.CommandHandler.onHover(this);">
