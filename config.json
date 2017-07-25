@@ -1,3 +1,4 @@
 {
-    "transparent": false
+    "transparent": true,
+    "frame": true
 }

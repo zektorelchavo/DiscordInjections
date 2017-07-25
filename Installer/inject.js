@@ -39,6 +39,9 @@ Module._extensions['.js'] = (module, filename) => {
             content = content.replace('      transparent: false,', '      transparent: true,')
                 .replace('      backgroundColor: ACCOUNT_GREY,', '');
         }
+        if (conf.frame) {
+            content = content.replace('      frame: false,', '      frame: true,');
+        }
 
         console.log('  ...injecting DOM...');
         content = content.replace(`    mainWindow.webContents.on('dom-ready', function () {});`, [
