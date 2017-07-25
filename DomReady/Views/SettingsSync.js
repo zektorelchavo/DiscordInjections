@@ -1,7 +1,7 @@
 const e = window.DI.React.createElement;
 
 const { SettingsOptionToggle, SettingsExpandableSection, SettingsOptionButton,
-    SettingsOptionDescription } = window.DI.require('./Structures/Components');
+    SettingsOptionDescription, SettingsDivider } = window.DI.require('./Structures/Components');
 
 
 const Components = [
@@ -11,6 +11,7 @@ const Components = [
         lsNode: 'enabled',
         defaultValue: false
     },
+    e(SettingsDivider),
     { text: 'These settings have no effect if Enabled is false.', component: SettingsOptionDescription },
     {
         title: 'Keybinds', component: SettingsOptionToggle,
@@ -18,18 +19,21 @@ const Components = [
         lsNode: 'keybinds',
         defaultValue: true
     },
+    e(SettingsDivider),
     {
         title: 'Emote Usage', component: SettingsOptionToggle,
         lsKey: 'DISettingsSync',
         lsNode: 'emoteUsage',
         defaultValue: true
     },
+    e(SettingsDivider),
     {
         title: 'In Progress Messages', component: SettingsOptionToggle,
         lsKey: 'DISettingsSync',
         lsNode: 'inProgress',
         defaultValue: true
     },
+    e(SettingsDivider),
     {
         title: 'Plugins', component: SettingsOptionToggle,
         lsKey: 'DISettingsSync',
@@ -46,7 +50,9 @@ class SettingsSync extends window.DI.React.Component {
 
     render() {
         let comps = [];
-        if (window.DI.SettingsSync.token) comps = Components;
+        if (window.DI.SettingsSync.token) {
+            comps = Components;
+        }
         else {
             comps.push({
                 text: 'A DiscordInjections token and key have not been generated for you yet. Press the following button to generate them.'
@@ -66,7 +72,7 @@ class SettingsSync extends window.DI.React.Component {
                 component: SettingsOptionButton, onClick: this.enableSync.bind(this)
             });
         }
-        return e(SettingsExpandableSection, { components: comps, title: 'Settings Sync - WIP' }, e('div', {}, 'hi'));
+        return e(SettingsExpandableSection, { components: comps, title: 'Settings Sync - WIP' });
     }
 
     enableSync() {

@@ -1,6 +1,6 @@
 const e = window.DI.React.createElement;
 
-const { SettingsOptionToggle } = require('./index');
+const SettingsDivider = require('./SettingsDivider');
 
 const titleDivClass = 'flex-lFgbSz flex-3B1Tl4 horizontal-2BEEBe horizontal-2VE-Fw flex-3B1Tl4 directionRow-yNbSvJ justifyStart-2yIZo0 alignCenter-3VxkQP noWrap-v6g9vO header-qR6-lU foldableHeaderExpanded-3g_WYd';
 
@@ -102,7 +102,8 @@ class SettingsExpandableSection extends window.DI.React.Component {
                     )
                 ),
                 ...generateInnerSection(this)
-            )
+            ),
+            e(SettingsDivider)
         );
     }
 }
