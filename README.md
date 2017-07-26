@@ -22,8 +22,18 @@ Need help installing? Want to give a suggestion? Want to just chat? I'm using DT
 
 ## Installation
 
-1. Go to the directory you would like to install this module in.
-2. Type `git clone https://github.com/DiscordInjections/DiscordInjections folderName`
+1. Go to the directory you would like to install this module in
+
+2. Download the files
+
+### With releases
+  1. Download the [latest release](https://github.com/DiscordInjections/DiscordInjections/releases)
+  2. Extract to the desired location
+  
+### With git
+  1. Type `git clone https://github.com/DiscordInjections/DiscordInjections folderName`
+  2. (optional) Type `git checkout tags/<VERSION>` to go to a specific version. This is recommended
+
 3. Type `cd folderName`
 4. Run `npm install`
 5. Run `npm run inject`
@@ -38,7 +48,13 @@ To reinstall, run `npm run reinject`
 
 **WARNING**: If you currently have version 1.X.X or 2.X.X installed, you *must* run `npm run uninject` before doing this step, and then `npm run inject` afterwards!
 
-To update, run `git pull origin master`.
+### With releases
+1. Download the [latest release](https://github.com/DiscordInjections/DiscordInjections/releases)
+2. Extract to the desired location
+
+### With git
+1. Run `git fetch --tags`
+2. Run `git checkout tags/<VERSION>`
 
 ## Requirements
 
