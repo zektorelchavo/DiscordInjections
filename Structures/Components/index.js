@@ -2,6 +2,7 @@ const SettingsDescription = require('./SettingsDescription');
 const SettingsDivider = require('./SettingsDivider');
 const SettingsOption = require('./SettingsOption');
 const SettingsOptionTextbox = require('./SettingsOptionTextbox');
+const SettingsOptionFilebox = require('./SettingsOptionFilebox');
 const SettingsOptionToggle = require('./SettingsOptionToggle');
 const SettingsOptionTitle = require('./SettingsOptionTitle');
 const SettingsOptionDescription = require('./SettingsOptionDescription');
@@ -15,6 +16,7 @@ module.exports = {
     get SettingsDivider() { return SettingsDivider; },
     get SettingsOption() { return SettingsOption; },
     get SettingsOptionTextbox() { return SettingsOptionTextbox; },
+    get SettingsOptionFilebox() { return SettingsOptionFilebox; },
     get SettingsOptionToggle() { return SettingsOptionToggle; },
     get SettingsOptionTitle() { return SettingsOptionTitle; },
     get SettingsOptionButton() { return SettingsOptionButton; },
