@@ -41,7 +41,7 @@ function injectClient(_path) {
         const file = fs.readFileSync(path.join(__dirname, 'inject.js'), { encoding: 'utf8' });
         const pack = fs.readFileSync(path.join(__dirname, 'package.json.template'), { encoding: 'utf8' });
         fs.writeFileSync(path.join(dir, 'index.js'), file);
-        fs.writeFileSync(path.join(dir, 'base.js'), `module.exports = '${path.join(__dirname)}';`);
+        fs.writeFileSync(path.join(dir, 'base.js'), `module.exports = '${__dirname.replace(/\\/g, '/')}';`);
         fs.writeFileSync(path.join(dir, 'package.json'), pack);
 
         let confDir = path.join(__dirname, '..', 'config.json');
