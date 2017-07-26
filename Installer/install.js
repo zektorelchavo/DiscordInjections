@@ -40,11 +40,15 @@ function injectClient(_path) {
         mkdirp.sync(dir);
         const file = fs.readFileSync(path.join(__dirname, 'inject.js'), { encoding: 'utf8' });
         const pack = fs.readFileSync(path.join(__dirname, 'package.json.template'), { encoding: 'utf8' });
-        const conf = fs.readFileSync(path.join(__dirname, 'config.json.template'), { encoding: 'utf8' });
         fs.writeFileSync(path.join(dir, 'index.js'), file);
         fs.writeFileSync(path.join(dir, 'base.js'), `module.exports = '${path.join(__dirname)}';`);
         fs.writeFileSync(path.join(dir, 'package.json'), pack);
-        fs.writeFileSync(path.join(__dirname, '..', 'config.json'), conf);
+
+        let confDir = path.join(__dirname, '..', 'config.json');
+        if (!fs.existsSync(confDir)) {
+            const conf = fs.readFileSync(path.join(__dirname, 'config.json.template'), { encoding: 'utf8' });
+            fs.writeFileSync(confDir, conf);
+        }
         resolve();
     });
 }

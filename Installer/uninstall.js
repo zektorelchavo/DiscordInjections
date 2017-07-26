@@ -44,7 +44,7 @@ var deleteFolderRecursive = function (path) {
 
 function restoreClient(_path) {
     return new Promise((resolve, reject) => {
-        const folder = path.join(_path, 'app', 'DiscordInjections');
+        const folder = path.join(_path, 'app');
         if (fs.existsSync(folder)) {
             console.log('Deleting the app folder...');
             deleteFolderRecursive(folder);

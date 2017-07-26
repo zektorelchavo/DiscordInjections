@@ -34,33 +34,37 @@ Module._extensions['.js'] = (module, filename) => {
             '      webPreferences: {',
             `        preload: "${preloadPath}",`
         ].join('\n'));
+
         if (conf.transparent) {
             console.log('  ...injecting transparency...');
-            content = content.replace('      transparent: false,', '      transparent: true,')
-                .replace('      backgroundColor: ACCOUNT_GREY,', '');
+            content = content.replace('transparent: false,', 'transparent: true,')
+                .replace('backgroundColor: ACCOUNT_GREY,', '');
+            console.log(content);
         }
-        if (conf.frame) {
-            content = content.replace('      frame: false,', '      frame: true,');
+
+        if (typeof conf.frame === 'boolean') {
+            console.log('  ...injecting frame...');
+            content = content.replace('frame: false,', `frame: ${conf.frame},`)
+                .replace('mainWindowOptions.frame = true;', `mainWindowOptions.frame = ${conf.frame};`);
         }
 
         console.log('  ...injecting DOM...');
-        content = content.replace(`    mainWindow.webContents.on('dom-ready', function () {});`, [
-            `    mainWindow.webContents.on('dom-ready', function () {`,
-            `      mainWindow.webContents.executeJavaScript(`,
-            `        'window._injectDir = "${path.join(base, '..').replace(/\\/g, '/')}";' + `,
-            `        _fs2.default.readFileSync('${domPath}', 'utf8')`,
-            `      );`,
-            `    });`
-        ].join('\n'));
+        content = content.replace(`    mainWindow.webContents.on('dom-ready', function () {});`, `
+            mainWindow.webContents.on('dom-ready', function () {
+                mainWindow.webContents.executeJavaScript(
+                    'window._injectDir = "${path.join(base, '..').replace(/\\/g, '/')}";' +
+                    _fs2.default.readFileSync('${domPath}', 'utf8')
+                );
+            });`);
         monkeyPatcher++;
     }
 
     if (filename == path.join(root, 'SquirrelUpdate.js')) {
         console.log('[Injector] patching SquirrelUpdate.js');
-        content = content.replace("app.once('will-quit', function () {", [
-            "app.once('will-quit', function () {",
-            `require('${path.join(base, 'Installer', 'update.js').replace(/\\/g, '/')}')(_path2.default.resolve(rootFolder, 'app-' + newVersion));`
-        ].join('\n'));
+        content = content.replace("app.once('will-quit', function () {", `
+            app.once('will-quit', function () {
+                require('${path.join(base, 'Installer', 'update.js').replace(/\\/g, '/')}')
+                    (_path2.default.resolve(rootFolder, 'app-' + newVersion));`);
         monkeyPatcher++;
     }
 

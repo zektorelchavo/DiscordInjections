@@ -18,6 +18,7 @@ Need help installing? Want to give a suggestion? Want to just chat? I'm using DT
 4. Custom commands
 5. Custom settings
 6. Exposes the native Discord WebSocket and localStorage
+7. Transparency and frame settings
 
 ## Installation
 
@@ -26,7 +27,8 @@ Need help installing? Want to give a suggestion? Want to just chat? I'm using DT
 3. Type `cd folderName`
 4. Run `npm install`
 5. Run `npm run inject`
-6. Install any desired plugins, and then run `npm run install-plugins`
+6. Edit the config.json file as desired
+7. Install any desired plugins, and then run `npm run install-plugins`
 
 To uninstall, run `npm run uninject`
 
@@ -47,6 +49,19 @@ This module also requires [git](https://git-scm.com/downloads).
 ## Usage
 
 All usage takes place in the folder you installed DiscordInjections into.
+
+### Config
+
+DiscordInjections has some configuration options. A default config.json file is generated when you run `npm run inject` (this will not overwrite existing files).
+
+```json
+{
+    // This makes the background of the client transparent. On linux, you must run discord with the `--enable-transparent-visuals` flag!
+    "transparent": false,
+    // Set to `true` or `false` to enable or disable the OS frame around the client. Leave as `null` to use default client settings.
+    "frame": null
+}
+```
 
 ### CSS
 
