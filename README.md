@@ -26,13 +26,13 @@ Need help installing? Want to give a suggestion? Want to just chat? I'm using DT
 
 2. Download the files
 
-### With releases
-  1. Download the [latest release](https://github.com/DiscordInjections/DiscordInjections/releases)
-  2. Extract to the desired location
+     #### With releases
+    1. Download the [latest release](https://github.com/DiscordInjections/DiscordInjections/releases)
+    2. Extract to the desired location
   
-### With git
-  1. Type `git clone https://github.com/DiscordInjections/DiscordInjections folderName`
-  2. (optional) Type `git checkout tags/<VERSION>` to go to a specific version. This is recommended
+     #### With git
+    1. Type `git clone https://github.com/DiscordInjections/DiscordInjections folderName`
+    2. (optional) Type `git checkout tags/<VERSION>` to go to a specific version. This is recommended
 
 3. Type `cd folderName`
 4. Run `npm install`
