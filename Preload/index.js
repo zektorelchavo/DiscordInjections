@@ -1,7 +1,7 @@
 /**
  * Script to inject into the PRELOADER. Modify as you see fit.
  */
-
+let DIPluginInitialized = false;
 const DI = window.DI = {
     ws: null,
     client: null,
@@ -9,7 +9,8 @@ const DI = window.DI = {
     PluginManager: null,
     CssInjector: null,
     StateWatcher: null,
-
+    get DIPluginInitialized() { return DIPluginInitialized; },
+    set DIPluginInitialized(val) { DIPluginInitialized = true; },
     // Bridges the websocket to Discord.JS (courtesy of GusCaplan)    
     onWebsocketReload(ws) {
         DI.client.ws.connection.set(ws);

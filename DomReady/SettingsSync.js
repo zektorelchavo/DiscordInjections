@@ -50,6 +50,14 @@ class SettingsSync {
         });
     }
 
+    get isEnabled() {
+        try {
+            return JSON.parse(localStorage.getItem('DI-DiscordInjections')).sync.enabled;
+        } catch (err) {
+            return false;
+        }
+    }
+
     encryptData(data) {
         const cipher = crypto.createCipher('aes192', this.key);
         let encrypted = cipher.update(data, 'utf8', 'base64');
@@ -62,6 +70,12 @@ class SettingsSync {
         let decrypted = cipher.update(data, 'base64', 'utf8');
         decrypted += cipher.final('utf8');
         return decrypted;
+    }
+
+    submit(key) {
+        if (this.isEnabled) {
+            let data = this.encryptData(window.DI.localStorage.getItem(key));
+        }
     }
 }
 

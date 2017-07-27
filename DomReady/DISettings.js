@@ -2,9 +2,11 @@ const DI = window.DI;
 
 const SettingsGeneral = require('./Views/SettingsGeneral');
 const SettingsBase = require('./Views/SettingsBase');
+const Plugin = window.DI.require('./Structures/Plugin');
 
 class DISettings {
     constructor() {
+        const plugin = new (class DiscordInjections extends Plugin { })();
         DI.StateWatcher.on('settingsOpened', this.injectSettingsTab.bind(this));
         DI.StateWatcher.on('settingsTab', type => {
             if (this.map.hasOwnProperty(type)) {
@@ -14,6 +16,7 @@ class DISettings {
 
                 DI.ReactDOM.render(DI.React.createElement(SettingsBase, {
                     component: this.map[type].component,
+                    plugin: this.map[type].plugin,
                     title: this.map[type].name
                 }),
                     document.querySelector('.layer .content-column div'));
@@ -33,7 +36,7 @@ class DISettings {
 
         this.map = {};
 
-        this.registerSettingsTab(null, 'General Settings', SettingsGeneral);
+        this.registerSettingsTab(plugin, 'General Settings', SettingsGeneral);
     }
 
     registerSettingsTab(plugin, name, component) {
@@ -50,7 +53,7 @@ class DISettings {
         };
 
         this.map[id] = {
-            tab, component, id, name
+            tab, component, id, name, plugin
         };
     }
 

@@ -9,6 +9,11 @@ class Plugin {
      * @param {Any} [...] - Any other config fields
      */
     constructor(path, name) {
+        if (path === undefined && !window.DI.DIPluginInitialized) {
+            window.DI.DIPluginInitialized = true;
+            this._name = 'DiscordInjections';
+            return;
+        }
         if (this.constructor == Plugin) {
             throw new Error('Cannot instantiate an abstract class!');
         }
@@ -128,7 +133,7 @@ class Plugin {
     }
 
     get name() {
-        return this._name || this.pack ? this.pack.name || this.constructor.name : this.constructor.name;
+        return this._name ? this._name : this.pack ? this.pack.name || this.constructor.name : this.constructor.name;
     }
 
     get author() {

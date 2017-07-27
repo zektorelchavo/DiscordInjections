@@ -9,7 +9,7 @@ class SettingsBase extends window.DI.React.Component {
             e('div', { className: 'flex-vertical' },
                 e('div', { className: 'margin-bottom-40' },
                     e('div', { className: 'di-settings-menu-wrapper' },
-                        e(this.props.component)
+                        e(this.props.component, { plugin: this.props.plugin })
                     )
                 )
             )

@@ -7,37 +7,32 @@ const { SettingsOptionToggle, SettingsExpandableSection, SettingsOptionButton,
 const Components = [
     {
         title: 'Enabled', component: SettingsOptionToggle,
-        lsKey: 'DISettingsSync',
-        lsNode: 'enabled',
+        lsNode: 'sync.enabled',
         defaultValue: false
     },
     e(SettingsDivider),
     { text: 'These settings have no effect if Enabled is false.', component: SettingsOptionDescription },
     {
         title: 'Keybinds', component: SettingsOptionToggle,
-        lsKey: 'DISettingsSync',
-        lsNode: 'keybinds',
+        lsNode: 'sync.keybinds',
         defaultValue: true
     },
     e(SettingsDivider),
     {
         title: 'Emote Usage', component: SettingsOptionToggle,
-        lsKey: 'DISettingsSync',
-        lsNode: 'emoteUsage',
+        lsNode: 'sync.emoteUsage',
         defaultValue: true
     },
     e(SettingsDivider),
     {
         title: 'In Progress Messages', component: SettingsOptionToggle,
-        lsKey: 'DISettingsSync',
-        lsNode: 'inProgress',
+        lsNode: 'sync.inProgress',
         defaultValue: true
     },
     e(SettingsDivider),
     {
         title: 'Plugins', component: SettingsOptionToggle,
-        lsKey: 'DISettingsSync',
-        lsNode: 'plugins',
+        lsNode: 'sync.plugins',
         defaultValue: true
     }
 ];
@@ -51,7 +46,11 @@ class SettingsSync extends window.DI.React.Component {
     render() {
         let comps = [];
         if (window.DI.SettingsSync.token) {
-            comps = Components;
+            comps = Components.map(c => {
+                if (c.constructor.name === 'Object')
+                    c.plugin = this.props.plugin;
+                return c;
+            });
         }
         else {
             comps.push({
