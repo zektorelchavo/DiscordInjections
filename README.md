@@ -70,7 +70,7 @@ All usage takes place in the folder you installed DiscordInjections into.
 
 DiscordInjections has some configuration options. A default config.json file is generated when you run `npm run inject` (this will not overwrite existing files).
 
-```json
+```js
 {
     // This makes the background of the client transparent. On linux, you must run discord with the `--enable-transparent-visuals` flag!
     "transparent": false,
