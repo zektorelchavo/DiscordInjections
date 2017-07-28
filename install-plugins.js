@@ -15,7 +15,7 @@ function npmInstall(name) {
     return new Promise((res, rej) => {
         console.log('*=== Installing:', name, '===*');
         const file = path.join(__dirname, 'Plugins', name);
-        if (fs.lstatSync(file).isDirectory()) {
+        if (fs.statSync(file).isDirectory()) {
             childProcess.exec('npm install', {
                 cwd: file,
                 encoding: 'utf8'
