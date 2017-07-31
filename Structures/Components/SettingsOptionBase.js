@@ -36,8 +36,11 @@ class SettingsOptionBase extends window.DI.React.Component {
             current[nodes[nodes.length - 1]] = this.props.defaultValue;
             update = true;
         }
-        if (update)
+        if (update) {
             window.DI.localStorage.setItem('DI-' + this.name, JSON.stringify(entry));
+            if (typeof this.props.onSave == "function") this.props.onSave();
+            if (typeof this.props.plugins.settingsChanged == "function") this.props.plugin.settingsChanged();
+        }
 
         return current[nodes[nodes.length - 1]];
     }
