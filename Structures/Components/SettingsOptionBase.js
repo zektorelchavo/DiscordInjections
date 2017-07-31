@@ -20,7 +20,6 @@ class SettingsOptionBase extends window.DI.React.Component {
         } catch (err) {
             entry = {};
         }
-        console.log(entry);
         let nodes = this.props.lsNode.split('.');
         let current = entry;
         let update = false;
