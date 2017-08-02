@@ -37,7 +37,7 @@ class SettingsSync {
         try {
             let diSettings = JSON.parse(window.DI.localStorage.getItem('DI-DiscordInjections'));
             if (diSettings.sync.enabled) {
-                this.ws = new Websocket('ws://localhost:8099/ws', undefined, {
+                this.ws = new Websocket(diSettings.sync.localWs ? 'ws://localhost:8099/ws' : 'wss://discordinjections.xyz/ws', undefined, {
                     headers: {
                         userid: window.DI.client.user.id,
                         auth: this.token
