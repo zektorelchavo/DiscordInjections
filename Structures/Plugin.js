@@ -133,7 +133,7 @@ class Plugin {
     }
 
     get name() {
-        return this._name ? this._name : this.pack ? this.pack.name || this.constructor.name : this.constructor.name;
+        return this.pack ? this.pack.name : this._name ? this._name || this.constructor.name : this.constructor.name;
     }
 
     get author() {
@@ -150,6 +150,68 @@ class Plugin {
 
     get color() {
         return this.config ? this.config.color || 0x444444 : 0x444444;
+    }
+
+    getSettingsNode(node, defaultValue) {
+        let entry = this.settings;
+        let nodes = node.split('.');
+        let current = entry;
+        let update = false;
+        for (let i = 0; i < nodes.length - 1; i++) {
+            if (typeof current === 'object') {
+                if (!current.hasOwnProperty(nodes[i])) {
+                    current[nodes[i]] = {};
+                    update = true;
+                }
+                current = current[nodes[i]];
+            }
+        }
+        if (!current.hasOwnProperty(nodes[nodes.length - 1])) {
+            current[nodes[nodes.length - 1]] = defaultValue;
+            update = true;
+        }
+        if (update)
+            this.settings = entry;
+
+        return current[nodes[nodes.length - 1]];
+    }
+
+    setSettingsNode(node, value) {
+        let entry = this.settings;
+        let nodes = node.split('.');
+        let current = entry;
+        let update = false;
+        for (let i = 0; i < nodes.length - 1; i++) {
+            if (current[nodes[i]] === undefined || current[nodes[i]] === null) {
+                current[nodes[i]] = {};
+                update = true;
+            } else {
+                current = current[nodes[i]];
+            }
+        }
+        current[nodes[nodes.length - 1]] = value;
+        this.settings = entry;
+    }
+
+    get settings() {
+        try {
+            let res = JSON.parse(window.DI.localStorage.getItem('DI-' + this.name));
+            if (res === null) {
+                this.settings = {};
+                return {};
+            } else return res;
+        } catch (err) {
+            this.settings = {};
+            return {};
+        }
+    }
+
+    get hasSettings() {
+        return window.DI.localStorage.getItem('DI-' + this.name) !== null;
+    }
+
+    set settings(val) {
+        window.DI.localStorage.setItem('DI-' + this.name, JSON.stringify(val));
     }
 
     log(...args) {

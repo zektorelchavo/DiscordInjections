@@ -37,7 +37,7 @@ class SettingsOptionTextbox extends Base {
             e('div', { className: 'flex-lFgbSz flex-3B1Tl4 horizontal-2BEEBe horizontal-2VE-Fw flex-3B1Tl4 directionRow-yNbSvJ justifyStart-2yIZo0 alignStretch-1hwxMa noWrap-v6g9vO margin-bottom-20' },
                 e('input', {
                     className: 'inputDefault-Y_U37D input-2YozMi size16-3IvaX_ flexChild-1KGW5q',
-                    type: this.props.password ? 'password' : 'text',
+                    type: this.props.type ? this.props.type : this.props.password ? 'password' : 'text',
                     placeholder: this.props.defaultValue || this.props.placeholder || undefined,
                     name: this.props.name || undefined,
                     maxlength: this.props.maxlength || undefined,

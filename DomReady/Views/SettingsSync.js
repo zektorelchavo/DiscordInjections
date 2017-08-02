@@ -1,14 +1,28 @@
 const e = window.DI.React.createElement;
 
 const { SettingsOptionToggle, SettingsExpandableSection, SettingsOptionButton,
-    SettingsOptionDescription, SettingsDivider } = window.DI.require('./Structures/Components');
+    SettingsOptionDescription, SettingsDivider, SettingsOptionTextbox } = window.DI.require('./Structures/Components');
 
+const SettingsSyncPlugins = require('./SettingsSyncPlugins');
 
 const Components = [
+    { text: 'SettingsSync settings will not be synced.', component: SettingsOptionDescription },
     {
         title: 'Enabled', component: SettingsOptionToggle,
         lsNode: 'sync.enabled',
         defaultValue: false
+    },
+    {
+        title: 'Sync Interval', component: SettingsOptionTextbox,
+        description: 'The interval to sync settings at, in milliseconds. Defaults to 5 minutes.',
+        lsNode: 'sync.interval',
+        defaultValue: 5 * 60 * 1000,
+        apply: true,
+        onApply: () => {
+            window.DI.SettingsSync.initWS();
+        },
+        reset: true,
+        type: 'number'
     },
     e(SettingsDivider),
     { text: 'These settings have no effect if Enabled is false.', component: SettingsOptionDescription },
@@ -31,11 +45,19 @@ const Components = [
     },
     e(SettingsDivider),
     {
-        title: 'Plugins', component: SettingsOptionToggle,
+        title: 'Plugins', component: SettingsSyncPlugins,
         lsNode: 'sync.plugins',
         defaultValue: true
+    },
+    e(SettingsDivider),
+    { text: 'Dev settings - don\'t touch unless you know what you\'re doing!', component: SettingsOptionDescription },
+    {
+        title: 'Local WS', component: SettingsOptionToggle,
+        lsNode: 'sync.localWs',
+        defaultValue: false
     }
 ];
+
 
 class SettingsSync extends window.DI.React.Component {
     constructor(props) {

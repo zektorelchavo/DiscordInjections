@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const Websocket = require('ws');
 
 class SettingsSync {
     constructor() {
@@ -21,8 +22,76 @@ class SettingsSync {
                 }
             });
         });
-
         console.log('Settings syncer initialized.');
+
+        if (window.DI.client.readyAt != null)
+            this.initWS();
+        else window.DI.client.on('ready', this.initWS.bind(this));
+    }
+
+    initWS() {
+        if (this.ws) {
+            this.ws.close(1000);
+            this.ws.removeAllListeners();
+        }
+        try {
+            let diSettings = JSON.parse(window.DI.localStorage.getItem('DI-DiscordInjections'));
+            if (diSettings.sync.enabled) {
+                this.ws = new Websocket('ws://localhost:8099/ws', undefined, {
+                    headers: {
+                        userid: window.DI.client.user.id,
+                        auth: this.token
+                    }
+                });
+                clearInterval(this.interval);
+                this.ws.on('close', this.wsClose.bind(this));
+                this.ws.on('message', this.wsMessage.bind(this));
+                this.ws.on('open', () => {
+                    console.log('SettingsSync WS opened');
+                    this.sync();
+                    this.interval = setInterval(this.sync.bind(this), diSettings.sync.interval);
+                });
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    destroy() {
+        this.ws.close(1000);
+        this.ws.removeAllListeners();
+        delete this.ws;
+        clearInterval(this.interval);
+    }
+
+    wsClose(code, reason) {
+        let msg = 'Failed to connect to the SettingsSync WebSocket: ' + code;
+        if (reason) msg += '\nReason: ' + reason;
+        if (code == 4001) {
+            msg += '\nPlease regenerate your DI token and restart your client.';
+        } else if (code == 1000) {
+            msg = 'SettingsSync WebSocket has been closed.';
+        } else {
+            msg += '\nReconnecting in 5 seconds...';
+            setTimeout(this.initWS.bind(this), 5000);
+        }
+        console.log(msg);
+    }
+
+    wsMessage(msg) {
+        msg = JSON.parse(msg);
+        if (typeof msg === 'object' && msg.hasOwnProperty('code')) {
+            switch (msg.code) {
+                case 'settings': {
+                    for (const { key, data } of msg.data) {
+                        console.log(data);
+                        let decrypted = this.decryptData(data);
+                        window.DI.localStorage.setItem(key, decrypted);
+                    }
+                    console.log('Settings have been imported.');
+                }
+            }
+        }
     }
 
     get note() {
@@ -72,9 +141,68 @@ class SettingsSync {
         return decrypted;
     }
 
-    submit(key) {
-        if (this.isEnabled) {
-            let data = this.encryptData(window.DI.localStorage.getItem(key));
+    getLastModified(key) {
+        try {
+            let lastModified = JSON.parse(window.DI.localStorage.getItem('DI-LastModified'));
+            return lastModified[key];
+        } catch (err) {
+            return null;
+        }
+    }
+
+    sync() {
+        try {
+            let data = {};
+            let diSettings = JSON.parse(window.DI.localStorage.getItem('DI-DiscordInjections'));
+            if (diSettings.sync.enabled) {
+                console.log('Exporting settings...');
+
+                if (diSettings.sync.keybinds) {
+                    let comp = window.DI.localStorage.getItem('keybinds');
+                    data['keybinds'] = {
+                        encrypted: this.encryptData(comp),
+                        lastModified: this.getLastModified('keybinds')
+                    };
+                }
+
+                if (diSettings.sync.emoteUsage) {
+                    let comp = window.DI.localStorage.getItem('EmojiUsageHistory');
+                    data['EmojiUsageHistory'] = {
+                        encrypted: this.encryptData(comp),
+                        lastModified: this.getLastModified('EmojiUsageHistory')
+                    };
+                }
+
+                if (diSettings.sync.inProgress) {
+                    let comp = window.DI.localStorage.getItem('InProgressText');
+                    data['InProgressText'] = {
+                        encrypted: this.encryptData(comp),
+                        lastModified: this.getLastModified('InProgressText')
+                    };
+                }
+
+                if (diSettings.sync.plugins) {
+                    for (const [key, value] of Object.entries(diSettings.sync.plugin)) {
+                        if (value === true) {
+                            let plugin = window.DI.PluginManager.plugins[key];
+                            if (plugin && plugin.hasSettings)
+                                data['DI-' + key] = {
+                                    encrypted: this.encryptData(JSON.stringify(plugin.settings)),
+                                    lastModified: this.getLastModified('DI-' + key)
+                                };
+                        }
+                    }
+                }
+
+                this.ws.send(JSON.stringify({
+                    code: 'setsettings',
+                    data
+                }), err => {
+                    if (err) console.error(err);
+                });
+            }
+        } catch (err) {
+            console.error(err);
         }
     }
 }

@@ -30,20 +30,23 @@ class PluginManager {
             return loaded;
         }
         try {
+            name = name.toLowerCase();
             let pack;
+            let dirs = window._fs.readdirSync(this.constructPath()).filter(n => n.toLowerCase() === name);
+            if (dirs.length === 0) throw new Error('No files found');
             try {
-                pack = reload(this.constructPath(name, 'package'));
+                pack = reload(this.constructPath(dirs[0], 'package'));
             } catch (err) { }
             if (!(pack instanceof Object)) {
                 console.error(`Plugin '${name}' had an invalid package file, skipping`);
                 return;
             }
             let entryPoint = pack.main || 'index';
-            const Plugin = reload(this.constructPath(name, entryPoint));
+            const Plugin = reload(this.constructPath(dirs[0], entryPoint));
             if (Plugin && Plugin.constructor && Plugin.prototype instanceof PluginStruct) {
-                const plugin = new Plugin(this.constructPath(name), name);
-                this.classes[name.toLowerCase()] = Plugin;
-                this.plugins[name.toLowerCase()] = plugin;
+                const plugin = new Plugin(this.constructPath(dirs[0]), dirs[0]);
+                this.classes[name] = Plugin;
+                this.plugins[name] = plugin;
                 plugin.log('Loaded!');
                 return true;
             } else {
@@ -61,9 +64,10 @@ class PluginManager {
             return loaded;
         }
         try {
-            this.plugins[name.toLowerCase()]._unload();
-            delete this.plugins[name.toLowerCase()];
-            delete this.classes[name.toLowerCase()];
+            name = name.toLowerCase();
+            this.plugins[name]._unload();
+            delete this.plugins[name];
+            delete this.classes[name];
             console.log(`Plugin ${name} has been unloaded.`);
             return true;
         } catch (err) {
@@ -78,8 +82,9 @@ class PluginManager {
             return loaded;
         }
         try {
-            this.unload(name.toLowerCase());
-            this.load(name.toLowerCase());
+            name = name.toLowerCase();
+            this.unload(name);
+            this.load(name);
             console.log(`Plugin ${name} has been reloaded.`);
             return true;
         } catch (err) {

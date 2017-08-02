@@ -9,57 +9,16 @@ class SettingsOptionBase extends window.DI.React.Component {
         }
     }
 
-    get name() {
-        return this.props.plugin.constructor.name;
+    get plugin() {
+        return this.props.plugin;
     }
 
     getProp() {
-        let entry = {};
-        try {
-            entry = JSON.parse(window.DI.localStorage.getItem('DI-' + this.name)) || {};
-        } catch (err) {
-            entry = {};
-        }
-        console.log(entry);
-        let nodes = this.props.lsNode.split('.');
-        let current = entry;
-        let update = false;
-        for (let i = 0; i < nodes.length - 1; i++) {
-            if (current[nodes[i]] === undefined || current[nodes[i]] === null) {
-                current[nodes[i]] = {};
-                update = true;
-            } else {
-                current = current[nodes[i]];
-            }
-        }
-        if (!current.hasOwnProperty(nodes[nodes.length - 1])) {
-            current[nodes[nodes.length - 1]] = this.props.defaultValue;
-            update = true;
-        }
-        if (update)
-            window.DI.localStorage.setItem('DI-' + this.name, JSON.stringify(entry));
-
-        return current[nodes[nodes.length - 1]];
+        return this.plugin.getSettingsNode(this.props.lsNode, this.props.defaultValue);
     }
 
     setProp(newVal) {
-        let entry = {};
-        try {
-            entry = JSON.parse(window.DI.localStorage.getItem('DI-' + this.name));
-        } catch (err) { }
-        let nodes = this.props.lsNode.split('.');
-        let current = entry;
-        let update = false;
-        for (let i = 0; i < nodes.length - 1; i++) {
-            if (current[nodes[i]] === undefined || current[nodes[i]] === null) {
-                current[nodes[i]] = {};
-                update = true;
-            } else {
-                current = current[nodes[i]];
-            }
-        }
-        current[nodes[nodes.length - 1]] = newVal;
-        window.DI.localStorage.setItem('DI-' + this.name, JSON.stringify(entry));
+        return this.plugin.setSettingsNode(this.props.lsNode, newVal);
     }
 }
 
