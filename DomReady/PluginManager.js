@@ -13,7 +13,7 @@ class PluginManager {
         window._fs.readdir(this.constructPath(), (err, files) => {
             for (const file of files) {
                 try {
-                    if (window._fs.lstatSync(this.constructPath(file)).isDirectory()) {
+                    if (window._fs.statSync(this.constructPath(file)).isDirectory()) {
                         this.load(file);
                     }
                 } catch (err) {

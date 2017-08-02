@@ -20,6 +20,12 @@ Need help installing? Want to give a suggestion? Want to just chat? I'm using DT
 6. Exposes the native Discord WebSocket and localStorage
 7. Transparency and frame settings
 
+## Requirements
+
+This module requires you to have [node.js](https://nodejs.org/en/download/) installed with ES6 support.
+
+This module optionally requires [git](https://git-scm.com/downloads) for easier version updating.
+
 ## Installation
 
 1. Go to the directory you would like to install this module in
@@ -55,12 +61,6 @@ To reinstall, run `npm run reinject`
 ### With git
 1. Run `git fetch --tags`
 2. Run `git checkout tags/<VERSION>`
-
-## Requirements
-
-This module requires you to have [node.js](https://nodejs.org/en/download/) installed with ES6 support.
-
-This module also requires [git](https://git-scm.com/downloads). 
 
 ## Usage
 

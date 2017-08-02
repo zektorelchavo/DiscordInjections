@@ -13,9 +13,10 @@ Promise.each(files, npmInstall).then(() => {
 
 function npmInstall(name) {
     return new Promise((res, rej) => {
+        if (name === "readme.md") return;
         console.log('*=== Installing:', name, '===*');
         const file = path.join(__dirname, 'Plugins', name);
-        if (fs.lstatSync(file).isDirectory()) {
+        if (fs.statSync(file).isDirectory()) {
             childProcess.exec('npm install', {
                 cwd: file,
                 encoding: 'utf8'
