@@ -212,6 +212,7 @@ class Plugin {
 
     set settings(val) {
         window.DI.localStorage.setItem('DI-' + this.name, JSON.stringify(val));
+        if (typeof this.settingsChanged === 'function') this.settingsChanged();
     }
 
     log(...args) {
