@@ -3,6 +3,7 @@
  */
 
 const reload = require('require-reload');
+const solve = require('toposort');
 const PluginStruct = require('../Structures/Plugin');
 
 class PluginManager {
@@ -10,20 +11,53 @@ class PluginManager {
         this.classes = {};
         this.plugins = {};
 
+        const dependencies = [];
+
         window._fs.readdir(this.constructPath(), (err, files) => {
             for (const file of files) {
                 try {
                     if (window._fs.statSync(this.constructPath(file)).isDirectory()) {
-                        this.load(file);
+                        // preload, don't instantiate plugin
+                        const pluginName = this.load(file, true);
+                        const Plugin = this.classes[pluginName];
+
+                        if (Plugin.before && Array.isArray(Plugin.before)) {
+                            Plugin.before.forEach(dep => dependencies.push([ /* load */ pluginName, /* before */ dep ]));
+                        }
+                        if (Plugin.after && Array.isArray(Plugin.after)) {
+                            Plugin.after.forEach(dep => dependencies.push([ /* load */ dep, /* before */ pluginName ]));
+                        }
                     }
                 } catch (err) {
-                    console.error('Failed to load plugin', file, err);
+                    console.error('Failed to parse plugin', file, err);
                 }
             }
+
+            const plugins = Object.keys(this.classes);
+            const order = solve.array(plugins, dependencies);
+            const skip = [];
+
+            order.forEach(plugin => {
+                if (!this.load(plugin)) {
+                    skip.push(plugin);
+                    console.error('Failed to load plugin, undefined behaviour possible!', plugin);
+                    // TODO: handle before and after flags maybe?
+                }
+            })
+
+            // emit plugins-loaded to all plugins with an array of all loaded plugins
+            const loaded = plugins.filter(v => !skip.includes(v));
+            this.pluginEmit('plugins-loaded', loaded);
+        })
+    }
+
+    pluginEmit(ev, ...args) {
+        Object.keys(this.plugins).forEach(name => {
+            this.plugins[name].emit(ev, ...args);
         });
     }
 
-    load(name) {
+    load(name, preload = false) {
         if (Array.isArray(name)) {
             let loaded = [];
             for (const nam of name) if (this.load(nam)) loaded.push(nam);
@@ -44,13 +78,16 @@ class PluginManager {
             let entryPoint = pack.main || 'index';
             const Plugin = reload(this.constructPath(dirs[0], entryPoint));
             if (Plugin && Plugin.constructor && Plugin.prototype instanceof PluginStruct) {
-                const plugin = new Plugin(this.constructPath(dirs[0]), dirs[0]);
                 this.classes[name] = Plugin;
-                this.plugins[name] = plugin;
-                plugin.log('Loaded!');
-                return true;
+
+                if (!preload) {
+                    const plugin = new Plugin(this.constructPath(dirs[0]), dirs[0]);
+                    this.plugins[name] = plugin;
+                    plugin.log('Loaded!');
+                }
+                return name;
             } else {
-                console.error(`Plugin '${name}''s entry point was not an instance of the Plugin structure, skipping`);
+                console.error(`Plugin '${name}'s entry point was not an instance of the Plugin structure, skipping`);
             }
         } catch (err) {
             console.error('Failed to load plugin', name, err);
