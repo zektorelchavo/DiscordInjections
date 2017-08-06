@@ -3,7 +3,7 @@
  */
 
 const reload = require('require-reload');
-const solve = require("toposort");
+const solve = require('toposort');
 const PluginStruct = require('../Structures/Plugin');
 
 class PluginManager {
@@ -11,7 +11,7 @@ class PluginManager {
         this.classes = {};
         this.plugins = {};
 
-        const dependencies = []
+        const dependencies = [];
 
         window._fs.readdir(this.constructPath(), (err, files) => {
             for (const file of files) {
@@ -19,13 +19,13 @@ class PluginManager {
                     if (window._fs.statSync(this.constructPath(file)).isDirectory()) {
                         // preload, don't instantiate plugin
                         const pluginName = this.load(file, true);
-                        const Plugin = this.classes[pluginName]
+                        const Plugin = this.classes[pluginName];
 
                         if (Plugin.before && Array.isArray(Plugin.before)) {
-                            Plugin.before.forEach(dep => dependencies.push([ /* load */ pluginName, /* before */ dep ]))
+                            Plugin.before.forEach(dep => dependencies.push([ /* load */ pluginName, /* before */ dep ]));
                         }
                         if (Plugin.after && Array.isArray(Plugin.after)) {
-                            Plugin.after.forEach(dep => dependencies.push([ /* load */ dep, /* before */ pluginName ]))
+                            Plugin.after.forEach(dep => dependencies.push([ /* load */ dep, /* before */ pluginName ]));
                         }
                     }
                 } catch (err) {
@@ -39,22 +39,22 @@ class PluginManager {
 
             order.forEach(plugin => {
                 if (!this.load(plugin)) {
-                    skip.push(plugin)
-                    console.error("Failed to load plugin, undefined behaviour possible!", plugin)
+                    skip.push(plugin);
+                    console.error('Failed to load plugin, undefined behaviour possible!', plugin);
                     // TODO: handle before and after flags maybe?
                 }
             })
 
             // emit plugins-loaded to all plugins with an array of all loaded plugins
             const loaded = plugins.filter(v => !skip.includes(v));
-            this.pluginEmit("plugins-loaded", loaded)
+            this.pluginEmit('plugins-loaded', loaded);
         })
     }
 
     pluginEmit(ev, ...args) {
         Object.keys(this.plugins).forEach(name => {
-            this.plugins[name].emit(ev, ...args)
-        })
+            this.plugins[name].emit(ev, ...args);
+        });
     }
 
     load(name, preload = false) {
