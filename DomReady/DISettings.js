@@ -71,10 +71,10 @@ class DISettings {
     }
 
     injectSettingsTab() {
-        if (!this.settingsTabs) return
+        if (!this.settingsTabs) return;
 
-        const el = this.settingsTabs.querySelector(".itemDanger-3m3dwx")
-        let header = el.previousElementSibling
+        const el = this.settingsTabs.querySelector('.itemDanger-3m3dwx');
+        let header = el.previousElementSibling;
         this.settingsTabs.insertBefore(this.divider, header);
         this.settingsTabs.insertBefore(this.header, header);
         for (const key in this.map) {
