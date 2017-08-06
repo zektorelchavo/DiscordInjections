@@ -33,9 +33,9 @@ class PluginManager {
                 }
             }
 
-            const plugins = Object.keys(this.classes)
+            const plugins = Object.keys(this.classes);
             const order = solve.array(plugins, dependencies);
-            const skip = []
+            const skip = [];
 
             order.forEach(plugin => {
                 if (!this.load(plugin)) {
