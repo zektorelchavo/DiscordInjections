@@ -7,6 +7,7 @@ const Plugin = window.DI.require('./Structures/Plugin');
 class DISettings {
     constructor() {
         const plugin = new (class DiscordInjections extends Plugin { })();
+        DI.StateWatcher.on('languageChange', this.injectSettingsTab.bind(this));
         DI.StateWatcher.on('settingsOpened', this.injectSettingsTab.bind(this));
         DI.StateWatcher.on('settingsTab', type => {
             if (this.map.hasOwnProperty(type)) {
@@ -70,8 +71,10 @@ class DISettings {
     }
 
     injectSettingsTab() {
-        if (this.settingsTabs.childNodes[0].innerHTML !== 'User Settings') return;
-        let header = this.settingsTabs.querySelectorAll('.separator-3z7STW')[3];
+        if (!this.settingsTabs) return;
+
+        const el = this.settingsTabs.querySelector('.itemDanger-3m3dwx');
+        let header = el.previousElementSibling;
         this.settingsTabs.insertBefore(this.divider, header);
         this.settingsTabs.insertBefore(this.header, header);
         for (const key in this.map) {
