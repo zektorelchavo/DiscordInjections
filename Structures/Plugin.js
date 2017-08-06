@@ -1,6 +1,7 @@
 const Command = require('./Command');
+const EventEmitter = require("eventemitter3")
 
-class Plugin {
+class Plugin extends EventEmitter {
     /**
      * Plugin constructor
      * @param {Object} pack - The package.json object
@@ -9,6 +10,8 @@ class Plugin {
      * @param {Any} [...] - Any other config fields
      */
     constructor(path, name) {
+        super();
+
         if (path === undefined && !window.DI.DIPluginInitialized) {
             window.DI.DIPluginInitialized = true;
             this._name = 'DiscordInjections';
@@ -51,6 +54,7 @@ class Plugin {
         this._loadPackage();
         this._loadConfig();
         this._loadCss();
+        this.load();
     }
 
     _loadPackage(pack) {
@@ -123,6 +127,15 @@ class Plugin {
         if (cssElement) cssElement.parentElement.removeChild(cssElement);
 
         this.unload();
+    }
+
+    /**
+     * Functionality to call when the plugin is loaded
+     * 
+     * This is the same as putting the code into the contructor. It just looks nicer :)
+     */
+    load() {
+
     }
 
     /**
@@ -235,6 +248,10 @@ class Plugin {
 
     sendLocalMessage(message, sanitize) {
         return window.DI.Helpers.sendLog(this.name, message, this.iconURL, sanitize);
+    }
+
+    broadcast(event, ...args) {
+        return window.DI.PluginManager.pluginEmit(this._name.toLowerCase() + ":" + event, ...args)
     }
 }
 
