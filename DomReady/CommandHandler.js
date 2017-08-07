@@ -171,7 +171,13 @@ class CommandHandler {
         };
         let ac = this.autoComplete;
         let content = textarea.value.toLowerCase();
-        if (!ac) { this.initAC(); ac = this.autoComplete; }
+
+        if (content.includes(' ')) {
+            this.removeAC();
+            return;
+        }
+        if (!ac && !content.includes(' ')) { this.initAC(); ac = this.autoComplete; }
+
         if (content.trim() === this.prefix) {
             this.offset = 0;
             this.currentSet = Object.keys(this.commands);
@@ -324,6 +330,9 @@ class CommandHandler {
                                 window.DI.client.selectedChannel.send(output);
                         }
                         break;
+                    } else if (this.lastHovered) {
+                        this.lastHovered.click();
+                        event.preventDefault();
                     }
             }
     }
