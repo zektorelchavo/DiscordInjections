@@ -10,6 +10,7 @@ class PluginManager {
     constructor() {
         this.classes = {};
         this.plugins = {};
+        this.intialized = false
 
         const dependencies = [];
 
@@ -48,6 +49,7 @@ class PluginManager {
             // emit plugins-loaded to all plugins with an array of all loaded plugins
             const loaded = plugins.filter(v => !skip.includes(v));
             this.pluginEmit('plugins-loaded', loaded);
+            this.initialized = true
         })
     }
 
@@ -84,6 +86,10 @@ class PluginManager {
                     const plugin = new Plugin(this.constructPath(dirs[0]), dirs[0]);
                     this.plugins[name] = plugin;
                     plugin.log('Loaded!');
+
+                    if (this.initialized) {
+                        plugin.emit('plugins-loaded', Object.keys(this.plugins).concat([name]));
+                    }
                 }
                 return name;
             } else {
