@@ -39,7 +39,8 @@ class SettingsOptionToggle extends Base {
                     }
                 }, `${this.props.title}`),
                 e('div', {
-                    className: 'switchWrapperDefaultActive-2IdHq2 switchWrapperDefault-3GSsCS switchWrapper-3sSQdm flexChild-1KGW5q',
+                    className: 'flexChild-1KGW5q switchEnabled-3CPlLV switch-3lyafC value-kmHGfs sizeDefault-rZbSBU size-yI1KRe themeDefault-3M0dJU '
+                    + (this.state.checked ? 'valueChecked-3Bzkbm' : 'valueUnchecked-XR6AOk'),
                     onClick: this.click.bind(this),
                     style: {
                         flex: '0 0 auto'
@@ -47,7 +48,7 @@ class SettingsOptionToggle extends Base {
                 },
                     e('input', {
                         type: 'checkbox',
-                        className: 'checkbox-1KYsPm',
+                        className: `checkbox-1KYsPm checkboxEnabled-4QfryV checkbox-1KYsPm`,
                         value: this.state.checked ? 'on' : 'off'
                     }),
                     e('div', {
