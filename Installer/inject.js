@@ -39,7 +39,6 @@ Module._extensions['.js'] = (module, filename) => {
             console.log('  ...injecting transparency...');
             content = content.replace('transparent: false,', 'transparent: true,')
                 .replace('backgroundColor: ACCOUNT_GREY,', '');
-            console.log(content);
         }
 
         if (typeof conf.frame === 'boolean') {
