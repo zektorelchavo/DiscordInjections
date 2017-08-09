@@ -126,6 +126,8 @@ class Plugin extends EventEmitter {
         let cssElement = document.getElementById(`CSS-${this.name}`);
         if (cssElement) cssElement.parentElement.removeChild(cssElement);
 
+        this.removeAllListeners();
+
         this.unload();
     }
 
