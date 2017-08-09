@@ -323,12 +323,10 @@ class CommandHandler {
                         this.onInput();
                         event.preventDefault();
                         let output = this.commands[name]._execute(args);
-                        if (output) {
-                            if (output instanceof Promise)
-                                output.then(out => window.DI.client.selectedChannel.send(out));
-                            else
-                                window.DI.client.selectedChannel.send(output);
-                        }
+                        Promise.resolve(output).then(out => out ? window.DI.client.selectedChannel.send(out) : null).then(() => setTimeout(() => {
+                            this.textarea.focus();
+                            this.textarea.selectionStart = this.textarea.selectionEnd = 0
+                        }, 200));
                         break;
                     } else if (this.lastHovered) {
                         this.lastHovered.click();
