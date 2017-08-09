@@ -18,8 +18,8 @@ class SettingsOptionBase extends window.DI.React.Component {
     }
 
     setProp(newVal) {
+        if (typeof this.props.onSave === 'function') this.props.onSave();
         return this.plugin.setSettingsNode(this.props.lsNode, newVal);
-        if (typeof this.props.onSave === "function") this.props.onSave();
     }
 }
 

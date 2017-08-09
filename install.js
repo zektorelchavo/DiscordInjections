@@ -18,7 +18,7 @@ util.getDiscordProcess().then((proc) => {
             process.exit(0);
             break;
     }
-}).catch(err => {
+}).catch(() => {
     console.log('No discord process was found. Please open your discord client and try again.');
     process.exit(0);
 });

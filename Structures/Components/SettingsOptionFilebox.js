@@ -26,13 +26,12 @@ class SettingsOptionFilebox extends Base {
                 e(SettingsOptionTitle, { text: this.props.title })
             )
         ];
-        
+
         if (this.props.description)
             titles.push(e(SettingsOptionDescription, { text: this.props.description }));
 
         let icon = this.props.buttonIcon || 'https://cdn.bowser65.tk/i/icon-folder.png';
-        let btn_text = this.props.buttonIcon || 'https://cdn.bowser65.tk/i/icon-folder.png';
-        
+
         return e('div', {},
             e('div', {
                 className: 'flex-lFgbSz flex-3B1Tl4 vertical-3X17r5 flex-3B1Tl4 directionColumn-2h-LPR justifyStart-2yIZo0 alignStretch-1hwxMa noWrap-v6g9vO switchItem-1uofoz',
@@ -102,7 +101,7 @@ class SettingsOptionFilebox extends Base {
             )
         );
     }
-    
+
     apply(event) {
         let value = this.state.value || this.props.defaultValue;
         this.setProp(value);
@@ -121,14 +120,14 @@ class SettingsOptionFilebox extends Base {
         this.setState({ value: '' });
         this.apply(event);
     }
-    
-    fileSelector(event){
+
+    fileSelector() {
         let _this = this;
         dialog.showOpenDialog({
             title: 'Select CSS file',
-            filters: [{name: 'CSS Files', extensions: ['css']}],
-            properties : ['openFile']
-        }, function(filePath){
+            filters: [{ name: 'CSS Files', extensions: ['css'] }],
+            properties: ['openFile']
+        }, function (filePath) {
             _this.setState({ value: filePath[0] });
         });
     }

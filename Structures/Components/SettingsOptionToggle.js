@@ -1,7 +1,6 @@
 const e = window.DI.React.createElement;
 
 const Base = require('./SettingsOptionBase');
-const Divider = require('./SettingsDivider');
 
 class SettingsOptionToggle extends Base {
     constructor(props) {
@@ -14,7 +13,7 @@ class SettingsOptionToggle extends Base {
 
     click() {
         this.setProp(!this.getProp());
-        this.setState(prev => ({
+        this.setState(() => ({
             checked: this.getProp()
         }));
     }

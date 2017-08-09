@@ -7,7 +7,7 @@ const rl = readline.createInterface({
 });
 
 function askQuestion(question) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         rl.question(question + '\nInput: ', answer => {
             resolve(answer);
         });

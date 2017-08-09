@@ -12,8 +12,8 @@ Promise.each(files, npmInstall).then(() => {
 });
 
 function npmInstall(name) {
-    return new Promise((res, rej) => {
-        if (name === "readme.md") return;
+    return new Promise((res) => {
+        if (name === 'readme.md') return;
         console.log('*=== Installing:', name, '===*');
         const file = path.join(__dirname, 'Plugins', name);
         if (fs.statSync(file).isDirectory()) {

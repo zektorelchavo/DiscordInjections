@@ -1,5 +1,5 @@
 const Command = require('./Command');
-const EventEmitter = require("eventemitter3")
+const EventEmitter = require('eventemitter3');
 
 class Plugin extends EventEmitter {
     /**
@@ -57,7 +57,7 @@ class Plugin extends EventEmitter {
         this.load();
     }
 
-    _loadPackage(pack) {
+    _loadPackage() {
         this.pack = require(window._path.join(this.path, 'package.json'));
         if (!this.pack.hasOwnProperty('author') || !this.pack.hasOwnProperty('version') || !this.pack.hasOwnProperty('description')) {
             throw new Error('A plugin must have an author, version, and description');
@@ -195,11 +195,9 @@ class Plugin extends EventEmitter {
         let entry = this.settings;
         let nodes = node.split('.');
         let current = entry;
-        let update = false;
         for (let i = 0; i < nodes.length - 1; i++) {
             if (current[nodes[i]] === undefined || current[nodes[i]] === null) {
                 current[nodes[i]] = {};
-                update = true;
             } else {
                 current = current[nodes[i]];
             }

@@ -2,13 +2,13 @@ const Discord = require('discord.js');
 
 Object.defineProperty(Discord.Client.prototype, 'selectedGuild', {
     get: function () {
-        return this.guilds.get(window.location.pathname.split("/")[2]);
+        return this.guilds.get(window.location.pathname.split('/')[2]);
     }
 });
 
 Object.defineProperty(Discord.Client.prototype, 'selectedChannel', {
     get: function () {
-        return window.location.pathname.split("/")[3] ? this.channels.get(window.location.pathname.split("/")[3]) : undefined;
+        return window.location.pathname.split('/')[3] ? this.channels.get(window.location.pathname.split('/')[3]) : undefined;
     }
 });
 
@@ -20,7 +20,7 @@ Object.defineProperty(Discord.Guild.prototype, 'element', {
 
 Object.defineProperty(Discord.Guild.prototype, 'selected', {
     get: function () {
-        return this.element.className.includes("selected");
+        return this.element.className.includes('selected');
     }
 });
 
@@ -32,7 +32,7 @@ Object.defineProperty(Discord.DMChannel.prototype, 'element', {
 
 Object.defineProperty(Discord.DMChannel.prototype, 'selected', {
     get: function () {
-        return this.element.className.includes("selected");
+        return this.element.className.includes('selected');
     }
 });
 
@@ -44,13 +44,13 @@ Object.defineProperty(Discord.GroupDMChannel.prototype, 'element', {
 
 Object.defineProperty(Discord.GroupDMChannel.prototype, 'selected', {
     get: function () {
-        return this.element.className.includes("selected");
+        return this.element.className.includes('selected');
     }
 });
 
 Object.defineProperty(Discord.TextChannel.prototype, 'visible', {
     get: function () {
-        return this.permissionsFor(this.client.user).has("READ_MESSAGES");
+        return this.permissionsFor(this.client.user).has('READ_MESSAGES');
     }
 });
 
@@ -63,7 +63,7 @@ Object.defineProperty(Discord.TextChannel.prototype, 'unread', {
 
 Object.defineProperty(Discord.GuildChannel.prototype, 'element', {
     get: function () {
-        let channels = document.querySelectorAll(".channels-wrap .scroller-fzNley .containerDefault-7RImuF");
+        let channels = document.querySelectorAll('.channels-wrap .scroller-fzNley .containerDefault-7RImuF');
         for (const channel of channels) {
             const react = getReactInstance(channel);
             if (!react) continue;
@@ -83,11 +83,11 @@ Object.defineProperty(Discord.GuildChannel.prototype, 'element', {
 
 Object.defineProperty(Discord.Message.prototype, 'element', {
     get: function () {
-        const messages = document.querySelectorAll(".message");
+        const messages = document.querySelectorAll('.message');
         for (const message of messages) {
             const react = getReactInstance(message);
             if (!react) continue;
-            let id = message.parentNode.parentNode.classList.contains('compact') ? react._currentElement.props.children[0].props.children[1].props.subscribeTo.split("_")[3] : react._currentElement.props.children[0].props.children[1].props.children[1].props.subscribeTo.split("_")[3];
+            let id = message.parentNode.parentNode.classList.contains('compact') ? react._currentElement.props.children[0].props.children[1].props.subscribeTo.split('_')[3] : react._currentElement.props.children[0].props.children[1].props.children[1].props.subscribeTo.split('_')[3];
             if (id === this.id) return message;
         }
         return null;
@@ -95,5 +95,5 @@ Object.defineProperty(Discord.Message.prototype, 'element', {
 });
 
 function getReactInstance(node) {
-    return node[Object.keys(node).find((key) => key.startsWith("__reactInternalInstance"))];
+    return node[Object.keys(node).find((key) => key.startsWith('__reactInternalInstance'))];
 }

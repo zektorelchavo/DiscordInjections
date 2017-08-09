@@ -22,7 +22,7 @@ class Command {
         else return this.execute(args);
     }
 
-    execute(args) {
+    execute() {
         /* no-op */
     }
 }

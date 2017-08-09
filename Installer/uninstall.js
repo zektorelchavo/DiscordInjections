@@ -1,9 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-const asar = require('asar');
 const childProcess = require('child_process');
-const Installer = require('./util');
-const ps = require('ps-node');
 var appPath;
 var isReinstall = false;
 
@@ -20,7 +17,7 @@ function closeClient(proc) {
             }
             resolve(path.join(proc.command, '..', 'resources'));
         } else {
-            childProcess.exec('killall -9 ' + proc.command, (err, stdout, stderr) => {
+            childProcess.exec('killall -9 ' + proc.command, (err) => {
                 if (err) reject(err);
                 resolve(path.join(proc.command, '..', 'resources'));
             });
@@ -30,8 +27,8 @@ function closeClient(proc) {
 
 var deleteFolderRecursive = function (path) {
     if (fs.existsSync(path) && path != '/') {
-        fs.readdirSync(path).forEach(function (file, index) {
-            var curPath = path + "/" + file;
+        fs.readdirSync(path).forEach(function (file) {
+            var curPath = path + '/' + file;
             if (fs.lstatSync(curPath).isDirectory()) { // recurse
                 deleteFolderRecursive(curPath);
             } else { // delete file
@@ -43,7 +40,7 @@ var deleteFolderRecursive = function (path) {
 };
 
 function restoreClient(_path) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         const folder = path.join(_path, 'app');
         if (fs.existsSync(folder)) {
             console.log('Deleting the app folder...');
@@ -54,7 +51,7 @@ function restoreClient(_path) {
 }
 
 function relaunchClient() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         if (isReinstall) {
             console.log('Not relaunching client yet, because reinstalling.');
         } else {

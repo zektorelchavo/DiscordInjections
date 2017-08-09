@@ -34,7 +34,7 @@ function closeClient(proc, close) {
 }
 
 function injectClient(_path) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         console.log('Creating injector...');
         let dir = path.join(_path, 'app');
         mkdirp.sync(dir);
@@ -54,7 +54,7 @@ function injectClient(_path) {
 }
 
 function relaunchClient() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         console.log('Relaunching client');
         let child = childProcess.spawn(appPath, { detached: true });
         child.unref();

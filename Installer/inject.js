@@ -1,7 +1,6 @@
 'use strict';
 
 const electron = require('electron');
-const util = require('util');
 const fs = require('fs');
 const path = require('path');
 const Module = require('module');
@@ -48,7 +47,7 @@ Module._extensions['.js'] = (module, filename) => {
         }
 
         console.log('  ...injecting DOM...');
-        content = content.replace(`    mainWindow.webContents.on('dom-ready', function () {});`, `
+        content = content.replace('    mainWindow.webContents.on(\'dom-ready\', function () {});', `
             mainWindow.webContents.on('dom-ready', function () {
                 mainWindow.webContents.executeJavaScript(
                     'window._injectDir = "${path.join(base, '..').replace(/\\/g, '/')}";' +
@@ -60,7 +59,7 @@ Module._extensions['.js'] = (module, filename) => {
 
     if (filename == path.join(root, 'SquirrelUpdate.js')) {
         console.log('[Injector] patching SquirrelUpdate.js');
-        content = content.replace("app.once('will-quit', function () {", `
+        content = content.replace('app.once(\'will-quit\', function () {', `
             app.once('will-quit', function () {
                 require('${path.join(base, 'Installer', 'update.js').replace(/\\/g, '/')}')
                     (_path2.default.resolve(rootFolder, 'app-' + newVersion));`);
