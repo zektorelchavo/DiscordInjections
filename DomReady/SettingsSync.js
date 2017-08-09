@@ -30,6 +30,9 @@ class SettingsSync {
     }
 
     initWS() {
+        if (!this.token) {
+            return;
+        }
         if (this.ws) {
             this.ws.close(1000);
             this.ws.removeAllListeners();
