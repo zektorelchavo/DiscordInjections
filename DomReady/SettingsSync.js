@@ -87,13 +87,14 @@ class SettingsSync {
                     break;
                 }
                 case 'settings': {
-                    for (const { key, data } of msg.data) {
+                    for (let { key, data } of msg.data) {
+                        key = this.decryptData(key);
                         let decrypted = this.decryptData(data);
                         if (key.startsWith('DI-')) {
                             let name = key.substring(3);
                             let plugin = Object.values(window.DI.PluginManager.plugins).filter(p => p.name === name)[0];
                             if (plugin) plugin.settings = JSON.parse(decrypted);
-                        } else
+                        } else if (window.DI.localStorage.hasOwnProperty(key))
                             window.DI.localStorage.setItem(key, decrypted);
                     }
                     console.log('Settings have been imported.');
