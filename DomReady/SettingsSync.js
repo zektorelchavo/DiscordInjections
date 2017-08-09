@@ -169,7 +169,7 @@ class SettingsSync {
                 if (diSettings.sync.keybinds) {
                     let comp = window.DI.localStorage.getItem('keybinds');
                     data['keybinds'] = {
-                        encrypted: this.encryptData(comp),
+                        encrypted: comp,
                         lastModified: this.getLastModified('keybinds')
                     };
                 }
@@ -177,7 +177,7 @@ class SettingsSync {
                 if (diSettings.sync.emoteUsage) {
                     let comp = window.DI.localStorage.getItem('EmojiUsageHistory');
                     data['EmojiUsageHistory'] = {
-                        encrypted: this.encryptData(comp),
+                        encrypted: comp,
                         lastModified: this.getLastModified('EmojiUsageHistory')
                     };
                 }
@@ -185,7 +185,7 @@ class SettingsSync {
                 if (diSettings.sync.inProgress) {
                     let comp = window.DI.localStorage.getItem('InProgressText');
                     data['InProgressText'] = {
-                        encrypted: this.encryptData(comp),
+                        encrypted: comp,
                         lastModified: this.getLastModified('InProgressText')
                     };
                 }
@@ -196,16 +196,22 @@ class SettingsSync {
                             let plugin = window.DI.PluginManager.plugins[key];
                             if (plugin && plugin.hasSettings)
                                 data['DI-' + key] = {
-                                    encrypted: this.encryptData(JSON.stringify(plugin.settings)),
+                                    encrypted: JSON.stringify(plugin.settings),
                                     lastModified: this.getLastModified('DI-' + key)
                                 };
                         }
                     }
                 }
 
+                let encryptedData = {};
+                for (const key in data) {
+                    data[key].encrypted = this.encryptData(data[key].encrypted);
+                    encryptedData[this.encryptData(key)] = data[key];
+                }
+
                 this.ws.send(JSON.stringify({
                     code: 'setsettings',
-                    data
+                    encryptedData
                 }), err => {
                     if (err) console.error(err);
                 });

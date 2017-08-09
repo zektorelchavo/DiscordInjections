@@ -34,11 +34,13 @@ class StateWatcher extends EventEmitter {
         this.observer.disconnect();
         let mutation = { childList: true, subtree: true };
         this.observer.observe(document.querySelector('.app .layers'), mutation);
-        this.observer.observe(document.querySelector('html'), { attributes: true })
+        this.observer.observe(document.querySelector('html'), { attributes: true });
     }
 
     _onMutation(muts) {
         //console.log(muts);
+
+        this.emit('mutation', muts);
 
         if (muts.length === 1 && muts[0].type === 'attributes' && muts[0].attributeName === 'lang') {
             this.emit('languageChange', muts[0].target.attributes.lang.value);
