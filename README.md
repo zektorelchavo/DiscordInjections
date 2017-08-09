@@ -2,7 +2,7 @@
 
 [![latest release](https://img.shields.io/github/release/DiscordInjections/DiscordInjections.svg)](https://github.com/DiscordInjections/DiscordInjections/releases)
 [![license](https://img.shields.io/github/license/DiscordInjections/DiscordInjections.svg)](https://github.com/DiscordInjections/DiscordInjections/blob/master/LICENSE.md)
-[![discord](https://img.shields.io/discord/102860784329052160.svg)](https://discord.gg/EDwd5wr)
+[![discord](https://img.shields.io/discord/257300016832446475.svg)](https://discord.gg/EDwd5wr)
 [![issues](https://img.shields.io/github/issues/DiscordInjections/DiscordInjections.svg)](https://github.com/DiscordInjections/DiscordInjections/issues)
 [![prs](https://img.shields.io/github/issues-pr/DiscordInjections/DiscordInjections.svg)](https://github.com/DiscordInjections/DiscordInjections/pulls)
 
