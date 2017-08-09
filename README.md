@@ -3,10 +3,8 @@
 [![latest release](https://img.shields.io/github/release/DiscordInjections/DiscordInjections.svg)](https://github.com/DiscordInjections/DiscordInjections/releases)
 [![license](https://img.shields.io/github/license/DiscordInjections/DiscordInjections.svg)](https://github.com/DiscordInjections/DiscordInjections/blob/master/LICENSE.md)
 [![discord](https://img.shields.io/discord/102860784329052160.svg)](https://discord.gg/EDwd5wr)
-[![issues](https://img.shields.io/github/issues/badges/shields.svg)](https://github.com/DiscordInjections/DiscordInjections/issues)
-[![prs](https://img.shields.io/github/issues-pr/cdnjs/cdnjs.svg)](https://github.com/DiscordInjections/DiscordInjections/pulls)
-[![size](https://img.shields.io/github/size/webcaetano/craft/build/craft.min.js.svg)](https://media.giphy.com/media/iU2yJX5YKI9pe/giphy.gif)
-
+[![issues](https://img.shields.io/github/issues/DiscordInjections/DiscordInjections.svg)](https://github.com/DiscordInjections/DiscordInjections/issues)
+[![prs](https://img.shields.io/github/issues-pr/DiscordInjections/DiscordInjections.svg)](https://github.com/DiscordInjections/DiscordInjections/pulls)
 
 This script aims to pick up where [BeautifulDiscord](https://github.com/leovoel/BeautifulDiscord) ends. Not only does it support custom CSS injections, but it also gives you the ability for custom JavaScript.
 
