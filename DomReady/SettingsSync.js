@@ -211,7 +211,7 @@ class SettingsSync {
 
                 this.ws.send(JSON.stringify({
                     code: 'setsettings',
-                    encryptedData
+                    data: encryptedData
                 }), err => {
                     if (err) console.error(err);
                 });
