@@ -82,6 +82,10 @@ class SettingsSync {
         msg = JSON.parse(msg);
         if (typeof msg === 'object' && msg.hasOwnProperty('code')) {
             switch (msg.code) {
+                case 'ping': {
+                    this.ws.send(JSON.stringify({ code: 'pong', time: msg.time }));
+                    break;
+                }
                 case 'settings': {
                     for (const { key, data } of msg.data) {
                         let decrypted = this.decryptData(data);
@@ -93,6 +97,7 @@ class SettingsSync {
                             window.DI.localStorage.setItem(key, decrypted);
                     }
                     console.log('Settings have been imported.');
+                    break;
                 }
             }
         }
