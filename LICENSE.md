@@ -1,5 +1,3 @@
-# DiscordInjections License
-
 DiscordInjections is open-source under the MIT license.
 
 Copyright 2017 stupid cat

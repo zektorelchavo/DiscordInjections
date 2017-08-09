@@ -1,5 +1,13 @@
 # DiscordInjections
 
+![latest release](https://img.shields.io/github/release/DiscordInjections/DiscordInjections.svg)
+![license](https://img.shields.io/github/license/DiscordInjections/DiscordInjections.svg)
+[![discord](https://img.shields.io/discord/102860784329052160.svg)](https://discord.gg/EDwd5wr)
+![issues](https://img.shields.io/github/issues/badges/shields.svg)
+![prs](https://img.shields.io/github/issues-pr/cdnjs/cdnjs.svg)
+![size](https://img.shields.io/github/size/webcaetano/craft/build/craft.min.js.svg)
+
+
 This script aims to pick up where [BeautifulDiscord](https://github.com/leovoel/BeautifulDiscord) ends. Not only does it support custom CSS injections, but it also gives you the ability for custom JavaScript.
 
 ## DTinker
