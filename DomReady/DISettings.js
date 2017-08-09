@@ -9,6 +9,11 @@ class DISettings {
         const plugin = new (class DiscordInjections extends Plugin { })();
         DI.StateWatcher.on('languageChange', this.injectSettingsTab.bind(this));
         DI.StateWatcher.on('settingsOpened', this.injectSettingsTab.bind(this));
+        DI.StateWatcher.on('settingsClosed', _ => {
+            for (const key in this.map) {
+                this.map[key].tab.className = this.unselectedCss;
+            }
+        });
         DI.StateWatcher.on('settingsTab', type => {
             if (this.map.hasOwnProperty(type)) {
                 let element = document.querySelector('.layer .sidebar .selected-eNoxEK');
