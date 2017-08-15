@@ -38,19 +38,24 @@ class PluginManager {
             const order = solve.array(plugins, dependencies);
             const skip = [];
 
-            order.forEach(plugin => {
-                if (!this.load(plugin)) {
-                    skip.push(plugin);
-                    console.error('Failed to load plugin, undefined behaviour possible!', plugin);
-                    // TODO: handle before and after flags maybe?
+            order.forEach(pluginName => {
+                if (skip.includes(pluginName) || !this.load(pluginName)) {
+                    // unload plugin, just to be sure
+                    this.unload(pluginName);
+                    
+                    skip.push(pluginName);
+                    console.error('Failed to load plugin, undefined behaviour possible!', pluginName);
                 }
             })
 
-            // emit plugins-loaded to all plugins with an array of all loaded plugins
             const loaded = plugins.filter(v => !skip.includes(v));
-            this.pluginEmit('plugins-loaded', loaded);
+            this.pluginEmit('plugins-loaded', this.pluginNames);
             this.initialized = true
         })
+    }
+
+    get pluginNames() {
+        return Object.keys(this.classes);
     }
 
     pluginEmit(ev, ...args) {
@@ -108,6 +113,8 @@ class PluginManager {
         }
         try {
             name = name.toLowerCase();
+            // skip already "unloaded" (non existant) plugins
+            if (!this.plugins[name]) return true;
             this.plugins[name]._unload();
             delete this.plugins[name];
             delete this.classes[name];
