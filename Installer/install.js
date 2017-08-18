@@ -1,6 +1,5 @@
 const path = require('path');
 const fs = require('fs');
-const asar = require('asar');
 const childProcess = require('child_process');
 const Installer = require('./util');
 const ps = require('ps-node');
