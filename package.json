@@ -14,7 +14,6 @@
   "license": "MIT",
   "repository": "https://github.com/DiscordInjections/DiscordInjections",
   "dependencies": {
-    "asar": "^0.13.0",
     "bluebird": "^3.5.0",
     "discord.js": "^11.1.0",
     "eventemitter3": "^2.0.3",
