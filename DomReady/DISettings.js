@@ -76,7 +76,7 @@ class DISettings {
     }
 
     injectSettingsTab() {
-        if (!this.settingsTabs) return;
+        if (!this.settingsTabs || !document.querySelector('.itemBrand-mC9YR4')) return;
 
         const el = this.settingsTabs.querySelector('.itemDanger-3m3dwx');
         let header = el.previousElementSibling;

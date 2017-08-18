@@ -253,6 +253,10 @@ class Plugin extends EventEmitter {
     broadcast(event, ...args) {
         return window.DI.PluginManager.pluginEmit(this._name.toLowerCase() + ':' + event, ...args);
     }
+
+    getPlugin(name) {
+        return window.DI.PluginManager.plugins[name];
+    }
 }
 
 module.exports = Plugin;

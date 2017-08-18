@@ -65,7 +65,8 @@ class StateWatcher extends EventEmitter {
             // Settings
             if (changed[0] && changed[0].classList && changed[0].classList.contains('layer')) {
                 let node = changed[0];
-                if (node.childNodes.length > 0) {
+                const programSettings = !!changed[0].querySelector('[class*="socialLinks"]');
+                if (programSettings && node.childNodes.length > 0) {
                     let child = node.childNodes[0];
                     if (child.className === 'ui-standard-sidebar-view') {
                         if (added) {

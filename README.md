@@ -68,6 +68,9 @@ To reinstall, run `npm run reinject`
 1. Run `git fetch --tags`
 2. Run `git checkout tags/<VERSION>`
 
+### Next Steps
+1. Make sure all dependencies are installed (run `npm install` - new dependencies might have been added)
+
 ## Usage
 
 All usage takes place in the folder you installed DiscordInjections into.
