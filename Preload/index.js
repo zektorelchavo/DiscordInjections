@@ -29,5 +29,4 @@ require('./LocalStorageInterceptor');
 
 // Initiate the Discord.JS websocket bridge client
 const Client = require('./DiscordJSBridge');
-// Keep window.client for legacy support
 DI.client = new Client();
