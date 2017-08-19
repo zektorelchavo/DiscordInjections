@@ -1,7 +1,7 @@
 const e = window.DI.React.createElement;
 
-const { SettingsSection, SettingsDivider, SettingsOptionTextbox, SettingsOptionFilebox,
-    SettingsTitle, SettingsDescription } = window.DI.require('./Structures/Components');
+const { SettingsDivider, SettingsOptionTextbox, SettingsOptionFilebox, SettingsExpandableSection, SettingsOptionDescription, SettingsOptionToggle 
+    } = window.DI.require('./Structures/Components');
 
 class SettingsGeneral extends window.DI.React.Component {
     render() {
@@ -26,6 +26,20 @@ class SettingsGeneral extends window.DI.React.Component {
                 reset: true
             }),
             e(SettingsDivider),
+            e(SettingsExpandableSection, { title: 'Expert settings', components: [
+                e(SettingsOptionDescription, { 
+                    text: 'Attention: These settings may break several things in your Discord Injections installation. ' +
+                          'Make sure you know what you are doing!'
+                }),
+                e(SettingsOptionToggle, {
+                    title: 'Internal Webserver',
+                    description: 'This controls the internal webserver that is used as a wrapper around local file requests. If you don\'t use local imports, it is safe to disable.',
+                    plugin: this.props.plugin,
+                    lsNode: 'webServer',
+                    defaultValue: true,
+                    onSave: () => window.DI.WebServer.listen()
+                }),
+            ] }),
             e(require('./SettingsSync'), { title: 'Settings Sync', plugin: this.props.plugin })
         );
     }
