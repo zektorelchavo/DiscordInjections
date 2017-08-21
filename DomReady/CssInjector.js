@@ -48,7 +48,7 @@ class CssInjector {
         }
     }
 
-    parseFile(content) {
+    parseFile(content, location) {
         if (content.match(/url\([\'"]?.\//)) {
             const base = window.DI.WebServer.base;
             return content.replace(/url\(['"]?(.\/[^'"\)]+)['"]?/g, (match, path) => {
@@ -66,7 +66,7 @@ class CssInjector {
             location = window._path.join(__dirname, '..', 'CSS', location);
 
         readFile(location).then(css => {
-            this.rawCss = this.parseFile(css);
+            this.rawCss = this.parseFile(css, location);
 
             if (this.styleTag == null) {
                 this.styleTag = document.createElement('style');
@@ -79,7 +79,7 @@ class CssInjector {
                     eventType => {
                         if (eventType == 'change') {
                             readFile(location).then(css => {
-                                this.rawCss = this.parseFile(css);
+                                this.rawCss = this.parseFile(css, location);
                                 this.styleTag.innerHTML = this.rawCss;
                             });
                         }
