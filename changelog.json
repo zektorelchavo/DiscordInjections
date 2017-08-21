@@ -1,0 +1,29 @@
+{
+    "3.2.2": {
+        "New Stuff": [
+            "DI now hosts a local webserver so that CSS stuff resolves. Don't worry, the overhead on this is negligable. You can also disable it in the settings tab.",
+            "There's this new fancy changelog thing in town. What's up with that?"
+        ]
+    },
+    "3.2.1": {
+        "Fixes": [
+            "Fixes the settings tabs appearing in guild settings, and other misc things."
+        ]
+    },
+    "3.2.0": {
+        "Features": [
+            "Synchronised settings!",
+            "A generic mutation event in the StateWatcher!"
+        ],
+        "Changes": [
+            "Some custom command buffs",
+            "Changes to plugin settings - can access from a <code>.settings</code> property"
+        ],
+        "Fixes": [
+            "Fixed the settings toggle switch! (for now)",
+            "Plugins now properly reload/load/unload",
+            "Fixed the settings tab on different locales",
+            "Fixed plugin loading when symlinked"
+        ]
+    }
+}
