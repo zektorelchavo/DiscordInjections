@@ -51,7 +51,7 @@ class CssInjector {
     parseFile(content) {
         if (content.match(/url\([\'"]?.\//)) {
             const base = window.DI.WebServer.base;
-            return content.replace(/url\(['"]?(.\/[^'"\)]+['"]?)/g, (match, path) => {
+            return content.replace(/url\(['"]?(.\/[^'"\)]+)['"]?/g, (match, path) => {
                 window.DI.WebServer.serve(path, window._path.join(window._path.dirname(location), path));
                 return 'url(' + base + path;
             });
