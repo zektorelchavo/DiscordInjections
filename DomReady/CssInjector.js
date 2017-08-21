@@ -48,21 +48,25 @@ class CssInjector {
         }
     }
 
+    parseFile(content) {
+        if (content.match(/url\([\'"]?.\//)) {
+            const base = window.DI.WebServer.base;
+            return content.replace(/url\(['"]?(.\/[^'"\)]+['"]?)/g, (match, path) => {
+                window.DI.WebServer.serve(path, window._path.join(window._path.dirname(location), path));
+                return 'url(' + base + path;
+            });
+        }
+
+        return content
+    }
+
     watch() {
         let location = this.path;
         if (!window._path.isAbsolute(location))
             location = window._path.join(__dirname, '..', 'CSS', location);
 
         readFile(location).then(css => {
-            if (css.match(/url\([\'"]?.\//)) {
-                const base = window.DI.WebServer.base;
-                css = css.replace(/url\(['"]?(.\/[^'"\)]+['"]?)/g, (match, path) => {
-                    window.DI.WebServer.serve(path, window._path.join(window._path.dirname(location), path));
-                    return 'url(' + base + path;
-                });
-            }
-
-            this.rawCss = css;
+            this.rawCss = this.parseFile(css);
 
             if (this.styleTag == null) {
                 this.styleTag = document.createElement('style');
@@ -75,7 +79,7 @@ class CssInjector {
                     eventType => {
                         if (eventType == 'change') {
                             readFile(location).then(css => {
-                                this.rawCss = css;
+                                this.rawCss = this.parseFile(css);
                                 this.styleTag.innerHTML = this.rawCss;
                             });
                         }
