@@ -58,6 +58,7 @@ class CommandHandler {
         this.hookCommand(new CommandStruct(null, { name: 'setprefix', info: 'Sets the custom command prefix.', usage: '<prefix>', func: this.commandSetPrefix.bind(this) }));
         this.hookCommand(new CommandStruct(null, { name: 'setcss', info: 'Sets the custom css path.', usage: '<path>', func: this.setCssPath.bind(this) }));
         this.hookCommand(new CommandStruct(null, { name: 'echo', info: 'Is there an echo in here?', usage: '<text>', func: this.commandEcho }));
+		this.hookCommand(new CommandStruct(null, { name: 'diag', info: 'Generates a diagnostic file.', func: this.diagnostics.bind(this) }));
 
         document.addEventListener('input', this.onInput.bind(this));
         document.addEventListener('keydown', this.onKeyDown.bind(this));
@@ -72,6 +73,34 @@ class CommandHandler {
         this.offset = 0;
     }
 
+	diagnostics(args) {
+		let output = '='.repeat(15)
+			+ '\n| Diagnostics |\n'
+			+ '='.repeat(15) + '\n\n';
+			
+		let app = require('electron').remote.app;
+		let exec = app.getPath('exe').split(/\/|\\/);
+		exec = exec[exec.length - 1];
+		let diag = {
+			'DI_Version': window.DI.version,
+			'Discord_Version': app.getVersion(),
+			'Executable': exec,
+			'Plugins': Object.values(window.DI.PluginManager.plugins).map(p => {
+				return p.name + ' - ' + p.version
+			})
+		};
+		
+		for (const key in diag) {			
+			output += ' '.repeat(16 - key.length) + key + ' : ';
+			if (Array.isArray(diag[key])) {
+				output += '\n'
+				for (const val of diag[key])
+					output += ' '.repeat(16) + ' - ' + val + '\n';
+			} else output += diag[key];
+			output += '\n';
+		}
+		window.DI.client.selectedChannel.send('Diagnostic File:', {files: [{ attachment: Buffer.from(output), name: 'diag.txt' }] });
+	}
     loadPlugin(args) {
         let plugins = window.DI.PluginManager.load(args);
         if (plugins.length === 0)
@@ -439,3 +468,4 @@ style="flex: 1 1 auto;">
 }
 
 module.exports = CommandHandler;
+
