@@ -21,7 +21,7 @@ const DI = window.DI = {
         return node[Object.keys(node).find((key) => key.startsWith('__reactInternalInstance'))];
     },
 	
-	get version() { return pack.version; }
+    get version() { return pack.version; }
 };
 
 // Intercepts the websocket before it is deleted.

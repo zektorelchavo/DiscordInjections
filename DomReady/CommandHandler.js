@@ -4,6 +4,9 @@
  */
 
 const CommandStruct = require('../Structures/Command');
+const { remote, clipboard } = require('electron');
+const app = remote.app;
+
 const css = `
 
 .di-autocomplete {
@@ -58,7 +61,8 @@ class CommandHandler {
         this.hookCommand(new CommandStruct(null, { name: 'setprefix', info: 'Sets the custom command prefix.', usage: '<prefix>', func: this.commandSetPrefix.bind(this) }));
         this.hookCommand(new CommandStruct(null, { name: 'setcss', info: 'Sets the custom css path.', usage: '<path>', func: this.setCssPath.bind(this) }));
         this.hookCommand(new CommandStruct(null, { name: 'echo', info: 'Is there an echo in here?', usage: '<text>', func: this.commandEcho }));
-		this.hookCommand(new CommandStruct(null, { name: 'diag', info: 'Generates a diagnostic file.', func: this.diagnostics.bind(this) }));
+        this.hookCommand(new CommandStruct(null, { name: 'udiag', info: 'Generates and uploads a diagnostic file.', func: this.uDiagnostics.bind(this) }));
+        this.hookCommand(new CommandStruct(null, { name: 'diag', info: 'Generates and copies diagnostic information to your clipboard.', func: this.cDiagnostics.bind(this) }));
 
         document.addEventListener('input', this.onInput.bind(this));
         document.addEventListener('keydown', this.onKeyDown.bind(this));
@@ -73,34 +77,45 @@ class CommandHandler {
         this.offset = 0;
     }
 
-	diagnostics(args) {
-		let output = '='.repeat(15)
-			+ '\n| Diagnostics |\n'
-			+ '='.repeat(15) + '\n\n';
-			
-		let app = require('electron').remote.app;
-		let exec = app.getPath('exe').split(/\/|\\/);
-		exec = exec[exec.length - 1];
-		let diag = {
-			'DI_Version': window.DI.version,
-			'Discord_Version': app.getVersion(),
-			'Executable': exec,
-			'Plugins': Object.values(window.DI.PluginManager.plugins).map(p => {
-				return p.name + ' - ' + p.version
-			})
-		};
-		
-		for (const key in diag) {			
-			output += ' '.repeat(16 - key.length) + key + ' : ';
-			if (Array.isArray(diag[key])) {
-				output += '\n'
-				for (const val of diag[key])
-					output += ' '.repeat(16) + ' - ' + val + '\n';
-			} else output += diag[key];
-			output += '\n';
-		}
-		window.DI.client.selectedChannel.send('Diagnostic File:', {files: [{ attachment: Buffer.from(output), name: 'diag.txt' }] });
-	}
+    createDiagnostics() {
+        let output = '='.repeat(15)
+            + '\n| Diagnostics |\n'
+            + '='.repeat(15) + '\n\n';
+
+        let exec = app.getPath('exe').split(/\/|\\/);
+        exec = exec[exec.length - 1];
+        let diag = {
+            'DI_Version': window.DI.version,
+            'Discord_Version': app.getVersion(),
+            'Executable': exec,
+            'Resource_Path': process.resourcesPath,
+            'Locale': app.getLocale(),
+            'Plugins': Object.values(window.DI.PluginManager.plugins).map(p => {
+                return p.name + ' - ' + p.version
+            })
+        };
+
+        for (const key in diag) {
+            output += ' '.repeat(16 - key.length) + key + ' : ';
+            if (Array.isArray(diag[key])) {
+                output += '\n'
+                for (const val of diag[key])
+                    output += ' '.repeat(16) + ' - ' + val + '\n';
+            } else output += diag[key];
+            output += '\n';
+        }
+        return output.trim();
+    }
+
+    uDiagnostics(args) {
+        window.DI.client.selectedChannel.send('Diagnostic File:', { files: [{ attachment: Buffer.from(this.createDiagnostics()), name: 'diag.txt' }] });
+    }
+
+    cDiagnostics(args) {
+        clipboard.writeText(this.createDiagnostics());
+        window.DI.Helpers.sendDI('Copied diagnostic information to your clipboard.');
+    }
+
     loadPlugin(args) {
         let plugins = window.DI.PluginManager.load(args);
         if (plugins.length === 0)
@@ -404,10 +419,10 @@ class CommandHandler {
                 parseInt(result[3], 16)
             ] : [0, 0, 0];
         };
-        const isDark = c => (c[ 0 ] * 0.299 + c[ 1 ] * 0.587 + c[ 2 ] * 0.114) > 150 ? false : true;
+        const isDark = c => (c[0] * 0.299 + c[1] * 0.587 + c[2] * 0.114) > 150 ? false : true;
         let color = null;
-        if(command.plugin && typeof command.plugin.color === 'number') color = command.plugin.color.toString(16);
-        else if(command.plugin) color = command.plugin.color;
+        if (command.plugin && typeof command.plugin.color === 'number') color = command.plugin.color.toString(16);
+        else if (command.plugin) color = command.plugin.color;
         let element = this.createElement(`<div class="autocompleteRowVertical-3_UxVA autocompleteRow-31UJBI command">
             <div class="selector-nbyEfM selectable-3iSmAf" onclick="DI.CommandHandler.makeSelection('${command.name}');"
             onmouseover="DI.CommandHandler.onHover(this);">
