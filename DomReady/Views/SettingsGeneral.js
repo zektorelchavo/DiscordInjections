@@ -12,6 +12,10 @@ class SettingsGeneral extends window.DI.React.Component {
                 plugin: this.props.plugin,
                 lsNode: 'cssPath',
                 defaultValue: 'style.css',
+                dialog: {
+                    title: 'Select CSS file',
+                    filters: [{ name: 'CSS Files', extensions: ['css'] }],
+                },
                 reset: true,
                 apply: true,
                 onApply: () => window.DI.CssInjector.refresh()
