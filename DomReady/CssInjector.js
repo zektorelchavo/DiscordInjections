@@ -1,6 +1,7 @@
 /**
  * The CSS injector, do not modify this
  */
+const reBDMeta = /\/\/META{.*}\*\/\//;
 
 function readFile(path, encoding = 'utf-8') {
     return new Promise((resolve, reject) => {
@@ -49,6 +50,8 @@ class CssInjector {
     }
 
     parseFile(content, location) {
+        content = content.replace(reBDMeta, '');
+
         if (content.match(/url\([\'"]?.\//)) {
             const base = window.DI.WebServer.base;
             return content.replace(/url\(['"]?(.\/[^'"\)]+)['"]?/g, (match, path) => {
