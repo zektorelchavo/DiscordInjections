@@ -1,7 +1,6 @@
 const e = window.DI.React.createElement;
 
-const { SettingsOptionToggle, SettingsExpandableSection, SettingsOptionButton,
-    SettingsOptionDescription, SettingsDivider, SettingsOptionTextbox } = window.DI.require('./Structures/Components');
+const { SettingsOptionToggle } = window.DI.require('./Structures/Components');
 
 
 class SettingsSyncPlugins extends SettingsOptionToggle {
@@ -41,8 +40,8 @@ class SettingsSyncPlugins extends SettingsOptionToggle {
                     this.forceUpdate();
                 }, 1000);
             })
-            .catch(err => {
-                this.setState(prev => ({
+            .catch(() => {
+                this.setState(() => ({
                     attemptFailed: true
                 }));
             });

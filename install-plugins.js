@@ -14,7 +14,7 @@ Promise.each(files, npmInstall).then(() => {
 function npmInstall(name) {
     return new Promise((res) => {
         if (name === 'readme.md') {
-            res()
+            res();
             return;
         }
         console.log('*=== Installing:', name, '===*');

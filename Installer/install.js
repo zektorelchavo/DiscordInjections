@@ -1,14 +1,9 @@
 const path = require('path');
 const fs = require('fs');
 const childProcess = require('child_process');
-const Installer = require('./util');
-const ps = require('ps-node');
 const mkdirp = require('mkdirp');
 var appPath;
-var isReinstall = false;
-
-const preloadPath = path.join(__dirname, '..', 'Preload', 'index.js').replace(/\\/g, '/');
-const domPath = path.join(__dirname, '..', 'DomReady', 'inject.js').replace(/\\/g, '/');
+var isReinstall = false; // eslint-disable-line no-unused-vars
 
 function closeClient(proc, close) {
     if (!close) return new Promise((res => res(path.join(proc.command, '..', 'resources'))));
@@ -24,7 +19,7 @@ function closeClient(proc, close) {
             }
             resolve(path.join(proc.command, '..', 'resources'));
         } else {
-            childProcess.exec('killall -9 ' + proc.command, (err, stdout, stderr) => {
+            childProcess.exec('killall -9 ' + proc.command, (err) => {
                 if (err) reject(err);
                 resolve(path.join(proc.command, '..', 'resources'));
             });

@@ -39,7 +39,7 @@ const PluginManager = require('./PluginManager');
 const StateWatcher = require('./StateWatcher');
 const SettingsSync = require('./SettingsSync');
 const DISettings = require('./DISettings');
-const WebServer = require('./WebServer')
+const WebServer = require('./WebServer');
 
 DI.StateWatcher = new StateWatcher();
 DI.DISettings = new DISettings();

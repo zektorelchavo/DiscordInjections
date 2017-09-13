@@ -1,11 +1,10 @@
-const moment = require('moment');
-const resolver = new (require("discord.js/src/client/ClientDataResolver"))(window.DI.client);
+const resolver = new (require('discord.js/src/client/ClientDataResolver'))(window.DI.client);
 
 class Helpers {
 
     constructor() {
         this.fakeIds = [];
-        this.localChannelId = window.location.pathname.split("/")[3];
+        this.localChannelId = window.location.pathname.split('/')[3];
 
         window.DI.StateWatcher.on('channelChanged', this.deleteLocalMessages.bind(this));
     }
@@ -27,7 +26,7 @@ class Helpers {
         }
         this.fakeIds = [];
 
-        this.localChannelId = window.location.pathname.split("/")[3];
+        this.localChannelId = window.location.pathname.split('/')[3];
     }
 
     createElement(text) {
@@ -37,7 +36,7 @@ class Helpers {
     }
 
     sanitize(message) {
-        return message.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;");
+        return message.replace(/&/g, '&amp;').replace(/>/g, '&gt;').replace(/</g, '&lt;');
     }
 
     generateSnowflake() {
@@ -98,7 +97,7 @@ class Helpers {
 
     sendLog(name, message, avatarURL = '/assets/f78426a064bc9dd24847519259bc42af.png') {
         if (!this.localChannelId)
-            this.localChannelId = window.location.pathname.split("/")[3];
+            this.localChannelId = window.location.pathname.split('/')[3];
         let base = {
             username: name,
             content: message
@@ -133,7 +132,7 @@ class Helpers {
     }
 
     resolveUser(query) {
-        return window.DI.client.users.find("tag", query.slice(1));
+        return window.DI.client.users.find('tag', query.slice(1));
     }
 
     resolveMention(query) {
@@ -143,9 +142,15 @@ class Helpers {
     }
 
     filterMessage(message) {
-        window.DI.client.users.forEach(u => message = message.replace(new RegExp(this.escape(`@${u.tag}`), "g"), u.toString()));
-        if (window.DI.client.selectedGuild) window.DI.client.selectedGuild.roles.forEach(r => { if (r.mentionable) message = message.replace(new RegExp(this.escape(`@${r.name}`), "g"), r.toString()); });
-        if (window.DI.client.selectedGuild) window.DI.client.selectedGuild.channels.forEach(c => message = message.replace(new RegExp(this.escape(`#${c.name}`), "g"), c.toString()));
+        window.DI.client.users.forEach(u => message = message.replace(new RegExp(this.escape(`@${u.tag}`), 'g'), u.toString()));
+        if (window.DI.client.selectedGuild) {
+            window.DI.client.selectedGuild.roles.forEach(r => {
+                if (r.mentionable) {
+                    message = message.replace(new RegExp(this.escape(`@${r.name}`), 'g'), r.toString());
+                }
+            });
+            window.DI.client.selectedGuild.channels.forEach(c => message = message.replace(new RegExp(this.escape(`#${c.name}`), 'g'), c.toString()));
+        }
         return message;
     }
 }

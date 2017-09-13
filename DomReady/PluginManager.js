@@ -10,7 +10,7 @@ class PluginManager {
     constructor() {
         this.classes = {};
         this.plugins = {};
-        this.intialized = false
+        this.intialized = false;
 
         const dependencies = [];
 
@@ -46,12 +46,11 @@ class PluginManager {
                     skip.push(pluginName);
                     console.error('Failed to load plugin, undefined behaviour possible!', pluginName);
                 }
-            })
+            });
 
-            const loaded = plugins.filter(v => !skip.includes(v));
             this.pluginEmit('plugins-loaded', this.pluginNames);
-            this.initialized = true
-        })
+            this.initialized = true;
+        });
     }
 
     get pluginNames() {
@@ -77,7 +76,7 @@ class PluginManager {
             if (dirs.length === 0) throw new Error('No files found');
             try {
                 pack = reload(this.constructPath(dirs[0], 'package'));
-            } catch (err) { }
+            } catch (err) {}
             if (!(pack instanceof Object)) {
                 console.error(`Plugin '${name}' had an invalid package file, skipping`);
                 return;

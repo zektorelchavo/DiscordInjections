@@ -77,9 +77,9 @@ class BridgedClient extends Discord.Client {
                 guild: this.guilds.get(lastpath.split('/')[2]),
                 channel: lastpath.split('/')[3] ? this.channels.get(lastpath.split('/')[3]) : undefined
             }, {
-                    guild: this.guilds.get(window.location.pathname.split('/')[2]),
-                    channel: window.location.pathname.split('/')[3] ? this.channels.get(window.location.pathname.split('/')[3]) : undefined
-                });
+                guild: this.guilds.get(window.location.pathname.split('/')[2]),
+                channel: window.location.pathname.split('/')[3] ? this.channels.get(window.location.pathname.split('/')[3]) : undefined
+            });
             lastpath = window.location.pathname;
         }, 100);
     }

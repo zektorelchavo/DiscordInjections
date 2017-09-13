@@ -91,14 +91,14 @@ class CommandHandler {
             'Resource_Path': process.resourcesPath,
             'Locale': app.getLocale(),
             'Plugins': Object.values(window.DI.PluginManager.plugins).map(p => {
-                return p.name + ' - ' + p.version
+                return p.name + ' - ' + p.version;
             })
         };
 
         for (const key in diag) {
             output += ' '.repeat(16 - key.length) + key + ' : ';
             if (Array.isArray(diag[key])) {
-                output += '\n'
+                output += '\n';
                 for (const val of diag[key])
                     output += ' '.repeat(16) + ' - ' + val + '\n';
             } else output += diag[key];
@@ -107,11 +107,11 @@ class CommandHandler {
         return output.trim();
     }
 
-    uDiagnostics(args) {
+    uDiagnostics() {
         window.DI.client.selectedChannel.send('Diagnostic File:', { files: [{ attachment: Buffer.from(this.createDiagnostics()), name: 'diag.txt' }] });
     }
 
-    cDiagnostics(args) {
+    cDiagnostics() {
         clipboard.writeText(this.createDiagnostics());
         window.DI.Helpers.sendDI('Copied diagnostic information to your clipboard.');
     }
@@ -212,7 +212,7 @@ class CommandHandler {
         if (!textarea || textarea !== document.activeElement || !textarea.value.startsWith(this.prefix)) {
             if (this.autoComplete) this.removeAC();
             return;
-        };
+        }
         let ac = this.autoComplete;
         let content = textarea.value.toLowerCase();
 
@@ -220,7 +220,10 @@ class CommandHandler {
             this.removeAC();
             return;
         }
-        if (!ac && !content.includes(' ')) { this.initAC(); ac = this.autoComplete; }
+        if (!ac && !content.includes(' ')) {
+            this.initAC();
+            ac = this.autoComplete;
+        }
 
         if (content.trim() === this.prefix) {
             this.offset = 0;
@@ -260,7 +263,6 @@ class CommandHandler {
         if (this.acRows.length === 0) {
             let selection = keys.slice(0, 10);
             this.clearAC();
-            let first = true;
             for (const command of selection) {
                 this.attachACRow(command);
             }
@@ -322,10 +324,9 @@ class CommandHandler {
     }
 
     onKeyDown(event) {
-        let ac;
         if (!this.textarea || (event.target === this.textarea && event.key === 'Enter' && this.textarea.value === '')) {
             return;
-        };
+        }
         if (this.textarea.value.toLowerCase().startsWith(this.prefix))
             switch (event.key) {
                 case 'ArrowUp':
@@ -346,7 +347,7 @@ class CommandHandler {
                         event.preventDefault();
                     }
                     break;
-                case 'Enter':
+                case 'Enter': {
                     if (event.shiftKey) return;
                     let command = this.textarea.value;
                     command = command.substring(this.prefix.length).trim();
@@ -369,13 +370,14 @@ class CommandHandler {
                         let output = this.commands[name]._execute(args);
                         Promise.resolve(output).then(out => out ? window.DI.client.selectedChannel.send(out) : null).then(() => setTimeout(() => {
                             this.textarea.focus();
-                            this.textarea.selectionStart = this.textarea.selectionEnd = 0
+                            this.textarea.selectionStart = this.textarea.selectionEnd = 0;
                         }, 200));
                         break;
                     } else if (this.lastHovered) {
                         this.lastHovered.click();
                         event.preventDefault();
                     }
+                }
             }
     }
 
@@ -433,10 +435,10 @@ style="flex: 1 1 auto;">
 <div class="marginLeft4-3RAvyQ primary400-1OkqpL">${command.usage}</div>
 
 <div class="ellipsis-1MzbWB primary400-1OkqpL di-autocomplete-commandinfo" style="flex: 1 1 auto";>${command.plugin ?
-                `<span class='command-plugin-tag${isDark(h2rgb(color)) ? " dark" : ""}' style="color: #${color};border-color: #${command.plugin.color};">
-                ${command.plugin.name}</span> - `
-                : ''
-            }${command.info}</div>
+        `<span class='command-plugin-tag${isDark(h2rgb(color)) ? ' dark' : ''}' style="color: #${color};border-color: #${command.plugin.color};">
+        ${command.plugin.name}</span> - `
+        : ''
+}${command.info}</div>
 </div></div></div>`);
 
         return element;
