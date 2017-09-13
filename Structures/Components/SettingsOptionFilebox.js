@@ -127,7 +127,7 @@ class SettingsOptionFilebox extends Base {
             filters: [{ name: 'All Files', extentions: ['*'] }],
             properties: ['openFile'],
             required: false
-        }
+        };
     }
 
     fileSelector() {
@@ -141,7 +141,7 @@ class SettingsOptionFilebox extends Base {
                 return;
             }
             this.setState({ value: filePath[0], values: filePath });
-        })
+        });
     }
 }
 

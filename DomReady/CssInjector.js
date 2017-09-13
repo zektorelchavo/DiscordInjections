@@ -45,7 +45,7 @@ class CssInjector {
             this.watcher = null;
         }
         if (this.styleTag != null) {
-            this.styleTag.innerHTMl = "";
+            this.styleTag.innerHTMl = '';
         }
     }
 
@@ -60,7 +60,7 @@ class CssInjector {
             });
         }
 
-        return content
+        return content;
     }
 
     watch() {

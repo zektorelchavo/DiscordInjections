@@ -75,7 +75,7 @@ class Plugin extends EventEmitter {
                 }
             }
             if (save)
-                window._fs.writeFile(window._path.join(this.path, 'config.json'), JSON.stringify(config, null, 2));
+                window._fs.writeFile(window._path.join(this.path, 'config.json'), JSON.stringify(this.config, null, 2));
         } catch (err) {
             let config = this.configTemplate;
             window._fs.writeFile(window._path.join(this.path, 'config.json'), JSON.stringify(config, null, 2));

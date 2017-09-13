@@ -103,8 +103,8 @@ class SettingsSync extends window.DI.React.Component {
                     this.forceUpdate();
                 }, 1000);
             })
-            .catch(err => {
-                this.setState(prev => ({
+            .catch(() => {
+                this.setState(() => ({
                     attemptFailed: true
                 }));
             });

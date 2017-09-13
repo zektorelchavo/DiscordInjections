@@ -14,7 +14,7 @@ class SettingsGeneral extends window.DI.React.Component {
                 defaultValue: 'style.css',
                 dialog: {
                     title: 'Select CSS file',
-                    filters: [{ name: 'CSS Files', extensions: ['css'] }],
+                    filters: [{ name: 'CSS Files', extensions: ['css'] }]
                 },
                 reset: true,
                 apply: true,
@@ -42,7 +42,7 @@ class SettingsGeneral extends window.DI.React.Component {
                     lsNode: 'webServer',
                     defaultValue: true,
                     onSave: () => window.DI.WebServer.listen()
-                }),
+                })
             ] }),
             e(require('./SettingsSync'), { title: 'Settings Sync', plugin: this.props.plugin })
         );
