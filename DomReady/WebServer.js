@@ -4,7 +4,7 @@
 
 
 const http = require('http');
-const lookup = require('mime-types').contentType
+const lookup = require('mime-types').contentType;
 
 class WebServer {
     constructor() {
@@ -16,7 +16,7 @@ class WebServer {
     }
 
     get enabled() {
-        let settings = {webServer: true}
+        let settings = { webServer: true };
         const diNode = DI.localStorage.getItem('DI-DiscordInjections');
         if (diNode) {
             try {
@@ -36,7 +36,7 @@ class WebServer {
     serve(path, location) {
         if (!this.enabled) {
             console.error('[WebServer] disabled, but asked to serve', path);
-            return
+            return;
         }
 
         // strip beginning ./ if needed
@@ -51,7 +51,7 @@ class WebServer {
     listen() {
         if (!this.enabled && this.server.listening) {
             this.server.close();
-            console.log('WebServer closed')
+            console.log('WebServer closed');
         } else if (!this.server.listening && this.enabled) {
             this.server.listen(0, 'localhost', () => {
                 console.log('WebServer running on ' + this.base);
@@ -78,7 +78,7 @@ class WebServer {
             console.log('[WebServer] 200', req.url);
             res.writeHead(200, { 'Content-Type': lookup(this.paths[req.url]) || 'application/octet-stream', 'Access-Control-Allow-Origin': '*' });
             res.end(data);
-        })
+        });
     }
 }
 

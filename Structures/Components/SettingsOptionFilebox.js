@@ -121,14 +121,26 @@ class SettingsOptionFilebox extends Base {
         this.apply(event);
     }
 
+    static get fileDialogDefaults() {
+        return {
+            title: 'Select a file',
+            filters: [{ name: 'All Files', extentions: ['*'] }],
+            properties: ['openFile'],
+            required: false
+        };
+    }
+
     fileSelector() {
-        let _this = this;
-        dialog.showOpenDialog({
-            title: 'Select CSS file',
-            filters: [{ name: 'CSS Files', extensions: ['css'] }],
-            properties: ['openFile']
-        }, function (filePath) {
-            _this.setState({ value: filePath[0] });
+        let defaultDialogOptions = Object.assign({}, this.fileDialogDefaults, this.props.dialog);
+        dialog.showOpenDialog(defaultDialogOptions, (filePath) => {
+            if (!filePath || !filePath.length) {
+                if (this.props.dialog.required) {
+                    dialog.showMessageBox({ type: 'warning', message: 'You need to select a file.' });
+                    this.fileSelector();
+                }
+                return;
+            }
+            this.setState({ value: filePath[0], values: filePath });
         });
     }
 }

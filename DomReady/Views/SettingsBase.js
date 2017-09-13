@@ -1,6 +1,6 @@
 const e = window.DI.React.createElement;
 
-const { SettingsTitle, SettingsDescription } = window.DI.require('./Structures/Components');
+const { SettingsTitle } = window.DI.require('./Structures/Components');
 
 class SettingsBase extends window.DI.React.Component {
     render() {

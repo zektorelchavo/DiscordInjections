@@ -157,7 +157,7 @@ class SettingsSync {
     getLastModified(key) {
         try {
             let lastModified = JSON.parse(window.DI.localStorage.getItem('DI-LastModified'));
-            return lastModified[key];
+            return lastModified[key] || 0;
         } catch (err) {
             return null;
         }

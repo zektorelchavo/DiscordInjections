@@ -2,6 +2,7 @@
  * Script to inject into the PRELOADER. Modify as you see fit.
  */
 let DIPluginInitialized = false;
+const pack = require('../package.json');
 const DI = window.DI = {
     ws: null,
     client: null,
@@ -18,7 +19,9 @@ const DI = window.DI = {
 
     getReactInstance(node) {
         return node[Object.keys(node).find((key) => key.startsWith('__reactInternalInstance'))];
-    }
+    },
+	
+    get version() { return pack.version; }
 };
 
 // Intercepts the websocket before it is deleted.

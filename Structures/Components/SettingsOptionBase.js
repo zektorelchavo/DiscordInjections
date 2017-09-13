@@ -1,4 +1,3 @@
-const e = window.DI.React.createElement;
 const Plugin = require('../Plugin');
 
 class SettingsOptionBase extends window.DI.React.Component {

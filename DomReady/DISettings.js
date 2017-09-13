@@ -9,7 +9,7 @@ class DISettings {
         const plugin = new (class DiscordInjections extends Plugin { })();
         DI.StateWatcher.on('languageChange', this.injectSettingsTab.bind(this));
         DI.StateWatcher.on('settingsOpened', this.injectSettingsTab.bind(this));
-        DI.StateWatcher.on('settingsClosed', _ => {
+        DI.StateWatcher.on('settingsClosed', () => {
             for (const key in this.map) {
                 this.map[key].tab.className = this.unselectedCss;
             }
@@ -54,7 +54,7 @@ class DISettings {
         let tab = document.createElement('div');
         tab.className = this.unselectedCss;
         tab.innerText = name;
-        tab.onclick = event => {
+        tab.onclick = () => {
             DI.StateWatcher.emit('settingsTab', id);
         };
 

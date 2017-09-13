@@ -48,7 +48,7 @@ module.exports = {
         }],
         'no-cond-assign': 'off',
         'no-console': 'off',
-        'indent': ['warn', 4],
+        'indent': ['warn', 4, { 'SwitchCase': 1 }],
         'no-undef': 'warn',
         'no-global-assign': 'warn',
         'comma-dangle': 'warn',

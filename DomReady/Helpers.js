@@ -1,4 +1,3 @@
-const moment = require('moment');
 const resolver = new (require('discord.js/src/client/ClientDataResolver'))(window.DI.client);
 
 class Helpers {
@@ -182,8 +181,14 @@ class Helpers {
 
     filterMessage(message) {
         window.DI.client.users.forEach(u => message = message.replace(new RegExp(this.escape(`@${u.tag}`), 'g'), u.toString()));
-        if (window.DI.client.selectedGuild) window.DI.client.selectedGuild.roles.forEach(r => { if (r.mentionable) message = message.replace(new RegExp(this.escape(`@${r.name}`), 'g'), r.toString()); });
-        if (window.DI.client.selectedGuild) window.DI.client.selectedGuild.channels.forEach(c => message = message.replace(new RegExp(this.escape(`#${c.name}`), 'g'), c.toString()));
+        if (window.DI.client.selectedGuild) {
+            window.DI.client.selectedGuild.roles.forEach(r => {
+                if (r.mentionable) {
+                    message = message.replace(new RegExp(this.escape(`@${r.name}`), 'g'), r.toString());
+                }
+            });
+            window.DI.client.selectedGuild.channels.forEach(c => message = message.replace(new RegExp(this.escape(`#${c.name}`), 'g'), c.toString()));
+        }
         return message;
     }
 }

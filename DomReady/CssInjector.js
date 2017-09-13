@@ -1,6 +1,7 @@
 /**
  * The CSS injector, do not modify this
  */
+const reBDMeta = /\/\/META{.*}\*\/\//;
 
 function readFile(path, encoding = 'utf-8') {
     return new Promise((resolve, reject) => {
@@ -44,11 +45,13 @@ class CssInjector {
             this.watcher = null;
         }
         if (this.styleTag != null) {
-            this.styleTag.innerHTMl = "";
+            this.styleTag.innerHTMl = '';
         }
     }
 
-    parseFile(content) {
+    parseFile(content, location) {
+        content = content.replace(reBDMeta, '');
+
         if (content.match(/url\([\'"]?.\//)) {
             const base = window.DI.WebServer.base;
             return content.replace(/url\(['"]?(.\/[^'"\)]+)['"]?/g, (match, path) => {
@@ -57,7 +60,7 @@ class CssInjector {
             });
         }
 
-        return content
+        return content;
     }
 
     watch() {
@@ -66,7 +69,7 @@ class CssInjector {
             location = window._path.join(__dirname, '..', 'CSS', location);
 
         readFile(location).then(css => {
-            this.rawCss = this.parseFile(css);
+            this.rawCss = this.parseFile(css, location);
 
             if (this.styleTag == null) {
                 this.styleTag = document.createElement('style');
@@ -79,7 +82,7 @@ class CssInjector {
                     eventType => {
                         if (eventType == 'change') {
                             readFile(location).then(css => {
-                                this.rawCss = this.parseFile(css);
+                                this.rawCss = this.parseFile(css, location);
                                 this.styleTag.innerHTML = this.rawCss;
                             });
                         }

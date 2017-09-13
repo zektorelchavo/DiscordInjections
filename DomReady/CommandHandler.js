@@ -4,6 +4,9 @@
  */
 
 const CommandStruct = require('../Structures/Command');
+const { remote, clipboard } = require('electron');
+const app = remote.app;
+
 const css = `
 
 .di-autocomplete {
@@ -59,6 +62,8 @@ class CommandHandler {
         this.hookCommand(new CommandStruct(null, { name: 'setcss', info: 'Sets the custom css path.', usage: '<path>', func: this.setCssPath.bind(this) }));
         this.hookCommand(new CommandStruct(null, { name: 'echo', info: 'Is there an echo in here?', usage: '<text>', func: this.commandEcho }));
         this.hookCommand(new CommandStruct(null, { name: 'changelog', info: 'Shows the changelog.', func: this.commandChangelog }));
+        this.hookCommand(new CommandStruct(null, { name: 'udiag', info: 'Generates and uploads a diagnostic file.', func: this.uDiagnostics.bind(this) }));
+        this.hookCommand(new CommandStruct(null, { name: 'diag', info: 'Generates and copies diagnostic information to your clipboard.', func: this.cDiagnostics.bind(this) }));
 
         document.addEventListener('input', this.onInput.bind(this));
         document.addEventListener('keydown', this.onKeyDown.bind(this));
@@ -71,6 +76,45 @@ class CommandHandler {
         this.acRows = [];
         this.currentSet = [];
         this.offset = 0;
+    }
+
+    createDiagnostics() {
+        let output = '='.repeat(15)
+            + '\n| Diagnostics |\n'
+            + '='.repeat(15) + '\n\n';
+
+        let exec = app.getPath('exe').split(/\/|\\/);
+        exec = exec[exec.length - 1];
+        let diag = {
+            'DI_Version': window.DI.version,
+            'Discord_Version': app.getVersion(),
+            'Executable': exec,
+            'Resource_Path': process.resourcesPath,
+            'Locale': app.getLocale(),
+            'Plugins': Object.values(window.DI.PluginManager.plugins).map(p => {
+                return p.name + ' - ' + p.version;
+            })
+        };
+
+        for (const key in diag) {
+            output += ' '.repeat(16 - key.length) + key + ' : ';
+            if (Array.isArray(diag[key])) {
+                output += '\n';
+                for (const val of diag[key])
+                    output += ' '.repeat(16) + ' - ' + val + '\n';
+            } else output += diag[key];
+            output += '\n';
+        }
+        return output.trim();
+    }
+
+    uDiagnostics() {
+        window.DI.client.selectedChannel.send('Diagnostic File:', { files: [{ attachment: Buffer.from(this.createDiagnostics()), name: 'diag.txt' }] });
+    }
+
+    cDiagnostics() {
+        clipboard.writeText(this.createDiagnostics());
+        window.DI.Helpers.sendDI('Copied diagnostic information to your clipboard.');
     }
 
     loadPlugin(args) {
@@ -180,7 +224,10 @@ class CommandHandler {
             this.removeAC();
             return;
         }
-        if (!ac && !content.includes(' ')) { this.initAC(); ac = this.autoComplete; }
+        if (!ac && !content.includes(' ')) {
+            this.initAC();
+            ac = this.autoComplete;
+        }
 
         if (content.trim() === this.prefix) {
             this.offset = 0;
@@ -220,7 +267,6 @@ class CommandHandler {
         if (this.acRows.length === 0) {
             let selection = keys.slice(0, 10);
             this.clearAC();
-            let first = true;
             for (const command of selection) {
                 this.attachACRow(command);
             }
@@ -282,7 +328,6 @@ class CommandHandler {
     }
 
     onKeyDown(event) {
-        let ac;
         if (!this.textarea || (event.target === this.textarea && event.key === 'Enter' && this.textarea.value === '')) {
             return;
         }
@@ -306,7 +351,7 @@ class CommandHandler {
                         event.preventDefault();
                     }
                     break;
-                case 'Enter':
+                case 'Enter': {
                     if (event.shiftKey) return;
                     let command = this.textarea.value;
                     command = command.substring(this.prefix.length).trim();
@@ -336,6 +381,7 @@ class CommandHandler {
                         this.lastHovered.click();
                         event.preventDefault();
                     }
+                }
             }
     }
 
@@ -394,7 +440,7 @@ style="flex: 1 1 auto;">
 
 <div class="ellipsis-1MzbWB primary400-1OkqpL di-autocomplete-commandinfo" style="flex: 1 1 auto";>${command.plugin ?
                 `<span class='command-plugin-tag${isDark(h2rgb(color)) ? ' dark' : ''}' style="color: #${color};border-color: #${command.plugin.color};">
-                ${command.plugin.name}</span> - `
+        ${command.plugin.name}</span> - `
                 : ''
             }${command.info}</div>
 </div></div></div>`);
@@ -443,3 +489,4 @@ style="flex: 1 1 auto;">
 }
 
 module.exports = CommandHandler;
+
