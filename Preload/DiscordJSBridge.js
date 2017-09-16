@@ -68,7 +68,16 @@ class BridgedWS {
 
 class BridgedClient extends Discord.Client {
     constructor(options) {
+        const odp = Object.defineProperty;
+        Object.defineProperty = (i, n, d) => {
+            if (n === 'token') {
+                return;
+            }
+
+            return odp(i, n, d);
+        }
         super(options);
+        Object.defineProperty = odp
         this.ws.connection = new BridgedWS(this);
         let lastpath = window.location.pathname;
         this.setInterval(() => {
