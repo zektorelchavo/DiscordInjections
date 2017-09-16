@@ -19,11 +19,11 @@ load((m, e, r) => {
     let reactExtracted = false, reactDOMExtracted = false;
     for (const key in r.c) {
         let mod = r.c[key];
-        if (mod.exports.hasOwnProperty('DOM') && mod.exports.hasOwnProperty('createClass')) {
+        if (mod.exports.hasOwnProperty('PureComponent') && mod.exports.hasOwnProperty('createElement')) {
             DI.React = mod.exports;
             reactExtracted = true;
             console.log('Found React!');
-        } else if (mod.exports.hasOwnProperty('render')) {
+        } else if (mod.exports.hasOwnProperty('render') && mod.exports.hasOwnProperty('findDOMNode')) {
             DI.ReactDOM = mod.exports;
             reactDOMExtracted = true;
             console.log('Found ReactDOM!');
