@@ -57,7 +57,7 @@ Object.defineProperty(Discord.TextChannel.prototype, 'visible', {
 Object.defineProperty(Discord.TextChannel.prototype, 'unread', {
     get: function () {
         if (!this.element) return null;
-        return getReactInstance(this.element).memoizedProps.props.children.props.unread;
+        return getReactInstance(this.element).memoizedProps.children.props.unread;
     }
 });
 
@@ -68,11 +68,11 @@ Object.defineProperty(Discord.GuildChannel.prototype, 'element', {
             const react = getReactInstance(channel);
             if (!react) continue;
             if (react.memoizedProps.props.children[0]) {
-                if (react.memoizedProps.props.children[0].props.channel.id === this.id) {
+                if (react.memoizedProps.children[0].props.channel.id === this.id) {
                     return channel;
                 }
             } else {
-                if (react.memoizedProps.props.children.props.channel.id === this.id) {
+                if (react.memoizedProps.children.props.channel.id === this.id) {
                     return channel;
                 }
             }
@@ -87,7 +87,7 @@ Object.defineProperty(Discord.Message.prototype, 'element', {
         for (const message of messages) {
             const react = getReactInstance(message);
             if (!react) continue;
-            let id = message.parentNode.parentNode.classList.contains('compact') ? react.memoizedProps.props.children[0].props.children[1].props.subscribeTo.split('_')[3] : react.memoizedProps.props.children[0].props.children[1].props.children[1].props.subscribeTo.split('_')[3];
+            let id = message.parentNode.parentNode.classList.contains('compact') ? react.memoizedProps.children[0].props.children[1].props.subscribeTo.split('_')[3] : react.memoizedProps.props.children[0].props.children[1].props.children[1].props.subscribeTo.split('_')[3];
             if (id === this.id) return message;
         }
         return null;
