@@ -4,18 +4,22 @@ const util = Installer.util;
 util.getDiscordProcess().then((proc) => {
     var args = process.argv;
     switch (args[2]) {
-        case 'install':
+        case 'inject':
             Installer.install(proc);
             break;
-        case 'uninstall':
+        case 'uninject':
             Installer.uninstall(proc);
             break;
-        case 'reinstall':
+        case 'reinject':
             Installer.reinstall(proc);
             break;
         default:
-            console.log('invalid');
+            console.log('Invalid command - valid commands are: inject, uninject, reinject');
+            process.exit(0);
             break;
     }
+}).catch(() => {
+    console.log('No discord process was found. Please open your discord client and try again.');
+    process.exit(0);
 });
 

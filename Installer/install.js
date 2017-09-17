@@ -1,74 +1,54 @@
 const path = require('path');
 const fs = require('fs');
-const asar = require('asar');
 const childProcess = require('child_process');
-const Installer = require('./util');
-const ps = require('ps-node');
+const mkdirp = require('mkdirp');
 var appPath;
+var isReinstall = false; // eslint-disable-line no-unused-vars
 
-const preloadPath = path.join(__dirname, '..', 'Preload', 'index.js').replace(/\\/g, '/');
-const domPath = path.join(__dirname, '..', 'DomReady', 'inject.js').replace(/\\/g, '/');
-
-function closeClient(proc) {
+function closeClient(proc, close) {
+    if (!close) return new Promise((res => res(path.join(proc.command, '..', 'resources'))));
     return new Promise((resolve, reject) => {
         console.log('Closing client...');
-        ps.lookup({}, function (err, res) {
-            if (err) reject(err);
-            else {
-                const procs = res.filter(p => p.command == proc.command);
-                for (const { pid } of procs) {
-                    try {
-                        process.kill(pid);
-                    } catch (err) {
-                        console.error(err);
-                    }
+        if (process.platform === 'win32') {
+            for (const pid of proc.pid) {
+                try {
+                    process.kill(pid);
+                } catch (err) {
+                    console.error(err);
                 }
-                appPath = proc.command;
-                resolve(path.join(proc.command, '..', 'resources', 'app.asar'));
             }
-        });
-    });
-}
-
-function extractClient(_path) {
-    return new Promise((resolve, reject) => {
-        const folder = path.join(_path, '..', 'app');
-        if (fs.existsSync(_path)) {
-            console.log('Extracting the ASAR...');
-            asar.extractAll(_path, folder);
-            console.log('Renaming the original ASAR...');
-            fs.renameSync(_path, path.join(_path, '..', 'original_app.asar'));
-        } else console.log('ASAR already extracted, skipping...');
-        resolve(path.join(folder, 'index.js'));
+            resolve(path.join(proc.command, '..', 'resources'));
+        } else {
+            childProcess.exec('killall -9 ' + proc.command, (err) => {
+                if (err) reject(err);
+                resolve(path.join(proc.command, '..', 'resources'));
+            });
+        }
     });
 }
 
 function injectClient(_path) {
-    return new Promise((resolve, reject) => {
-        console.log('Injecting scripts...');
-        const file = fs.readFileSync(_path, { encoding: 'utf8' });
-        let raw = file.split('\n');
-        console.log('  ...injecting preloader...');
-        const preloadIndex = raw.indexOf('      webPreferences: {');
-        raw.splice(preloadIndex + 1, 0, [`        preload: "${preloadPath}",`]);
-        console.log('  ...injecting DOM...');
-        const domIndex = raw.indexOf(`    mainWindow.webContents.on('dom-ready', function () {});`);
-        raw.splice(domIndex, 1, ...[
-            `    mainWindow.webContents.on('dom-ready', function () {`,
-            `      mainWindow.webContents.executeJavaScript(`,
-            `        'window._injectDir = "${path.join(__dirname, '..').replace(/\\/g, '/')}";' + `,
-            `        _fs2.default.readFileSync('${domPath}', 'utf8')`,
-            `      );`,
-            `    });`
-        ]);
-        console.log('Writing file...');
-        fs.writeFileSync(_path, raw.join('\n'));
+    return new Promise((resolve) => {
+        console.log('Creating injector...');
+        let dir = path.join(_path, 'app');
+        mkdirp.sync(dir);
+        const file = fs.readFileSync(path.join(__dirname, 'inject.js'), { encoding: 'utf8' });
+        const pack = fs.readFileSync(path.join(__dirname, 'package.json.template'), { encoding: 'utf8' });
+        fs.writeFileSync(path.join(dir, 'index.js'), file);
+        fs.writeFileSync(path.join(dir, 'base.js'), `module.exports = '${__dirname.replace(/\\/g, '/')}';`);
+        fs.writeFileSync(path.join(dir, 'package.json'), pack);
+
+        let confDir = path.join(__dirname, '..', 'config.json');
+        if (!fs.existsSync(confDir)) {
+            const conf = fs.readFileSync(path.join(__dirname, 'config.json.template'), { encoding: 'utf8' });
+            fs.writeFileSync(confDir, conf);
+        }
         resolve();
     });
 }
 
 function relaunchClient() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         console.log('Relaunching client');
         let child = childProcess.spawn(appPath, { detached: true });
         child.unref();
@@ -76,13 +56,16 @@ function relaunchClient() {
     });
 }
 
-module.exports = function (proc) {
-    return closeClient(proc)
-        .then(extractClient)
+module.exports = function (proc, close = true, reinstall = false) {
+    appPath = proc.command;
+    isReinstall = reinstall;
+    return closeClient(proc, close)
         .then(injectClient)
         .then(relaunchClient)
+        .then(() => console.log('Install complete.'))
         .catch(err => {
-            console.error('An error has occurred. ' + err.message);
+            if (err === false) return 0;
+            console.error('An error has occurred. ' + err.stack);
             return 1;
         });
 };

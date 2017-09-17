@@ -1,22 +1,31 @@
 {
-  "name": "discord-injections",
-  "version": "1.0.1",
+  "name": "discordinjections",
+  "version": "3.2.2",
   "description": "Injects CSS and JS into the discord client, and piggybacks the websocket for later use.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "install": "node install.js install",
-    "reinstall": "node install.js reinstall",
-    "uninstall": "node install.js uninstall",
+    "inject": "node install.js inject",
+    "reinject": "node install.js reinject",
+    "uninject": "node install.js uninject",
     "install-plugins": "node install-plugins.js"
   },
   "author": "stupid cat",
-  "license": "ISC",
+  "license": "MIT",
   "repository": "https://github.com/DiscordInjections/DiscordInjections",
   "dependencies": {
-    "asar": "^0.13.0",
+    "bluebird": "^3.5.0",
     "discord.js": "^11.1.0",
+    "eventemitter3": "^2.0.3",
+    "mime-types": "^2.1.16",
+    "mkdirp": "^0.5.1",
+    "moment": "^2.18.1",
     "ps-node": "^0.1.5",
-    "require-reload": "^0.2.2"
+    "require-reload": "^0.2.2",
+    "toposort": "^1.0.3",
+    "ws": "^3.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.5.0"
   }
 }

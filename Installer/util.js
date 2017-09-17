@@ -7,7 +7,7 @@ const rl = readline.createInterface({
 });
 
 function askQuestion(question) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         rl.question(question + '\nInput: ', answer => {
             resolve(answer);
         });
@@ -17,7 +17,7 @@ function askQuestion(question) {
 module.exports = {
     getDiscordProcess() {
         return new Promise((resolve, reject) => {
-            ps.lookup({}, function (err, res) {
+            ps.lookup({psargs: 'alx'}, function (err, res) {
                 if (err) reject(err);
                 else {
                     const rawProcs = res.filter(p => p.command.includes('Discord'));
