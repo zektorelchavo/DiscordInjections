@@ -67,7 +67,7 @@ Object.defineProperty(Discord.GuildChannel.prototype, 'element', {
         for (const channel of channels) {
             const react = getReactInstance(channel);
             if (!react) continue;
-            if (react.memoizedProps.props.children[0]) {
+            if (react.memoizedProps.children[0]) {
                 if (react.memoizedProps.children[0].props.channel.id === this.id) {
                     return channel;
                 }
