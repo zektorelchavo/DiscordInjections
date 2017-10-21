@@ -8,7 +8,9 @@ class Helpers {
         
         let a = new Date().getTime()
         webpackJsonp([],{[a]:(_, __, d) => {
-            for (let i = 0; i < 7000; i++) {
+            let i = 0
+            const tick = () => {
+                if (that._sendAsClydeRaw && that._fakeMessageRaw) return clearInterval(tick)
                 let r;try{r=d(i)}catch(e){return};
                 for (let key in r) {
                     if (key === "sendBotMessage" && typeof r[key] === "function") {
@@ -20,7 +22,12 @@ class Helpers {
                         that._fakeMessageRaw = r[key].bind(r)
                     }
                 }
-            }}
+                i++;
+                if (i === 7000) clearInterval(tick)
+            }
+            setInterval(tick, 5)    
+            
+            }
         },[a])
         
     }
