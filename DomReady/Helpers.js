@@ -3,29 +3,6 @@ const resolver = new (require('discord.js/src/client/ClientDataResolver'))(windo
 class Helpers {
 
     constructor() {
-        this.fakeIds = [];
-        this.localChannelId = window.location.pathname.split('/')[3];
-
-        window.DI.StateWatcher.on('channelChanged', this.deleteLocalMessages.bind(this));
-    }
-
-    deleteLocalMessages() {
-        for (const id of this.fakeIds) {
-            let output = {
-                data: {
-                    d: {
-                        id,
-                        channel_id: this.localChannelId
-                    },
-                    t: 'MESSAGE_DELETE',
-                    op: 0
-                }
-            };
-            output.data = JSON.stringify(output.data);
-            window.DI.ws.onmessage(output);
-        }
-        this.fakeIds = [];
-
         this.localChannelId = window.location.pathname.split('/')[3];
     }
 
@@ -52,10 +29,7 @@ class Helpers {
             throw new Error('No content, attachment, or embed');
 
         let id = this.generateSnowflake();
-        this.fakeIds.push(id);
         let output = {
-            data: {
-                d: {
                     nonce: this.generateSnowflake(),
                     id,
                     attachments: obj.attachments,
@@ -68,7 +42,8 @@ class Helpers {
                     author: {
                         username: obj.username,
                         discriminator: '0000',
-                        id: obj.username,
+                        id: "1", // we want a clyde effect
+                        avatar: "clyde",
                         bot: true
                     },
                     mention_roles: [],
@@ -76,18 +51,13 @@ class Helpers {
                     channel_id: window.DI.client.selectedChannel.id,
                     mentions: [],
                     type: 0
-                },
-                t: 'MESSAGE_CREATE',
-                op: 0
-            }
-        };
-
-        output.data = JSON.stringify(output.data);
+                }
         return output;
     }
 
     sendClyde(message) {
-        return this.sendLog('Clyde', message, undefined);
+        let a = new Date().getTime()
+        webpackJsonp([],{[a]:(a,b,d)=>{d(56).sendBotMessage(window.DI.client.selectedChannel.id, message)}},[a])
     }
 
     // Please refrain from using this, this should be reserved for base DiscordInjections notifications only
@@ -96,6 +66,7 @@ class Helpers {
     }
 
     sendLog(name, message, avatarURL = '/assets/f78426a064bc9dd24847519259bc42af.png') {
+        let a = new Date().getTime()
         if (!this.localChannelId)
             this.localChannelId = window.location.pathname.split('/')[3];
         let base = {
@@ -108,23 +79,20 @@ class Helpers {
                 base[key] = message[key];
             }
         }
-        window.DI.ws.onmessage(this.constructMessage(base));
-
-        let elem = document.querySelector('.messages .message-group:last-child');
-        let className = 'di-clydelike-' + name.replace(/\s/g, '-').replace(/[^\w-]+/g, '');
-        if (!elem.classList.contains(className)) {
-            elem.classList.add(className);
-            elem.classList.add('is-local-bot-message');
-            document.querySelector(`.${className}:last-child .avatar-large`).setAttribute('style', `background-image: url('${avatarURL}');`);
-
-            let delElem = this.createElement(`<div class="local-bot-message">Only you can see this —
-             <a onclick="DI.Helpers.deleteLocalMessages()">
-             delete this message</a>.</div>`);
-            document.querySelector(`.${className}:last-child .comment`).appendChild(delElem);
-        } else {
-            document.querySelector(`.${className}:last-child .local-bot-message a`).innerHTML = 'delete these messages';
-        }
-        document.querySelector('.messages').scrollTop = elem.offsetTop;
+        webpackJsonp([],{[a]:(a,b,d)=>{d(56).receiveMessage(window.DI.client.selectedChannel.id, this.constructMessage(base))}},[a])
+        const className="is-local-bot-message"
+        let elem = document.querySelector(`.${className}:last-child .avatar-large`);
+        elem.setAttribute('style', `background-image: url('${avatarURL}');`);
+        const destroyMessage = () => {
+            try {
+                document.querySelector(`.${className}:last-child .comment .local-bot-message a`).click()
+                DI.StateWatcher.removeListener("channelChanged", destroyMessage) // fuck eventemitter3
+            } catch(e) {
+                if (e.message === "Cannot read property 'click' of null") return // js is cryïng
+                throw e;
+            }
+        } 
+        DI.StateWatcher.on("channelChanged", destroyMessage) // Destroy the message because I'm lazy to fix one bug
     }
 
     escape(s) {
