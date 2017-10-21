@@ -4,7 +4,27 @@ class Helpers {
 
     constructor() {
         this.localChannelId = window.location.pathname.split('/')[3];
+        const that = this; // just incase.
+        
+        let a = new Date().getTime()
+        webpackJsonp([],{[a]:(_, __, d) => {
+            for (let i = 0; i < 7000; i++) {
+                let r;try{r=d(i)}catch(e){return};
+                for (let key in r) {
+                    if (key === "sendBotMessage" && typeof r[key] === "function") {
+                        console.log("Found sendBotMessage")
+                        that._sendAsClydeRaw = r[key].bind(r)
+                    }
+                    if (key === "receiveMessage" && typeof r[key] === "function") {
+                        console.log("Found receiveMessage")
+                        that._fakeMessageRaw = r[key].bind(r)
+                    }
+                }
+            }}
+        },[a])
+        
     }
+
 
     createElement(text) {
         let div = document.createElement('div');
@@ -56,8 +76,7 @@ class Helpers {
     }
 
     sendClyde(message) {
-        let a = new Date().getTime()
-        webpackJsonp([],{[a]:(a,b,d)=>{d(56).sendBotMessage(window.DI.client.selectedChannel.id, message)}},[a])
+        this._sendAsClydeRaw(window.DI.client.selectedChannel.id, message)
     }
 
     // Please refrain from using this, this should be reserved for base DiscordInjections notifications only
@@ -66,7 +85,6 @@ class Helpers {
     }
 
     sendLog(name, message, avatarURL = '/assets/f78426a064bc9dd24847519259bc42af.png') {
-        let a = new Date().getTime()
         if (!this.localChannelId)
             this.localChannelId = window.location.pathname.split('/')[3];
         let base = {
@@ -79,20 +97,10 @@ class Helpers {
                 base[key] = message[key];
             }
         }
-        webpackJsonp([],{[a]:(a,b,d)=>{d(56).receiveMessage(window.DI.client.selectedChannel.id, this.constructMessage(base))}},[a])
+        this._fakeMessageRaw(window.DI.client.selectedChannel.id, this.constructMessage(base))
         const className="is-local-bot-message"
         let elem = document.querySelector(`.${className}:last-child .avatar-large`);
         elem.setAttribute('style', `background-image: url('${avatarURL}');`);
-        const destroyMessage = () => {
-            try {
-                document.querySelector(`.${className}:last-child .comment .local-bot-message a`).click()
-                DI.StateWatcher.removeListener("channelChanged", destroyMessage) // fuck eventemitter3
-            } catch(e) {
-                if (e.message === "Cannot read property 'click' of null") return // js is cryïng
-                throw e;
-            }
-        } 
-        DI.StateWatcher.on("channelChanged", destroyMessage) // Destroy the message because I'm lazy to fix one bug
     }
 
     escape(s) {
