@@ -43,6 +43,7 @@ class DISettings {
         this.map = {};
 
         this.registerSettingsTab(plugin, 'General Settings', SettingsGeneral);
+        console.log(this.map);
     }
 
     registerSettingsTab(plugin, name, component) {

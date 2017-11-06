@@ -28,9 +28,26 @@ load((m, e, r) => {
             reactDOMExtracted = true;
             console.log('Found ReactDOM!');
         }
-
         if (reactExtracted && reactDOMExtracted) break;
     }
+
+    let i = 0, interval;
+    let tick = () => {
+        if (DI._sendAsClydeRaw && DI._fakeMessageRaw) return clearInterval(interval);
+        let d; try { d = r.c[i].exports; } catch (e) { ++i; return; }
+        for (let key in d) {
+            if (key === 'sendBotMessage' && typeof d[key] === 'function') {
+                console.log('Found sendBotMessage');
+                DI._sendAsClydeRaw = d[key].bind(d);
+            }
+            if (key === 'receiveMessage' && typeof d[key] === 'function') {
+                console.log('Found receiveMessage');
+                DI._fakeMessageRaw = d[key].bind(d);
+            }
+        }
+        if (++i >= 7000) return clearInterval(interval);
+    };
+    interval = setInterval(tick, 5);
 });
 
 const CommandHandler = require('./CommandHandler');

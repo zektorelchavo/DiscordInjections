@@ -4,32 +4,15 @@ class Helpers {
 
     constructor() {
         this.localChannelId = window.location.pathname.split('/')[3];
-        const that = this; // just incase.
-        
-        let a = new Date().getTime()
-        webpackJsonp([],{[a]:(_, __, d) => {
-            let i = 0
-            const tick = () => {
-                if (that._sendAsClydeRaw && that._fakeMessageRaw) return clearInterval(tick)
-                let r;try{r=d(i)}catch(e){return};
-                for (let key in r) {
-                    if (key === "sendBotMessage" && typeof r[key] === "function") {
-                        console.log("Found sendBotMessage")
-                        that._sendAsClydeRaw = r[key].bind(r)
-                    }
-                    if (key === "receiveMessage" && typeof r[key] === "function") {
-                        console.log("Found receiveMessage")
-                        that._fakeMessageRaw = r[key].bind(r)
-                    }
-                }
-                i++;
-                if (i === 7000) clearInterval(tick)
-            }
-            setInterval(tick, 5)    
-            
-            }
-        },[a])
-        
+
+
+    }
+
+    get _sendAsClydeRaw() {
+        return DI._sendAsClydeRaw;
+    }
+    get _fakeMessageRaw() {
+        return DI._fakeMessageRaw;
     }
 
 
@@ -46,7 +29,7 @@ class Helpers {
             <div class="theme-dark DI-modal">
                 <div class="callout-backdrop" style="opacity: 0.85; background-color: black; transform: translateZ(0px);"></div>
                 <div class="modal-2LIEKY" style="opacity: 1; transform: scale(1) translateZ(0px);">
-                    <div class="inner-1_1f7b">
+                    <div class="inner-1_1f7b DI-modal-inner">
                         <div class="modal-3HOjGZ sizeMedium-1-2BNS">
                             ${content}
                         </div>
@@ -56,8 +39,12 @@ class Helpers {
         `);
 
         this._modal.querySelector('.callout-backdrop').addEventListener('click', this.destroyModal.bind(this));
+        this._modal.querySelector('.DI-modal-inner').addEventListener('click', event => {
+            event.stopPropagation();
+        });
         if (!this._hasSetKeyListener) {
             document.body.addEventListener('keyup', this._modalKeypress.bind(this));
+            document.body.addEventListener('click', this.destroyModal.bind(this));
             this._hasSetKeyListener = true;
         }
         root.appendChild(this._modal);
@@ -70,8 +57,8 @@ class Helpers {
 
     destroyModal() {
         if (this._modal) {
-            this._modal.querySelector('.callout-backdrop').removeEventListener('click');
             document.body.removeEventListener('keyup', this._modalKeypress.bind(this));
+            document.body.removeEventListener('click', this.destroyModal.bind(this));
             this._modal.parentNode.removeChild(this._modal);
             this._modal = null;
         }
@@ -95,33 +82,33 @@ class Helpers {
 
         let id = this.generateSnowflake();
         let output = {
-                    nonce: this.generateSnowflake(),
-                    id,
-                    attachments: obj.attachments,
-                    tts: false,
-                    embeds: obj.embeds,
-                    timestamp: Date.now(),
-                    mention_everyone: false,
-                    pinned: false,
-                    edited_timestamp: null,
-                    author: {
-                        username: obj.username,
-                        discriminator: '0000',
-                        id: "1", // we want a clyde effect
-                        avatar: "clyde",
-                        bot: true
-                    },
-                    mention_roles: [],
-                    content: obj.content,
-                    channel_id: window.DI.client.selectedChannel.id,
-                    mentions: [],
-                    type: 0
-                }
+            nonce: this.generateSnowflake(),
+            id,
+            attachments: obj.attachments,
+            tts: false,
+            embeds: obj.embeds,
+            timestamp: Date.now(),
+            mention_everyone: false,
+            pinned: false,
+            edited_timestamp: null,
+            author: {
+                username: obj.username,
+                discriminator: '0000',
+                id: '1', // we want a clyde effect
+                avatar: 'clyde',
+                bot: true
+            },
+            mention_roles: [],
+            content: obj.content,
+            channel_id: window.DI.client.selectedChannel.id,
+            mentions: [],
+            type: 0
+        };
         return output;
     }
 
     sendClyde(message) {
-        this._sendAsClydeRaw(window.DI.client.selectedChannel.id, message)
+        this._sendAsClydeRaw(window.DI.client.selectedChannel.id, message);
     }
 
     // Please refrain from using this, this should be reserved for base DiscordInjections notifications only
@@ -142,8 +129,8 @@ class Helpers {
                 base[key] = message[key];
             }
         }
-        this._fakeMessageRaw(window.DI.client.selectedChannel.id, this.constructMessage(base))
-        const className="is-local-bot-message"
+        this._fakeMessageRaw(window.DI.client.selectedChannel.id, this.constructMessage(base));
+        const className = 'is-local-bot-message';
         let elem = document.querySelector(`.${className}:last-child .avatar-large`);
         elem.setAttribute('style', `background-image: url('${avatarURL}');`);
     }
