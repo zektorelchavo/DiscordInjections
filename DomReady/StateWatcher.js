@@ -33,7 +33,7 @@ class StateWatcher extends EventEmitter {
     observe() {
         this.observer.disconnect();
         let mutation = { childList: true, subtree: true };
-        this.observer.observe(document.querySelector('.app .layers'), mutation);
+        this.observer.observe(document.querySelector('#app-mount'), mutation);
         this.observer.observe(document.querySelector('html'), { attributes: true });
     }
 
