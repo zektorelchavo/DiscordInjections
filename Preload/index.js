@@ -3,6 +3,7 @@
  */
 let DIPluginInitialized = false;
 const pack = require('../package.json');
+
 const DI = window.DI = {
     client: null,
     localStorage: null,

@@ -7,6 +7,15 @@ global.Promise = require('bluebird');
 const DI = window.DI;
 DI.Constants = require('./Constants');
 
+const fs = require('fs');
+const path = require('path');
+let css = fs.readFileSync(path.join(__dirname, 'style.css'));
+
+this._styleTag = document.createElement('style');
+this._styleTag.id = 'di-system-styles';
+this._styleTag.innerHTML = css;
+document.head.appendChild(this._styleTag);
+
 DI.require = (path) => {
     return require('../' + path);
 };

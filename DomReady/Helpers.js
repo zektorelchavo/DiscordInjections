@@ -27,9 +27,9 @@ class Helpers {
 
         this._modal = this.createElement(`
             <div class="theme-dark DI-modal">
-                <div class="callout-backdrop" style="opacity: 0.85; background-color: black; transform: translateZ(0px);"></div>
-                <div class="modal-2LIEKY" style="opacity: 1; transform: scale(1) translateZ(0px);">
-                    <div class="inner-1_1f7b DI-modal-inner">
+                <div class="callout-backdrop"></div>
+                <div class="modal-2LIEKY" style="opacity: 1">
+                    <div class="inner-1_1f7b DI-modal-inner expanded">
                         <div class="modal-3HOjGZ sizeMedium-1-2BNS">
                             ${content}
                         </div>
@@ -38,17 +38,22 @@ class Helpers {
             </div>
         `);
 
-        this._modal.querySelector('.callout-backdrop').addEventListener('click', this.destroyModal.bind(this));
         this._modal.querySelector('.DI-modal-inner').addEventListener('click', event => {
             event.stopPropagation();
         });
+        let close = this._modal.querySelector('.DI-modal-close-button');
+        if (close) close.addEventListener('click', this.destroyModal.bind(this));
         if (!this._hasSetKeyListener) {
             document.body.addEventListener('keyup', this._modalKeypress.bind(this));
             document.body.addEventListener('click', this.destroyModal.bind(this));
             this._hasSetKeyListener = true;
         }
         root.appendChild(this._modal);
-        this._modal = root.lastElementChild;
+        this._modal = root.querySelector('.DI-modal');
+        let backdrop = this._modal.querySelector('.callout-backdrop');
+        setTimeout(() => {
+            backdrop.style.opacity = 0.60;
+        }, 1);
     }
 
     _modalKeypress(e) {
@@ -57,10 +62,19 @@ class Helpers {
 
     destroyModal() {
         if (this._modal) {
-            document.body.removeEventListener('keyup', this._modalKeypress.bind(this));
-            document.body.removeEventListener('click', this.destroyModal.bind(this));
-            this._modal.parentNode.removeChild(this._modal);
-            this._modal = null;
+            let backdrop = this._modal.querySelector('.callout-backdrop');
+            let inner = this._modal.querySelector('.DI-modal-inner');
+            let close = this._modal.querySelector('.DI-modal-close-button');
+            backdrop.style.opacity = 0;
+            inner.classList.remove('expanded');
+            setTimeout(() => {
+                if (close) close.addEventListener('click', this.destroyModal.bind(this));
+                document.body.removeEventListener('keyup', this._modalKeypress.bind(this));
+                document.body.removeEventListener('click', this.destroyModal.bind(this));
+                this._modal.parentNode.removeChild(this._modal);
+                this._modal = null;
+            }, 200);
+
         }
     }
 

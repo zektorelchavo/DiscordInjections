@@ -7,37 +7,6 @@ const CommandStruct = require('../Structures/Command');
 const { remote, clipboard } = require('electron');
 const app = remote.app;
 
-const css = `
-
-.di-autocomplete {
-    display: block !important;
-}
-
-.di-autocomplete-commandinfo {
-    text-align: right !important;
-}
-
-.command-usage {
-    text-align: left !important;
-    margin-left: 10px;
-}
-
-.command-plugin-tag {
-    background-color: rgba(255, 255, 255, 0.15);
-    border-radius: 3px;
-    border: #fff solid 1px;
-    padding: 3px;
-}
-
-.command-plugin-tag.dark {
-    background-color: rgba(0, 0, 0, 0.3);
-}
-
-.di-autocomplete-header-label {
-    display: inline-block !important;
-}
-`;
-
 class CommandHandler {
     constructor() {
         let diNode = window.DI.localStorage.getItem('DI-DiscordInjections');
@@ -67,11 +36,6 @@ class CommandHandler {
 
         document.addEventListener('input', this.onInput.bind(this));
         document.addEventListener('keydown', this.onKeyDown.bind(this));
-
-        this._styleTag = document.createElement('style');
-        this._styleTag.id = 'di-command-style';
-        this._styleTag.innerHTML = css;
-        document.head.appendChild(this._styleTag);
 
         this.acRows = [];
         this.currentSet = [];

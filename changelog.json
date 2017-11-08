@@ -1,4 +1,12 @@
 {
+    "3.3.2": {
+        "Changes": [
+            "The styling of the changelog has been slightly modified (removed an annoying margin).",
+            "There are now fancy animations when the changelog is opened and closed.",
+            "The changelog now has a close button.",
+            "Internal DiscordInjections CSS (ex. command handler, changelog) has been centralized to a single CSS file: '/DomReady/style.css'. This is for easier development of new components."
+        ]
+    },
     "3.3.1": {
         "New Stuff": [
             "There's this new fancy changelog thing in town. What's up with that?",
