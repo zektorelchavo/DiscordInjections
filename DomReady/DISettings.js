@@ -76,10 +76,15 @@ class DISettings {
     }
 
     injectSettingsTab() {
-        if (!this.settingsTabs || !document.querySelector('.itemBrand-mC9YR4')) return;
+        if (!this.settingsTabs) return;
+        const el = this.settingsTabs.querySelector('.socialLinks-1oZoF3');
+        if (!el) return;
 
-        const el = this.settingsTabs.querySelector('.itemDanger-3m3dwx');
-        let header = el.previousElementSibling;
+        let header = el
+            .previousElementSibling // divider
+            .previousElementSibling // logout
+            .previousElementSibling // divider
+        ;
         this.settingsTabs.insertBefore(this.divider, header);
         this.settingsTabs.insertBefore(this.header, header);
         for (const key in this.map) {
