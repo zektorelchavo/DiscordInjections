@@ -1,71 +1,144 @@
-const path = require('path');
+const electron = require('electron');
 const fs = require('fs');
-const childProcess = require('child_process');
-const mkdirp = require('mkdirp');
-var appPath;
-var isReinstall = false; // eslint-disable-line no-unused-vars
+const path = require('path');
+const Module = require('module');
 
-function closeClient(proc, close) {
-    if (!close) return new Promise((res => res(path.join(proc.command, '..', 'resources'))));
-    return new Promise((resolve, reject) => {
-        console.log('Closing client...');
-        if (process.platform === 'win32') {
-            for (const pid of proc.pid) {
-                try {
-                    process.kill(pid);
-                } catch (err) {
-                    console.error(err);
-                }
+const base = require('./base');
+
+const preloadPath = path.join(base, '..', 'Preload', 'index.js').replace(/\\/g, '/');
+const domPath = path.join(base, '..', 'DomReady', 'inject.js').replace(/\\/g, '/');
+let conf = {};
+
+try {
+    conf = JSON.parse(fs.readFileSync(path.join(base, '..', 'config.json')));
+} catch (err) {
+    console.log('[Injector] Could not load the config.');
+}
+
+// patch app path
+const root = path.join(__dirname, '..', 'app.asar');
+electron.app.getAppPath = () => root;
+
+const oldLoader = Module._extensions['.js'];
+let monkeyPatcher = 0;
+
+// fetch package.json
+const pkg = require(path.join(root, 'package.json'));
+if (pkg.main.indexOf('app_bootstrap') >= 0) {
+    console.log('[Injector] adding modern .js compiler');
+
+    // app_bootstrap/appUpdater.js
+    // app_boostrap/splashScreen.js
+    // app_bootstrap/squirrelUpdate.js
+    // app_bootstrap/autoStart.js
+    // common/moduleUpdater.js
+
+    Module._extensions['.js'] = (module, filename) => {
+        let content = fs.readFileSync(filename, 'utf8');
+        const shortname = filename.replace(root, '');
+
+        if (filename.endsWith(`app_bootstrap${path.sep}splashScreen.js`)) {
+            console.log('[Injector] patching splash screen...')
+            content = content.replace('splashWindow = new _electron.BrowserWindow(windowConfig);', `
+                splashWindow = new _electron.BrowserWindow(windowConfig);
+                splashWindow.webContents.on('dom-ready', function () {
+                    // TODO: setup style only injector
+                });
+            `);
+
+            monkeyPatcher++;
+        } else
+        if (filename.endsWith(`discord_desktop_core${path.sep}app${path.sep}mainScreen.js`)) {
+            console.log('[Injector] patching main window...')
+            // preload script
+            content = content.replace('webPreferences: {', `webPreferences: { preload: "${preloadPath}",`);
+
+            // transparency
+            if (conf.transparent) {
+                content = content.replace('transparent: false,', 'transparent: true,')
+                    .replace('backgroundColor: ACCOUNT_GREY,', '');
             }
-            resolve(path.join(proc.command, '..', 'resources'));
-        } else {
-            childProcess.exec('killall -9 ' + proc.command, (err) => {
-                if (err) reject(err);
-                resolve(path.join(proc.command, '..', 'resources'));
-            });
+
+            // native frame
+            if (typeof conf.frame === 'boolean') {
+                content = content.replace('frame: false,', `frame: ${conf.frame},`)
+                    .replace('mainWindowOptions.frame = true;', `mainWindowOptions.frame = ${conf.frame};`);
+            }
+
+            content = content.replace('mainWindow.webContents.on(\'dom-ready\', function () {});', `
+                mainWindow.webContents.on('dom-ready', function () {
+                    mainWindow.webContents.executeJavaScript(
+                        'window._injectDir = "${path.join(base, '..').replace(/\\/g, '/')}";' +
+                        require("fs").readFileSync('${domPath}', 'utf8')
+                    );
+                });`);
+
+            monkeyPatcher++;
         }
-    });
-}
 
-function injectClient(_path) {
-    return new Promise((resolve) => {
-        console.log('Creating injector...');
-        let dir = path.join(_path, 'app');
-        mkdirp.sync(dir);
-        const file = fs.readFileSync(path.join(__dirname, 'inject.js'), { encoding: 'utf8' });
-        const pack = fs.readFileSync(path.join(__dirname, 'package.json.template'), { encoding: 'utf8' });
-        fs.writeFileSync(path.join(dir, 'index.js'), file);
-        fs.writeFileSync(path.join(dir, 'base.js'), `module.exports = '${__dirname.replace(/\\/g, '/')}';`);
-        fs.writeFileSync(path.join(dir, 'package.json'), pack);
-
-        let confDir = path.join(__dirname, '..', 'config.json');
-        if (!fs.existsSync(confDir)) {
-            const conf = fs.readFileSync(path.join(__dirname, 'config.json.template'), { encoding: 'utf8' });
-            fs.writeFileSync(confDir, conf);
+        // TODO: find appropriate point to insert update survivor (app_boostrap/hostUpdater.js?)
+        // TODO: set to 3 if update handler is found
+        if (monkeyPatcher >= 2) {
+            console.log('[Injector] all files patched, reverting to original loader');
+            Module._extensions['.js'] = oldLoader;
         }
-        resolve();
-    });
+
+        return module._compile(content, filename);
+    };
+} else {
+    console.log('[Injector] adding legacy .js compiler');
+    Module._extensions['.js'] = (module, filename) => {
+        let content = fs.readFileSync(filename, 'utf8');
+
+        if (filename == path.join(root, 'index.js')) {
+            console.log('[Injector] patching index.js');
+            console.log('  ...injecting preloader...');
+            content = content.replace('      webPreferences: {', [
+                '      webPreferences: {',
+                `        preload: "${preloadPath}",`
+            ].join('\n'));
+
+            if (conf.transparent) {
+                console.log('  ...injecting transparency...');
+                content = content.replace('transparent: false,', 'transparent: true,')
+                    .replace('backgroundColor: ACCOUNT_GREY,', '');
+            }
+
+            if (typeof conf.frame === 'boolean') {
+                console.log('  ...injecting frame...');
+                content = content.replace('frame: false,', `frame: ${conf.frame},`)
+                    .replace('mainWindowOptions.frame = true;', `mainWindowOptions.frame = ${conf.frame};`);
+            }
+
+            console.log('  ...injecting DOM...');
+            content = content.replace('    mainWindow.webContents.on(\'dom-ready\', function () {});', `
+                mainWindow.webContents.on('dom-ready', function () {
+                    mainWindow.webContents.executeJavaScript(
+                        'window._injectDir = "${path.join(base, '..').replace(/\\/g, '/')}";' +
+                        _fs2.default.readFileSync('${domPath}', 'utf8')
+                    );
+                });`);
+            monkeyPatcher++;
+        }
+
+        if (filename == path.join(root, 'SquirrelUpdate.js')) {
+            console.log('[Injector] patching SquirrelUpdate.js');
+            content = content.replace('app.once(\'will-quit\', function () {', `
+                app.once('will-quit', function () {
+                    require('${path.join(base, 'Installer', 'update.js').replace(/\\/g, '/')}')
+                        (_path2.default.resolve(rootFolder, 'app-' + newVersion));`);
+            monkeyPatcher++;
+        }
+
+        if (monkeyPatcher >= 2) {
+            console.log('[Injector] all files patched, reverting to original loader');
+            Module._extensions['.js'] = oldLoader;
+        }
+
+        return module._compile(content, filename);
+    };
 }
 
-function relaunchClient() {
-    return new Promise((resolve) => {
-        console.log('Relaunching client');
-        let child = childProcess.spawn(appPath, { detached: true });
-        child.unref();
-        resolve();
-    });
-}
-
-module.exports = function (proc, close = true, reinstall = false) {
-    appPath = proc.command;
-    isReinstall = reinstall;
-    return closeClient(proc, close)
-        .then(injectClient)
-        .then(relaunchClient)
-        .then(() => console.log('Install complete.'))
-        .catch(err => {
-            if (err === false) return 0;
-            console.error('An error has occurred. ' + err.stack);
-            return 1;
-        });
-};
+// rewrite root module
+console.log('[Injector] loading discord!');
+Module._load(path.join(root, pkg.main), null, true);
