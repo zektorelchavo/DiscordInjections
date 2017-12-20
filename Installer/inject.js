@@ -48,7 +48,7 @@ if (pkg.main.indexOf('app_bootstrap') >= 0) {
 
             monkeyPatcher++;
         } else
-        if (filename.endsWith(`discord_desktop_core${path.sep}app${path.sep}mainScreen.js`)) {
+        if (filename.endsWith(`app${path.sep}mainScreen.js`)) {
             console.log('[Injector] patching main window...')
             // preload script
             content = content.replace('webPreferences: {', `webPreferences: { preload: "${preloadPath}",`);
@@ -65,13 +65,13 @@ if (pkg.main.indexOf('app_bootstrap') >= 0) {
                     .replace('mainWindowOptions.frame = true;', `mainWindowOptions.frame = ${conf.frame};`);
             }
 
-            content = content.replace('mainWindow.webContents.on(\'dom-ready\', function () {});', `
+            content = content.replace('mainWindow.webContents.', `
                 mainWindow.webContents.on('dom-ready', function () {
                     mainWindow.webContents.executeJavaScript(
                         'window._injectDir = "${path.join(base, '..').replace(/\\/g, '/')}";' +
                         require("fs").readFileSync('${domPath}', 'utf8')
                     );
-                });`);
+                });mainWindow.webContents.`);
 
             monkeyPatcher++;
         }
@@ -111,13 +111,13 @@ if (pkg.main.indexOf('app_bootstrap') >= 0) {
             }
 
             console.log('  ...injecting DOM...');
-            content = content.replace('    mainWindow.webContents.on(\'dom-ready\', function () {});', `
+            content = content.replace('mainWindow.webContents.', `
                 mainWindow.webContents.on('dom-ready', function () {
                     mainWindow.webContents.executeJavaScript(
                         'window._injectDir = "${path.join(base, '..').replace(/\\/g, '/')}";' +
                         _fs2.default.readFileSync('${domPath}', 'utf8')
                     );
-                });`);
+                });mainWindow.webContents.`);
             monkeyPatcher++;
         }
 
