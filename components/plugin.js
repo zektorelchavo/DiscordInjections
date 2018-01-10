@@ -1,4 +1,4 @@
-const Command = require('./Command')
+const Command = require('./command')
 const EventEmitter = require('eventemitter3')
 const path = require('path')
 
