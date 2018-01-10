@@ -35,10 +35,10 @@ async function closeClient(proc) {
 function injectClient(base) {
   const app =
     process.platform === "darwin"
-      ? path.join(base, "..", "..", "Resources", "app")
+      ? path.join(base, "..", "Resources", "app")
       : path.join(base, "app")
   if (fs.existsSync(path.join(app, "package.json"))) {
-    throw new Error("some kind of injector is already installed")
+    throw new Error(`some kind of injector is already installed in <${app}>`)
   }
 
   fs.ensureDirSync(app)
@@ -73,7 +73,7 @@ async function inject(proc, reinstall = false) {
 async function uninject(proc, reinstall = false) {
   const appPath =
     process.platform === "darwin"
-      ? path.join(proc.command, "..", "..", "..", "Resources", "app")
+      ? path.join(proc.command, "..", "..", "Resources", "app")
       : path.join(proc.command, "..", "resources", "app")
 
   if (proc.pid.length > 0) {
