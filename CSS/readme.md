@@ -1,1 +1,0 @@
-Put your CSS files in here, and then set them by running (in discord console) `DI.CssInjector.set('filename.css')`.
