@@ -73,8 +73,8 @@ async function inject(proc, reinstall = false) {
 async function uninject(proc, reinstall = false) {
   const appPath =
     process.platform === "darwin"
-      ? path.join(base, "..", "..", "Resources", "app")
-      : path.join(base, "app")
+      ? path.join(proc.command, "..", "..", "..", "Resources", "app")
+      : path.join(proc.command, "..", "resources", "app")
 
   if (proc.pid.length > 0) {
     console.log("closing client...")
