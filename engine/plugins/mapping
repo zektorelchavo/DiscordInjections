@@ -1,0 +1,13 @@
+commands:
+  - CommandHandler
+
+sync:
+  - SettingsSync
+  - Constants
+
+unkown:
+  - Helper (send as clyde/send as plugin)
+
+{
+"sync":{"enabled":true,"interval":300000,"keybinds":true,"emoteUsage":true,"inProgress":true,"plugins":true,"plugin":{"betterformattingredux":true,"quicksave":false,"renamer":true,"useradditions":true},"localWs":false},
+}
