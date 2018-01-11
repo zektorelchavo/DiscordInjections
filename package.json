@@ -14,22 +14,16 @@
   "license": "MIT",
   "repository": "https://github.com/DiscordInjections/DiscordInjections",
   "dependencies": {
-    "bluebird": "^3.5.0",
+    "bluebird": "^3.5.1",
     "discord.js": "^11.2.1",
-    "eventemitter3": "^2.0.3",
+    "eventemitter3": "^3.0.0",
     "fs-extra": "^5.0.0",
-    "mime-types": "^2.1.16",
-    "moment": "^2.18.1",
     "pako": "^1.0.6",
     "postcss": "^6.0.16",
     "postcss-import": "^11.0.0",
     "ps-node": "^0.1.5",
     "require-reload": "^0.2.2",
     "semver": "^5.4.1",
-    "toposort": "^1.0.3",
-    "ws": "^3.1.0"
-  },
-  "devDependencies": {
-    "eslint": "^4.5.0"
+    "ws": "^4.0.0"
   }
 }
