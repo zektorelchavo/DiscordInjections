@@ -97,6 +97,12 @@ module.exports = class react extends Plugin {
     })
   }
 
+  getReactInstance(node) {
+    return node[
+      Object.keys(node).find(key => key.startsWith("__reactInternalInstance"))
+    ]
+  }
+
   createElement(text) {
     return document.createRange().createContextualFragment(text)
   }

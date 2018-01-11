@@ -23,12 +23,6 @@ const DI = {
 
   get version() {
     return this.package.version
-  },
-
-  getReactInstance(node) {
-    return node[
-      Object.keys(node).find(key => key.startsWith("__reactInternalInstance"))
-    ]
   }
 }
 
