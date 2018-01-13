@@ -66,7 +66,9 @@ Object.assign(exports, {
           )
           // transparency
           .replace('transparent: false', `transparent: ${conf.transparent}`)
-          // transparent == true, .replace('backgroundColor: ACCOUNT_GREY,', '') <= needed?
+        if (conf.transparent) {
+            content = content.replace('backgroundColor: ACCOUNT_GREY,', '')
+        }
 
         if (typeof conf.frame === typeof true) {
           // native frame
