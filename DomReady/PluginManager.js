@@ -21,12 +21,13 @@ class PluginManager {
                         // preload, don't instantiate plugin
                         const pluginName = this.load(file, true);
                         const Plugin = this.classes[pluginName];
-
-                        if (Plugin.before && Array.isArray(Plugin.before)) {
-                            Plugin.before.forEach(dep => dependencies.push([ /* load */ pluginName, /* before */ dep ]));
-                        }
-                        if (Plugin.after && Array.isArray(Plugin.after)) {
-                            Plugin.after.forEach(dep => dependencies.push([ /* load */ dep, /* before */ pluginName ]));
+                        if (Plugin) {
+                            if (Plugin.before && Array.isArray(Plugin.before)) {
+                                Plugin.before.forEach(dep => dependencies.push([ /* load */ pluginName, /* before */ dep]));
+                            }
+                            if (Plugin.after && Array.isArray(Plugin.after)) {
+                                Plugin.after.forEach(dep => dependencies.push([ /* load */ dep, /* before */ pluginName]));
+                            }
                         }
                     }
                 } catch (err) {
@@ -42,7 +43,7 @@ class PluginManager {
                 if (skip.includes(pluginName) || !this.load(pluginName)) {
                     // unload plugin, just to be sure
                     this.unload(pluginName);
-                    
+
                     skip.push(pluginName);
                     console.error('Failed to load plugin, undefined behaviour possible!', pluginName);
                 }
@@ -76,7 +77,7 @@ class PluginManager {
             if (dirs.length === 0) throw new Error('No files found');
             try {
                 pack = reload(this.constructPath(dirs[0], 'package'));
-            } catch (err) {}
+            } catch (err) { }
             if (!(pack instanceof Object)) {
                 console.error(`Plugin '${name}' had an invalid package file, skipping`);
                 return;
