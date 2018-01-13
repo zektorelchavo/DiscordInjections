@@ -16,7 +16,7 @@ class DISettings {
         });
         DI.StateWatcher.on('settingsTab', type => {
             if (this.map.hasOwnProperty(type)) {
-                let element = document.querySelector('.layer .sidebar .selected-eNoxEK');
+                let element = document.querySelector('[class*="layer"] .sidebar .selected-eNoxEK');
                 element.className = this.unselectedCss;
                 this.map[type].tab.className = this.selectedCss;
 
@@ -25,7 +25,7 @@ class DISettings {
                     plugin: this.map[type].plugin,
                     title: this.map[type].name
                 }),
-                    document.querySelector('.layer .content-column div'));
+                    document.querySelector('[class*="layer"] .content-column div'));
 
             } else {
                 for (const key in this.map)
@@ -68,11 +68,11 @@ class DISettings {
     }
 
     get selectedCss() {
-        return 'itemDefaultSelected-1UAWLe item-3879bf selected-eNoxEK';
+        return 'itemSelected-3XxAMf item-3879bf selected-eNoxEK';
     }
 
     get settingsTabs() {
-        return document.querySelector('.layer .sidebar .side-2nYO0F');
+        return document.querySelector('[class*="layer"] .sidebar .side-2nYO0F');
     }
 
     injectSettingsTab() {
@@ -84,7 +84,7 @@ class DISettings {
             .previousElementSibling // divider
             .previousElementSibling // logout
             .previousElementSibling // divider
-        ;
+            ;
         this.settingsTabs.insertBefore(this.divider, header);
         this.settingsTabs.insertBefore(this.header, header);
         for (const key in this.map) {

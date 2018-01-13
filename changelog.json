@@ -1,4 +1,9 @@
 {
+    "3.3.3": {
+        "Fixes": [
+            "Fixed an issue with the settings tab injector and state watcher."
+        ]
+    },
     "3.3.2": {
         "Changes": [
             "The styling of the changelog has been slightly modified (removed an annoying margin).",

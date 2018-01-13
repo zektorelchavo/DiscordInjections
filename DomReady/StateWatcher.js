@@ -38,7 +38,6 @@ class StateWatcher extends EventEmitter {
     }
 
     _onMutation(muts) {
-        //console.log(muts);
 
         this.emit('mutation', muts);
 
@@ -63,7 +62,7 @@ class StateWatcher extends EventEmitter {
             //      console.log(changed);
 
             // Settings
-            if (changed[0] && changed[0].classList && changed[0].classList.contains('layer')) {
+            if (changed[0] && typeof changed[0].className === 'string' && changed[0].className.indexOf('layer') > -1) {
                 let node = changed[0];
                 const programSettings = !!changed[0].querySelector('[class*="socialLinks"]');
                 if (programSettings && node.childNodes.length > 0) {
@@ -79,7 +78,7 @@ class StateWatcher extends EventEmitter {
                 }
             }
             else if (added && changed[0].parentNode && changed[0].parentNode.className === 'content-column default') {
-                let element = document.querySelector('.layer .sidebar .selected-eNoxEK');
+                let element = document.querySelector('[class*="layer"] .sidebar .selected-eNoxEK');
                 let type = this.settingsTabs[element.innerText];
                 if (type === undefined) type = 'unknown';
                 this.emit('settingsTab', type, mut);
