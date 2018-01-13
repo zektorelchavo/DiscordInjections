@@ -1,5 +1,5 @@
 {
-    "3.3.3": {
+    "3.3.2.2": {
         "Fixes": [
             "Fixed an issue with the settings tab injector and state watcher.",
             "Fixed an issue with plugin dependencies, when trying to load an invalid plugin."
