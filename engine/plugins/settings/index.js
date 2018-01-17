@@ -54,14 +54,14 @@ module.exports = class settings extends Plugin {
   }
 
   load() {
-    this.registerSettingsTab(
+    this._registerSettingsTab(
       this,
       "General Settings",
       require("./SettingsGeneral")
     )
   }
 
-  registerSettingsTab(plugin, name, component) {
+  _registerSettingsTab(plugin, name, component) {
     if (name && !component) {
       component = name
       name = plugin._name

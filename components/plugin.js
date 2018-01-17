@@ -187,7 +187,7 @@ class Plugin extends EventEmitter {
   }
 
   registerSettingsTab (name, component) {
-    this.manager.get("settings").registerSettingsTab(this, name, component)
+    this.manager.get("settings")._registerSettingsTab(this, name, component)
   }
 /*
   sendLocalMessage (message, sanitize) {
