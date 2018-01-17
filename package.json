@@ -15,7 +15,6 @@
   "repository": "https://github.com/DiscordInjections/DiscordInjections",
   "dependencies": {
     "bluebird": "^3.5.1",
-    "discord.js": "^11.2.1",
     "eventemitter3": "^3.0.0",
     "fs-extra": "^5.0.0",
     "pako": "^1.0.6",

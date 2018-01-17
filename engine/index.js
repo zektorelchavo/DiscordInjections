@@ -33,7 +33,7 @@ Object.defineProperty(DI, "localStorage", {
 
 Object.defineProperty(DI, "client", {
   writable: false,
-  value: require("./djs")
+  value: new (require("../lib/diio"))(DI)
 })
 
 Object.defineProperty(DI, "plugins", {
@@ -44,7 +44,7 @@ Object.defineProperty(DI, "plugins", {
 // websocket bridge, yay!
 WebSocket.onCreate = (socket, url) => {
   if (url.includes("encoding")) {
-    DI.client.ws.connection.set(socket)
+    DI.client.connect(socket)
   }
 }
 
