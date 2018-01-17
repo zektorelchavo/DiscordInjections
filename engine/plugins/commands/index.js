@@ -172,7 +172,6 @@ module.exports = class commands extends Plugin {
           let [name, ...args] = command.split(" ")
           name = name.toLowerCase()
 
-          args = this.filterMessage(args.join(" ")).split(" ")
           if (this.commands[name]) {
             this.onInput()
             event.preventDefault()
@@ -420,33 +419,5 @@ module.exports = class commands extends Plugin {
     if (this.acRows[selectedIndex])
       this.onHover(this.acRows[selectedIndex].selector)
     else if (this.acRows.length > 0) this.onHover(this.acRows[0].selector)
-  }
-
-  filterMessage(message) {
-    this.DI.client.users.forEach(
-      u =>
-        (message = message.replace(
-          new RegExp(this.escape(`@${u.tag}`), "g"),
-          u.toString()
-        ))
-    )
-    if (this.DI.client.selectedGuild) {
-      this.DI.client.selectedGuild.roles.forEach(r => {
-        if (r.mentionable) {
-          message = message.replace(
-            new RegExp(this.escape(`@${r.name}`), "g"),
-            r.toString()
-          )
-        }
-      })
-      this.DI.client.selectedGuild.channels.forEach(
-        c =>
-          (message = message.replace(
-            new RegExp(this.escape(`#${c.name}`), "g"),
-            c.toString()
-          ))
-      )
-    }
-    return message
   }
 }
