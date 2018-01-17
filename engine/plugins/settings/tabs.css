@@ -1,0 +1,16 @@
+.di-tabs-tab {
+  overflow: hidden;
+}
+
+.di-tabs-tab li {
+  flex: 1;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  padding: 10px;
+}
+
+.di-tabs-tab li.active {
+  border-color: rgb(114, 137, 218);
+  background-color: rgb(114, 137, 218);
+}
