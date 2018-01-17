@@ -81,7 +81,7 @@ class Plugin extends EventEmitter {
    *
    * During this stage, Discord and Plugins are probably not loaded.
    */
-  load () {}
+  preload () {}
 
   /**
    * Functionality to call when the plugin is loaded
