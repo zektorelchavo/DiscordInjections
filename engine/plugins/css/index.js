@@ -152,7 +152,7 @@ module.exports = class react extends Plugin {
 
     this.log(`attaching userstyle [${fileName}]`)
     const el = document.body.querySelector(
-      `style[data-plugin="$userstlye$"][data-filename="${fileName}"]`
+      `style[data-plugin="$userstyle$"][data-filename="${fileName}"]`
     )
     if (!el) {
       // huh? weird. just add it to the dom then
