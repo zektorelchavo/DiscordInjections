@@ -64,7 +64,7 @@ class PluginManager extends EventEmitter {
   async loadByPath(pluginPath, force = true) {
     const pkg = reload(path.join(pluginPath, "package.json"))
     if (!force && this.pluginsEnabled[pkg.name] === false) {
-      // dont load unenabled plugins
+      // dont load disabled plugins
       return
     }
 
