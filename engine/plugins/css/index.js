@@ -158,7 +158,7 @@ module.exports = class react extends Plugin {
       cssFile = pkg.main
     } catch (ex) {}
 
-    const idx = raw? filePath : pkg.name
+    const idx = raw ? filePath : pkg.name
     const sheets = this.getSettingsNode("stylesheets", {})
     if (sheets[idx]) {
       this.warn("user style already registered, overwriting", idx)
@@ -181,11 +181,16 @@ module.exports = class react extends Plugin {
     this.setSettingsNode("stylesheets", sheets)
   }
 
-  async loadUserCss(filePath) {
+  async loadUserCss(filePath, force = false) {
     const meta = this.settings.stylesheets[filePath]
 
     if (!meta.cssFile) {
       return this.error("css file not defined, skipping", filePath)
+    }
+
+    if (!meta.enabled && !force) {
+      // dont load disabled themes
+      return
     }
 
     let content = await fs.readFile(meta.cssFile, "utf-8")
