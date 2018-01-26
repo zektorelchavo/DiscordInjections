@@ -41,6 +41,8 @@ module.exports = class react extends Plugin {
   }
 
   load() {
+    this.registerSettingsTab("Theme Manager", require("./SettingsPage"))
+
     Object.keys(this.cssStack).forEach(plugin => {
       this.cssStack[plugin].files.forEach(async fileName => {
         const filePath = path.resolve(this.cssStack[plugin].path, fileName)
@@ -55,23 +57,9 @@ module.exports = class react extends Plugin {
       })
     })
 
-    this.getSettingsNode("stylesheets", []).forEach(async fileName => {
-      const filePath = path.resolve(
-        this.manager.expand(this.DI.conf.cssPath || "./CSS"),
-        fileName
-      )
-      let content = await fs.readFile(filePath, "utf-8")
-      content = await this.postcss.process(content, {
-        from: filePath,
-        to: filePath,
-        map: { annotation: false, inline: false, safe: false }
-      })
-      this.log(`attaching userstyle [${fileName}]`)
-      document.body.appendChild(
-        this._createStyle(content, "$userstyle$", fileName)
-      )
-      this.watcher.addFile(filePath, fileName)
-    })
+    Object.keys(this.getSettingsNode("stylesheets", {})).forEach(fileName =>
+      this.loadUserCss(fileName)
+    )
   }
 
   unload() {}
@@ -90,6 +78,12 @@ module.exports = class react extends Plugin {
           JSON.stringify(legacySettings)
         )
       }
+    }
+
+    let stylesheets = this.getSettingsNode("stylesheets", {})
+    if (Array.isArray(stylesheets)) {
+      this.setSettingsNode("stylesheets", {})
+      stylesheets.forEach(ss => this.addUserStyle(ss, false))
     }
   }
 
@@ -142,26 +136,94 @@ module.exports = class react extends Plugin {
     ).forEach(tag => tag.parentElement.removeChild(tag))
   }
 
-  async onFileChange(fileName, filePath) {
-    let content = await fs.readFile(filePath, "utf-8")
+  addUserStyle(filePath, load = true) {
+    const resolved = path.resolve(
+      this.manager.expand(this.DI.conf.cssPath || "./CSS"),
+      filePath
+    )
+
+    let raw = true
+    let pkg = null
+    let cssFile = resolved
+
+    try {
+      try {
+        pkg = require(resolved)
+        filePath = path.dirname(filePath)
+      } catch (ex) {
+        pkg = require(path.join(resolved, "package.json"))
+      }
+
+      raw = false
+      cssFile = pkg.main
+    } catch (ex) {}
+
+    const idx = raw? filePath : pkg.name
+    const sheets = this.getSettingsNode("stylesheets", {})
+    if (sheets[idx]) {
+      this.warn("user style already registered, overwriting", idx)
+    }
+    sheets[idx] = { raw, package: pkg, cssFile }
+    this.setSettingsNode("stylesheets", sheets)
+
+    if (load) {
+      this.loadUserCss(idx)
+    }
+  }
+
+  removeUserStyle(filePath, unload = true) {
+    if (unload) {
+      this.unloadUserCss(filePath)
+    }
+
+    const sheets = this.getSettingsNode("stylesheets", {})
+    delete sheets[filePath]
+    this.setSettingsNode("stylesheets", sheets)
+  }
+
+  async loadUserCss(filePath) {
+    const meta = this.settings.stylesheets[filePath]
+
+    if (!meta.cssFile) {
+      return this.error("css file not defined, skipping", filePath)
+    }
+
+    let content = await fs.readFile(meta.cssFile, "utf-8")
     content = await this.postcss.process(content, {
       from: filePath,
       to: filePath,
       map: { annotation: false, inline: false, safe: false }
     })
 
-    this.log(`attaching userstyle [${fileName}]`)
+    const el = document.body.querySelector(
+      `style[data-plugin="$userstyle$"][data-filename="${filePath}"]`
+    )
+
+    if (el) {
+      this.log(`reloading userstyle [${filePath}]`)
+      while (el.firstChild) el.removeChild(el.firstChild)
+      el.appendChild(document.createTextNode(content))
+    } else {
+      this.log(`attaching userstyle [${filePath}]`)
+      document.body.appendChild(
+        this._createStyle(content, "$userstyle$", filePath)
+      )
+    }
+    this.watcher.addFile(meta.cssFile, filePath)
+  }
+
+  unloadUserCss(filePath) {
+    this.log(`detaching userstyle [${filePath}]`)
     const el = document.body.querySelector(
       `style[data-plugin="$userstyle$"][data-filename="${fileName}"]`
     )
-    if (!el) {
-      // huh? weird. just add it to the dom then
-      document.body.appendChild(
-        this._createStyle(content, "$userstyle$", fileName)
-      )
-    } else {
-      while (el.firstChild) el.removeChild(el.firstChild)
-      el.appendChild(document.createTextNode(content))
+
+    if (el) {
+      el.remove()
     }
+  }
+
+  async onFileChange(fileName, filePath) {
+    this.loadUserCss(fileName)
   }
 }
