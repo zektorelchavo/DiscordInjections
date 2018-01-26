@@ -108,7 +108,7 @@ module.exports = class react extends Plugin {
   }
 
   createModal(content) {
-    const root = document.querySelector("#app-mount > div")
+    const root = document.querySelector("#app-mount")
 
     if (this._modal) this.destroyModal()
     this._modal = this.createElement(`
