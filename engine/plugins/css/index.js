@@ -188,7 +188,7 @@ module.exports = class react extends Plugin {
       return this.error("css file not defined, skipping", filePath)
     }
 
-    if (!meta.enabled && !force) {
+    if (meta.disabled && !force) {
       // dont load disabled themes
       return
     }
