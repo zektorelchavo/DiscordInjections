@@ -179,10 +179,7 @@ module.exports = class commands extends Plugin {
               this.commands[name]._execute(args)
             )
             if (output) {
-              this.DI.client.selectedChannel.send(
-                output,
-                this.DI.client.selectedChannel
-              )
+              this.DI.client.selectedChannel.send(output)
             }
 
             setTimeout(() => this.writeMessage(), 200)

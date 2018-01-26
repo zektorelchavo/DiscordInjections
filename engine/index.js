@@ -3,10 +3,6 @@ const path = require("path")
 const fs = require("fs")
 const Promise = require("bluebird")
 
-// stage zero
-// base object patching
-require("./webSocket")
-
 // stage one
 // prelaunch adjustments
 const DI = {
@@ -33,20 +29,13 @@ Object.defineProperty(DI, "localStorage", {
 
 Object.defineProperty(DI, "client", {
   writable: false,
-  value: new (require("../lib/diio"))(DI)
+  value: (require("./client"))(DI)
 })
 
 Object.defineProperty(DI, "plugins", {
   writable: false,
   value: new (require("./pluginManager"))(DI)
 })
-
-// websocket bridge, yay!
-WebSocket.onCreate = (socket, url) => {
-  if (url.includes("encoding")) {
-    DI.client.connect(socket)
-  }
-}
 
 // stage two
 // post launch patching
