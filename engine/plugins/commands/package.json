@@ -3,5 +3,6 @@
   "version": "0.0.1",
   "main": "index.js",
   "author": "Kura",
-  "description": "DI Command Handler"
+  "description": "DI Command Handler",
+  "css": ["autocomplete.css"]
 }

@@ -1,0 +1,28 @@
+.di-autocomplete {
+    display: block !important;
+}
+
+.di-autocomplete-commandinfo {
+    text-align: right !important;
+}
+
+.command-usage {
+    text-align: left !important;
+    margin-left: 10px;
+}
+
+.command-plugin-tag {
+    color: #222;
+    border-radius: 3px;
+    border: #222 solid 1px;
+    padding: 3px;
+}
+
+.command-plugin-tag.dark {
+    border-color: #ddd;
+    color: #ddd;
+}
+
+.di-autocomplete-header-label {
+    display: inline-block !important;
+}

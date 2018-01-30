@@ -305,12 +305,10 @@ module.exports = class commands extends Plugin {
             <div class="marginLeft4-3RAvyQ primary400-1OkqpL">${command.usage ||
               ""}</div>
             <div class="ellipsis-1MzbWB primary400-1OkqpL di-autocomplete-commandinfo" style="flex: 1 1 auto";>
-              <span class='command-plugin-tag${isDark(h2rgb(color))
+              ${command.info} <span class='command-plugin-tag${isDark(h2rgb(color))
                 ? " dark"
                 : ""}'
-              style="color: #${color}; border-color: #${command.plugin.color};">
-                ${command.plugin._name}
-              </span> - ${command.info}
+              style="background-color: rgba(${h2rgb(color).join(", ")}, 0.5)">${command.plugin._name}</span>
             </div>
           </div>
         </div>
