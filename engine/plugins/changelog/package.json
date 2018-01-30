@@ -1,0 +1,7 @@
+{
+  "name": "changelog",
+  "version": "0.0.1",
+  "main": "index.js",
+  "author": "Kura",
+  "description": "Display DI Changelog"
+}

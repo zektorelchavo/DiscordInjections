@@ -1,0 +1,8 @@
+{
+  "name": "react",
+  "version": "0.0.1",
+  "main": "index.js",
+  "author": "Kura",
+  "description": "Basic react interaction with Discord",
+  "css": ["modal.css"]
+}

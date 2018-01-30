@@ -1,0 +1,68 @@
+{
+  "4.0.0": {
+    "Rework": "DI got a whole rewrite. All your plugins are probably broken... <b>But</b> things should be more stable now! Also fully compatible with the latest <img style='width: 24px; height: 24px; display: inline' src='/assets/03f65a2b1b7367dc7647ffc6e995b82a.svg'> changes!",
+    "Changes": [
+      "Say bye to the webserver! Thanks to a small rewrite of the css injector we are now using the power of postcss to implement file merging. Has its pros and cons, but no more worries about a (pretty secure) implementation of a webserver. That means on the other hand, you can't piggy back on it anymore. ;)",
+      "More advanced plugin system, with better events and a two stage loading process. Some <img style='width: 24px; height: 24px; display: inline' src='/assets/cc005253d0d5dfff7f7d317e164102d7.svg'> for you devs.",
+      "Did you ever want to style the splash screen before discord launches? This is a thing now! Do your worst!",
+      "Did someone say multiple stylesheets back there? No? Well, I don't care. You can now add multiple stylesheets!"
+    ],
+    "Internal Fun Fact": "Discord Injections still doesn't edit any base files of Discord. It now doesn't add any script tags either and it doesn't use the dom-ready event anymore either. Everything is done in the preload script. Though we still need to add style tags so you can add your custom themes."
+  },
+  "3.3.2": {
+    "Changes": [
+      "The styling of the changelog has been slightly modified (removed an annoying margin).",
+      "There are now fancy animations when the changelog is opened and closed.",
+      "The changelog now has a close button.",
+      "Internal DiscordInjections CSS (ex. command handler, changelog) has been centralized to a single CSS file: '/DomReady/style.css'. This is for easier development of new components."
+    ]
+  },
+  "3.3.1": {
+    "New Stuff": [
+      "There's this new fancy changelog thing in town. What's up with that?",
+      "The changelog will display the first time you boot up on a new version, or any time you use the 'changelog' command."
+    ],
+    "Fixes": ["Fixed DiscordCanary crashes due to webpack scanning."]
+  },
+  "3.3.0": {
+    "Notice": [
+      "This update was mainly just repairs to discord's WS changes (zlib).",
+      "Additionally, local messages procedures have been rewritten."
+    ]
+  },
+  "3.2.2": {
+    "New Stuff": [
+      "DI now hosts a local webserver so that CSS stuff resolves. Don't worry, the overhead on this is negligable. You can also disable it in the settings tab.",
+      "There are now 'diag' and 'udiag' commands for system diagnostics."
+    ],
+    "Changes": [
+      "You can now specify custom file extensions to 'filter' for the file picker."
+    ],
+    "Fixes": [
+      "The plugin loader now successfully ignores the readme.md files.",
+      "Better support for BetterDiscord themes",
+      "Newest Discord Canary support (Attention: Plugins might still break!)"
+    ]
+  },
+  "3.2.1": {
+    "Fixes": [
+      "Fixes the settings tabs appearing in guild settings, and other misc things."
+    ]
+  },
+  "3.2.0": {
+    "Features": [
+      "Synchronised settings!",
+      "A generic mutation event in the StateWatcher!"
+    ],
+    "Changes": [
+      "Some custom command buffs",
+      "Changes to plugin settings - can access from a <code>.settings</code> property"
+    ],
+    "Fixes": [
+      "Fixed the settings toggle switch! (for now)",
+      "Plugins now properly reload/load/unload",
+      "Fixed the settings tab on different locales",
+      "Fixed plugin loading when symlinked"
+    ]
+  }
+}

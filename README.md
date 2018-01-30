@@ -8,6 +8,12 @@
 
 This script aims to pick up where [BeautifulDiscord](https://github.com/leovoel/BeautifulDiscord) ends. Not only does it support custom CSS injections, but it also gives you the ability for custom JavaScript.
 
+## Important notice
+
+This is version 4 of Discord Injections. This software is not yet finished and has many missing components, even though they are already listed in the changelog.
+
+Please report any problems, bugs, suspicious behavior, etc to Github. Thank you very much!
+
 ## DTinker
 
 Need help installing? Want to give a suggestion? Want to just chat? I'm using DTinker as a hub for DiscordInjections! Click right on Lil' Bub's face to go there!
@@ -41,7 +47,7 @@ This module optionally requires [git](https://git-scm.com/downloads) for easier 
      #### With releases
     1. Download the [latest release](https://github.com/DiscordInjections/DiscordInjections/releases)
     2. Extract to the desired location
-  
+
      #### With git
     1. Type `git clone https://github.com/DiscordInjections/DiscordInjections folderName`
     2. (optional) Type `git checkout tags/<VERSION>` to go to a specific version. This is recommended
