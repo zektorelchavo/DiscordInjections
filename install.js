@@ -2,6 +2,7 @@ const util = require("./lib/util")
 const path = require("path")
 const fs = require("fs-extra")
 const { spawn } = require("child_process")
+const os = require("os")
 
 const packageTemplate = {
   name: "discordinjections-loader",
@@ -26,19 +27,55 @@ function launchClient(exe) {
 
 async function closeClient(proc) {
   if (proc.pid.length === 0) return true
-  for (let pid of proc.pid) {
-    // dont try..catch, let exceptions fall through
-    process.kill(pid)
+
+  if (process.platform === "linux") {
+    const exe = path.basename(proc.command)
+    return new Promise(rs => {
+      // weird linux behavior not being able to kill the electron tree
+      spawn("killall", [exe]).on("exit", () => {
+        spawn("killall", [exe]).on("exit", rs)
+      })
+    })
+  } else {
+    for (let pid of proc.pid) {
+      // dont try..catch, let exceptions fall through
+      process.kill(pid)
+    }
   }
 }
 
-function injectClient(base) {
+async function injectClient(base) {
   const app =
     process.platform === "darwin"
       ? path.join(base, "..", "Resources", "app")
       : path.join(base, "app")
   if (fs.existsSync(path.join(app, "package.json"))) {
     throw new Error(`some kind of injector is already installed in <${app}>`)
+  }
+
+  // check for permissions
+  try {
+    fs.accessSync(path.dirname(app), fs.constants.W_OK)
+  } catch (err) {
+    // we dont have permissions, elevate and return!
+
+    const tmp = path.join(fs.realpathSync(os.tmpdir()), "injector.js")
+    console.log("Elevating permissions to access", path.dirname(app))
+    fs.writeFileSync(tmp, `
+    const fs = require("fs")
+    const path = require("path")
+    const app = "${app}"
+    fs.mkdirSync(app)
+
+    // create required injector files
+    fs.writeFileSync(
+      path.join(app, "package.json"),
+      \`${JSON.stringify(packageTemplate, null, 2)}\`
+    )
+    fs.writeFileSync(path.join(app, "index.js"), \`${indexTemplate(__dirname)}\`)
+    `)
+
+    return new Promise(rs => spawn("sudo", [process.argv0, tmp], { stdio: "inherit" }).on("exit", rs))
   }
 
   fs.ensureDirSync(app)
