@@ -1,10 +1,11 @@
-const e = window.React.createElement
+const React = require('react')
+const e = React.createElement
 
-class SettingsOption extends window.React.Component {
-  render() {
+class SettingsOption extends React.Component {
+  render () {
     return e(
-      "div",
-      { className: "di-settings-option" },
+      'div',
+      { className: 'di-settings-option' },
       `Option: ${this.props.title}`
     )
   }

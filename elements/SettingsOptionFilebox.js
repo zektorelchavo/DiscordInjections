@@ -1,85 +1,88 @@
-const e = window.React.createElement
+const React = require('react')
 
-const { dialog } = require("electron").remote
+const e = React.createElement
 
-const Base = require("./SettingsOptionBase")
+const { dialog } = require('electron').remote
 
-const SettingsOptionTitle = require("./SettingsOptionTitle")
-const SettingsOptionDescription = require("./SettingsOptionDescription")
-const SettingsOptionButton = require("./SettingsOptionButton")
+const Base = require('./SettingsOptionBase')
+
+const SettingsOptionTitle = require('./SettingsOptionTitle')
+const SettingsOptionDescription = require('./SettingsOptionDescription')
+const SettingsOptionButton = require('./SettingsOptionButton')
 
 class SettingsOptionFilebox extends Base {
-  constructor(props) {
+  constructor (props) {
     super(props)
 
     this.state = { value: this.getProp() }
   }
 
-  render() {
+  render () {
     let titles = [
       e(
-        "div",
+        'div',
         {
           className:
-            "flex-lFgbSz flex-3B1Tl4 horizontal-2BEEBe horizontal-2VE-Fw flex-3B1Tl4 directionRow-yNbSvJ justifyStart-2yIZo0 alignStretch-1hwxMa noWrap-v6g9vO",
+            'flex-lFgbSz flex-3B1Tl4 horizontal-2BEEBe horizontal-2VE-Fw flex-3B1Tl4 directionRow-yNbSvJ justifyStart-2yIZo0 alignStretch-1hwxMa noWrap-v6g9vO',
           style: {
-            flex: "1 1 auto"
+            flex: '1 1 auto'
           }
         },
         e(SettingsOptionTitle, { text: this.props.title })
       )
     ]
 
-    if (this.props.description)
+    if (this.props.description) {
       titles.push(
         e(SettingsOptionDescription, { text: this.props.description })
       )
+    }
 
     let icon =
-      this.props.buttonIcon || "https://cdn.bowser65.tk/i/icon-folder.png"
+      this.props.buttonIcon || 'https://cdn.bowser65.tk/i/icon-folder.png'
 
     return e(
-      "div",
+      'div',
       {},
       e(
-        "div",
+        'div',
         {
           className:
-            "flex-lFgbSz flex-3B1Tl4 vertical-3X17r5 flex-3B1Tl4 directionColumn-2h-LPR justifyStart-2yIZo0 alignStretch-1hwxMa noWrap-v6g9vO switchItem-1uofoz",
+            'flex-lFgbSz flex-3B1Tl4 vertical-3X17r5 flex-3B1Tl4 directionColumn-2h-LPR justifyStart-2yIZo0 alignStretch-1hwxMa noWrap-v6g9vO switchItem-1uofoz',
           style: {
-            flex: "1 1 auto"
+            flex: '1 1 auto'
           }
         },
         ...titles
       ),
       e(
-        "div",
+        'div',
         {
           className:
-            "flex-lFgbSz flex-3B1Tl4 horizontal-2BEEBe horizontal-2VE-Fw flex-3B1Tl4 directionRow-yNbSvJ justifyStart-2yIZo0 alignStretch-1hwxMa noWrap-v6g9vO margin-bottom-20"
+            'flex-lFgbSz flex-3B1Tl4 horizontal-2BEEBe horizontal-2VE-Fw flex-3B1Tl4 directionRow-yNbSvJ justifyStart-2yIZo0 alignStretch-1hwxMa noWrap-v6g9vO margin-bottom-20'
         },
         e(
-          "div",
+          'div',
           {
-            className: "ui-key-recorder ui-input-button default has-value",
+            className: 'ui-key-recorder ui-input-button default has-value',
             style: {
-              width: "90%"
+              width: '90%'
             }
           },
           e(
-            "div",
+            'div',
             {
               className:
-                "flex-lFgbSz flex-3B1Tl4 horizontal-2BEEBe horizontal-2VE-Fw flex-3B1Tl4 directionRow-yNbSvJ justifyStart-2yIZo0 alignStretch-1hwxMa noWrap-v6g9vO layout",
+                'flex-lFgbSz flex-3B1Tl4 horizontal-2BEEBe horizontal-2VE-Fw flex-3B1Tl4 directionRow-yNbSvJ justifyStart-2yIZo0 alignStretch-1hwxMa noWrap-v6g9vO layout',
               style: {
-                flex: "1 1 auto",
-                background: "none"
+                flex: '1 1 auto',
+                background: 'none'
               }
             },
-            e("input", {
+            e('input', {
               className:
-                "inputDefault-Y_U37D input-2YozMi size16-3IvaX_ flexChild-1KGW5q",
-              type: this.props.password ? "password" : "text",
+                'inputDefault-Y_U37D input-2YozMi size16-3IvaX_ flexChild-1KGW5q',
+              type: this.props.password ? 'password' : 'text',
               placeholder:
                 this.props.defaultValue || this.props.placeholder || undefined,
               name: this.props.name || undefined,
@@ -87,46 +90,46 @@ class SettingsOptionFilebox extends Base {
               value: this.state.value,
               onChange: this.change.bind(this),
               style: {
-                flex: "1 1 auto",
-                background: "none",
-                border: "none"
+                flex: '1 1 auto',
+                background: 'none',
+                border: 'none'
               }
             }),
             e(
-              "div",
+              'div',
               {
                 className:
-                  "flex-lFgbSz flex-3B1Tl4 horizontal-2BEEBe horizontal-2VE-Fw flex-3B1Tl4 directionRow-yNbSvJ justifyStart-2yIZo0 alignStretch-1hwxMa noWrap-v6g9vO",
+                  'flex-lFgbSz flex-3B1Tl4 horizontal-2BEEBe horizontal-2VE-Fw flex-3B1Tl4 directionRow-yNbSvJ justifyStart-2yIZo0 alignStretch-1hwxMa noWrap-v6g9vO',
                 style: {
-                  flex: "0 1 auto",
-                  margin: "0px"
+                  flex: '0 1 auto',
+                  margin: '0px'
                 }
               },
               e(
-                "button",
+                'button',
                 {
-                  type: "button",
+                  type: 'button',
                   className:
-                    "buttonGreyGhostDefault-2h5dqi buttonGhostDefault-2NFSwJ buttonDefault-2OLW-v button-2t3of8 buttonGhost-2Y7zWJ buttonGreyGhost-SfY7zU minGrow-1W9N45 min-K7DTfI ui-input-button-ui-button key-recorder-button",
+                    'buttonGreyGhostDefault-2h5dqi buttonGhostDefault-2NFSwJ buttonDefault-2OLW-v button-2t3of8 buttonGhost-2Y7zWJ buttonGreyGhost-SfY7zU minGrow-1W9N45 min-K7DTfI ui-input-button-ui-button key-recorder-button',
                   onClick: this.fileSelector.bind(this)
                 },
                 e(
-                  "div",
+                  'div',
                   {
                     className:
-                      "contentsDefault-nt2Ym5 contents-4L4hQM contentsGhost-2Yp1r8"
+                      'contentsDefault-nt2Ym5 contents-4L4hQM contentsGhost-2Yp1r8'
                   },
                   e(
-                    "span",
+                    'span',
                     {
-                      className: "key-recorder-button-text"
+                      className: 'key-recorder-button-text'
                     },
-                    this.props.buttonName || "Choose a file..."
+                    this.props.buttonName || 'Choose a file...'
                   ),
-                  e("span", {
-                    className: "key-recorder-edit-icon",
+                  e('span', {
+                    className: 'key-recorder-edit-icon',
                     style: {
-                      backgroundImage: "url(" + icon + ")"
+                      backgroundImage: 'url(' + icon + ')'
                     }
                   })
                 )
@@ -136,50 +139,51 @@ class SettingsOptionFilebox extends Base {
         ),
         this.props.apply
           ? e(SettingsOptionButton, {
-              outline: false,
-              text: "Apply",
-              onClick: this.apply.bind(this)
-            })
+            outline: false,
+            text: 'Apply',
+            onClick: this.apply.bind(this)
+          })
           : undefined,
         this.props.reset
           ? e(SettingsOptionButton, {
-              outline: true,
-              text: "Reset",
-              onClick: this.reset.bind(this)
-            })
+            outline: true,
+            text: 'Reset',
+            onClick: this.reset.bind(this)
+          })
           : undefined
       )
     )
   }
 
-  apply(event) {
+  apply (event) {
     let value = this.state.value || this.props.defaultValue
     this.setProp(value)
 
     if (this.props.onApply) this.props.onApply(event)
   }
 
-  change(event) {
+  change (event) {
     this.setState({ value: event.target.value })
-    if (!this.props.apply)
+    if (!this.props.apply) {
       this.setProp(event.target.value || this.props.defaultValue)
+    }
   }
 
-  reset(event) {
-    this.setState({ value: "" })
+  reset (event) {
+    this.setState({ value: '' })
     this.apply(event)
   }
 
-  static get fileDialogDefaults() {
+  static get fileDialogDefaults () {
     return {
-      title: "Select a file",
-      filters: [{ name: "All Files", extentions: ["*"] }],
-      properties: ["openFile"],
+      title: 'Select a file',
+      filters: [{ name: 'All Files', extentions: ['*'] }],
+      properties: ['openFile'],
       required: false
     }
   }
 
-  fileSelector() {
+  fileSelector () {
     let defaultDialogOptions = Object.assign(
       {},
       this.fileDialogDefaults,
@@ -189,8 +193,8 @@ class SettingsOptionFilebox extends Base {
       if (!filePath || !filePath.length) {
         if (this.props.dialog.required) {
           dialog.showMessageBox({
-            type: "warning",
-            message: "You need to select a file."
+            type: 'warning',
+            message: 'You need to select a file.'
           })
           this.fileSelector()
         }

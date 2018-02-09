@@ -3,5 +3,6 @@
   "version": "0.0.1",
   "main": "index.js",
   "author": "Kura",
-  "description": "Custom CSS"
+  "description": "Custom CSS",
+  "css": ["style.css"]
 }

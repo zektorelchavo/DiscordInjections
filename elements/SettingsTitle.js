@@ -1,12 +1,14 @@
-const e = window.React.createElement
+const React = require('react')
 
-class SettingsTitle extends window.React.Component {
-  render() {
+const e = React.createElement
+
+class SettingsTitle extends React.Component {
+  render () {
     return e(
-      "h2",
+      'h2',
       {
         className:
-          "h2-2ar_1B title-1pmpPr size16-3IvaX_ height20-165WbF weightSemiBold-T8sxWH defaultColor-v22dK1 defaultMarginh2-37e5HZ marginBottom20-2Ifj-2"
+          'h2-2ar_1B title-1pmpPr size16-3IvaX_ height20-165WbF weightSemiBold-T8sxWH defaultColor-v22dK1 defaultMarginh2-37e5HZ marginBottom20-2Ifj-2'
       },
       this.props.text
     )

@@ -1,29 +1,29 @@
-const Command = require("./command")
-const EventEmitter = require("eventemitter3")
-const path = require("path")
+const Command = require('./command')
+const EventEmitter = require('eventemitter3')
+const path = require('path')
 
 class Plugin extends EventEmitter {
-  constructor(pm, meta) {
+  constructor (pm, meta) {
     super()
 
     this.manager = pm
     this.DI = pm.DI
     this.meta = meta
     if (this.constructor == Plugin) {
-      throw new Error("Cannot instantiate an abstract class!")
+      throw new Error('Cannot instantiate an abstract class!')
     }
     this._name = meta.package.name
     this._commands = []
-    this.log("created")
+    this.log('created')
   }
 
   /**
    * Overwrite to set a custom icon URL
    */
-  get iconURL() {
+  get iconURL () {
     if (!this.hash) {
       this.hash =
-        this._name.split("").reduce(function(a, b) {
+        this._name.split('').reduce(function (a, b) {
           a = (a << 5) - a + b.charCodeAt(0)
           return a & a
         }, 0) % 4
@@ -40,29 +40,29 @@ class Plugin extends EventEmitter {
     }
   }
 
-  async _preload() {
+  async _preload () {
     this.path = path
     this._verifyPackage()
     await Promise.resolve(this.preload())
-    this.log("preloaded")
+    this.log('preloaded')
   }
 
-  _load() {
+  _load () {
     this.load()
-    this.log("loaded")
+    this.log('loaded')
   }
 
-  _verifyPackage() {
+  _verifyPackage () {
     if (
-      !this.meta.package.hasOwnProperty("author") ||
-      !this.meta.package.hasOwnProperty("version") ||
-      !this.meta.package.hasOwnProperty("description")
+      !this.meta.package.hasOwnProperty('author') ||
+      !this.meta.package.hasOwnProperty('version') ||
+      !this.meta.package.hasOwnProperty('description')
     ) {
-      throw new Error("A plugin must have an author, version, and description")
+      throw new Error('A plugin must have an author, version, and description')
     }
   }
 
-  _unload() {
+  _unload () {
     for (const command of this._commands) {
       this.DI.CommandHandler.unhookCommand(command.name)
     }
@@ -73,7 +73,7 @@ class Plugin extends EventEmitter {
     this.removeAllListeners()
 
     this.unload()
-    this.log("unloaded")
+    this.log('unloaded')
   }
 
   /**
@@ -81,37 +81,37 @@ class Plugin extends EventEmitter {
    *
    * During this stage, Discord and Plugins are probably not loaded.
    */
-  preload() {}
+  preload () {}
 
   /**
    * Functionality to call when the plugin is loaded
    */
-  load() {}
+  load () {}
 
   /**
    * Functionality to call when the plugin is unloaded
    */
-  unload() {}
+  unload () {}
 
   /**
    * Is called when settings changed
    */
-  settingsChanged() {}
+  settingsChanged () {}
 
   /**
    * Overwrite to customize plugin color
    */
-  get color() {
+  get color () {
     return 0x444444
   }
 
-  getSettingsNode(node, defaultValue) {
+  getSettingsNode (node, defaultValue) {
     let entry = this.settings
-    let nodes = node.split(".")
+    let nodes = node.split('.')
     let current = entry
     let update = false
     for (let i = 0; i < nodes.length - 1; i++) {
-      if (typeof current === "object") {
+      if (typeof current === 'object') {
         if (!current.hasOwnProperty(nodes[i])) {
           current[nodes[i]] = {}
           update = true
@@ -128,9 +128,9 @@ class Plugin extends EventEmitter {
     return current[nodes[nodes.length - 1]]
   }
 
-  setSettingsNode(node, value) {
+  setSettingsNode (node, value) {
     let entry = this.settings
-    let nodes = node.split(".")
+    let nodes = node.split('.')
     let current = entry
     for (let i = 0; i < nodes.length - 1; i++) {
       if (current[nodes[i]] === undefined || current[nodes[i]] === null) {
@@ -143,9 +143,9 @@ class Plugin extends EventEmitter {
     this.settings = entry
   }
 
-  get settings() {
+  get settings () {
     try {
-      let res = JSON.parse(this.DI.localStorage.getItem("DI-" + this._name))
+      let res = JSON.parse(this.DI.localStorage.getItem('DI-' + this._name))
       if (res === null) {
         this.settings = {}
         return {}
@@ -156,32 +156,32 @@ class Plugin extends EventEmitter {
     }
   }
 
-  get hasSettings() {
-    return this.DI.localStorage.getItem("DI-" + this._name) !== null
+  get hasSettings () {
+    return this.DI.localStorage.getItem('DI-' + this._name) !== null
   }
 
-  set settings(val) {
-    this.DI.localStorage.setItem("DI-" + this._name, JSON.stringify(val))
+  set settings (val) {
+    this.DI.localStorage.setItem('DI-' + this._name, JSON.stringify(val))
     this.settingsChanged()
   }
 
-  log(...args) {
-    this.console("log", ...args)
+  log (...args) {
+    this.console('log', ...args)
   }
 
-  info(...args) {
-    this.console("log", ...args)
+  info (...args) {
+    this.console('info', ...args)
   }
 
-  warn(...args) {
-    this.console("warn", ...args)
+  warn (...args) {
+    this.console('warn', ...args)
   }
 
-  error(...args) {
-    this.console("error", ...args)
+  error (...args) {
+    this.console('error', ...args)
   }
 
-  console(action, ...args) {
+  console (action, ...args) {
     console[action](
       `%c[${this._name}]`,
       `color: #${this.color}; font-weight: bold; `,
@@ -189,18 +189,18 @@ class Plugin extends EventEmitter {
     )
   }
 
-  registerCommand(options) {
+  registerCommand (options) {
     const command = new Command(this, options)
-    this.manager.get("commands").hookCommand(command)
+    this.manager.get('commands').hookCommand(command)
   }
 
-  registerSettingsTab(name, component) {
-    this.manager.get("settings")._registerSettingsTab(this, name, component)
+  registerSettingsTab (name, component) {
+    this.manager.get('settings')._registerSettingsTab(this, name, component)
   }
   /*
   sendLocalMessage (message, sanitize) {
     return this.DI.Helpers.sendLog(this._name, message, this.iconURL, sanitize)
-  }*/
+  } */
 }
 
 module.exports = Plugin

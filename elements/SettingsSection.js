@@ -1,20 +1,19 @@
-const e = window.React.createElement
+const React = require('react')
 
-const { SettingsTitle, SettingsDescription } = require("./index")
+const e = React.createElement
 
-class SettingsSection extends window.React.Component {
-  render() {
+const { SettingsTitle, SettingsDescription } = require('./index')
+
+class SettingsSection extends React.Component {
+  render () {
     let comps = []
     if (this.props.title) e(SettingsTitle, { text: this.props.title })
-    if (this.props.description)
-      comps.push(e(SettingsDescription, { text: this.props.description }))
-    if (this.props.elements && Array.isArray(this.props.elements))
-      comps.push(...this.props.elements)
-    else if (this.props.element) comps.push(this.props.element)
+    if (this.props.description) { comps.push(e(SettingsDescription, { text: this.props.description })) }
+    if (this.props.elements && Array.isArray(this.props.elements)) { comps.push(...this.props.elements) } else if (this.props.element) comps.push(this.props.element)
     else if (this.props.component) comps.push(e(this.props.component))
     return e(
-      "div",
-      { className: "ui-form-item" },
+      'div',
+      { className: 'ui-form-item' },
       e(SettingsTitle, { text: this.props.title }),
       ...comps
     )
