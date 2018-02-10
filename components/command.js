@@ -5,7 +5,7 @@ class Command {
     else throw new Error('Cannot instantiate a command without a name!')
 
     if (command.name.match(/[A-Z]/)) {
-      plguin.warn(
+      plugin.warn(
         'Registering a command with capitalization is unsupported and may result in unforeseen results.'
       )
     }
