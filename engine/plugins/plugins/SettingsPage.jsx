@@ -45,10 +45,12 @@ module.exports = class SettingsPage extends React.PureComponent {
   render () {
     return (
       <div>
-        <SettingsOptionButton
-          text='Add new Plugin'
-          onClick={() => this.addLocal()}
-        />
+        <div className="DI-plugin-buttonBar">
+          <SettingsOptionButton
+            text='Add new Plugin'
+            onClick={() => this.addLocal()}
+          />
+        </div>
         <List
           disable={(idx, flag) => this.setDisabled(idx, flag)}
           delete={idx => this.delete(idx)}

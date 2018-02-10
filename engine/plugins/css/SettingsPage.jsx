@@ -47,10 +47,12 @@ module.exports = class SettingsPage extends React.PureComponent {
     return (
       <div>
         <SettingsOptionDescription text='Drag and Drop to order and prioritize styles and themes, or to throw them into the trashcan.' />
-        <SettingsOptionButton
-          text='Add new style'
-          onClick={() => this.addLocal()}
-        />
+        <div className="DI-css-buttonBar">
+          <SettingsOptionButton
+            text='Add new style'
+            onClick={() => this.addLocal()}
+          />
+        </div>
         <List
           moveStylesheet={(src, dst) => this.refreshOrder(src, dst)}
           disable={(idx, flag) => this.setDisabled(idx, flag)}
