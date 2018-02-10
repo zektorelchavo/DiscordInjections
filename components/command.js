@@ -5,10 +5,8 @@ class Command {
     else throw new Error('Cannot instantiate a command without a name!')
 
     if (command.name.match(/[A-Z]/)) {
-      console.warn(
-        plguin.warn(
-          'Registering a command with capitalization is unsupported and may result in unkown results.'
-        )
+      plguin.warn(
+        'Registering a command with capitalization is unsupported and may result in unkown results.'
       )
     }
 
