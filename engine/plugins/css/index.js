@@ -6,7 +6,7 @@ const fs = require('fs-extra')
 const path = require('path')
 const Watcher = module.parent.require('../lib/watcher')
 
-module.exports = class react extends Plugin {
+module.exports = class css extends Plugin {
   preload () {
     this.convertLegacySettings()
 
