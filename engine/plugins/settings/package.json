@@ -3,6 +3,5 @@
   "version": "0.0.1",
   "main": "index.js",
   "author": "Kura",
-  "description": "DI Settings Dialog",
-  "css": ["tabs.css"]
+  "description": "DI Settings Dialog"
 }
