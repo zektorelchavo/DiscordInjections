@@ -10,7 +10,7 @@ This script aims to pick up where [BeautifulDiscord](https://github.com/leovoel/
 
 ## Important notice
 
-This is version 4 of Discord Injections. This software is not yet finished and has many missing components, even though they are already listed in the changelog.
+This is version 4 of Discord Injections. This software is now in Beta, breaking changes should not occur anymore, but no promises can be made.
 
 Please report any problems, bugs, suspicious behavior, etc to Github. Thank you very much!
 
@@ -29,8 +29,8 @@ Need help installing? Want to give a suggestion? Want to just chat? I'm using DT
 3. Custom JS in the form of Plugins
 4. Custom commands
 5. Custom settings
-6. Exposes the native Discord WebSocket and localStorage
-7. Transparency and frame settings
+6. Transparency and frame settings
+7. Custom splash screen CSS
 
 ## Requirements
 
@@ -83,32 +83,15 @@ All usage takes place in the folder you installed DiscordInjections into.
 
 ### Config
 
-DiscordInjections has some configuration options. A default config.json file is generated when you run `npm run inject` (this will not overwrite existing files).
-
-```js
-{
-    // This makes the background of the client transparent. On linux, you must run discord with the `--enable-transparent-visuals` flag!
-    "transparent": false,
-    // Set to `true` or `false` to enable or disable the OS frame around the client. Leave as `null` to use default client settings.
-    "frame": null
-}
-```
+DiscordInjections has some configuration options. A default config.json file is provided as config.json.template. Feel free to copy over and customize it to your liking.
 
 ### CSS
 
-By default, DiscordInjections looks for a `style.css` file within the `CSS` folder. This file is not provided.
+The CSS tree can be changed in the settings of Discord.
 
-For a custom location, open the `General Settings` DiscordInjections settings tab in the user settings.
+To adjust the CSS for the splash screen, adjust the `splash` key of the config.json file. To see the HTML of the splash screen, extract the app.asar file in the Discord resources folder. Then load the app_bootstrap/spash/index.html in Vanilla [Electron](https://github.com/electron/electron/releases/latest).
 
 ### JavaScript
-
-There are two segments of JS that get injected.
-
-#### Preload/index.js
-
-This is content that gets injected before anything else in the discord client. It is what enables us to intercept the WS and localStorage objects. Put things that need to be loaded first here. Generally, this should not be modified.
-
-#### Plugins
 
 For extensibility, DiscordInjections uses a simple plugin system. Plugins are placed in the `Plugins/` directory.
 
@@ -119,16 +102,6 @@ For a list of plugins, visit [Plugins](https://github.com/DiscordInjections/Plug
 ##### WARNING
 
 Plugins can be dangerous. Please read the disclaimer.
-
-#### Note
-
-Do not touch the `DomReady` directory, as it is what handles the custom CSS injections and plugins.
-
-### WebSockets and localStorage
-
-Discord deletes its websocket and localStorage references to prevent tampering. In order to prevent deletion, these variables are stored to `DI.ws` and `DI.localStorage` respectively.
-
-Additionally, Discord initiates a new websocket object every reconnect. To ensure that your implementation works properly, you should define a `window.onWebsocketReload` function, that takes a websocket as an input.
 
 ## Disclaimer
 
