@@ -1,30 +1,37 @@
 class Command {
-    constructor(plugin, options = {}) {
-        this.plugin = plugin;
-        if (options.name)
-            this.name = options.name;
-        else throw new Error('Cannot instantiate a command without a name!');
-        this.info = options.info || 'A super cool command.';
-        this.usage = options.usage || '';
-        this.usage = this.usage.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  constructor (plugin, options = {}) {
+    this.plugin = plugin
+    if (options.name) this.name = options.name
+    else throw new Error('Cannot instantiate a command without a name!')
 
-        if (options.func) this.execOverride = options.func;
+    if (command.name.match(/[A-Z]/)) {
+      console.warn(
+        plguin.warn(
+          'Registering a command with capitalization is unsupported and may result in unkown results.'
+        )
+      )
     }
 
-    get header() {
-        if (this.plugin)
-            return this.plugin.name;
-        else return '';
-    }
+    this.info = options.info || 'A super cool command.'
+    this.usage = options.usage || ''
+    this.usage = this.usage.replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
-    _execute(args) {
-        if (this.execOverride) return this.execOverride(args);
-        else return this.execute(args);
-    }
+    if (options.func) this.execOverride = options.func
+  }
 
-    execute() {
-        /* no-op */
-    }
+  get header () {
+    if (this.plugin) return this.plugin.name
+    else return ''
+  }
+
+  _execute (args) {
+    if (this.execOverride) return this.execOverride(args)
+    else return this.execute(args)
+  }
+
+  execute () {
+    /* no-op */
+  }
 }
 
-module.exports = Command;
+module.exports = Command
