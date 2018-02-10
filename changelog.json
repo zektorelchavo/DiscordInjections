@@ -11,7 +11,9 @@
     "Things to come": [
       "Automatic resolvement of unmet dependencies",
       "Theme file dependencies",
-      "Possible plugin dependency tree unloading"
+      "Possible plugin dependency tree unloading",
+      "The ability to rename commands. Make DI fully yours!",
+      "Automatic version updater"
     ]
   },
   "3.3.2": {
