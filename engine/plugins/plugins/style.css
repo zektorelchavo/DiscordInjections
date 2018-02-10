@@ -1,0 +1,51 @@
+#pluginList {
+  transition: all 0.5s ease;
+}
+
+#pluginList.droppable {
+  background: rgba(255, 255, 255, 0.2);
+  border: 5px solid rgba(128, 128, 128, 0.5);
+}
+
+#styleList li {
+  height: 110px;
+}
+
+.DI-plugin-infobox {
+  display: flex;
+  width: 100%;
+  color: #f6f6f7;
+}
+
+.DI-plugin-infobox > * {
+  flex: 1;
+}
+
+.DI-plugin-infobox > :first-child,
+.DI-plugin-infobox > :last-child {
+  flex: 0 34px;
+}
+
+.DI-plugin-meta span {
+  margin-right: 0.5rem;
+}
+
+.DI-plugin-meta .license:before {
+  content: "©";
+  margin-right: 0.3rem;
+}
+
+.DI-plugin-meta .homepage:before {
+  content: "⌂";
+  margin-right: 0.3rem;
+}
+
+.DI-plugin-meta .author:before {
+  content: "👤";
+  margin-right: 0.3rem;
+}
+
+.DI-plugin-meta .repository:before {
+  content: "☭";
+  margin-right: 0.3rem;
+}

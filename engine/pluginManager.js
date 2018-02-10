@@ -50,7 +50,9 @@ class PluginManager extends EventEmitter {
         // prefix basepath
         .map(f => path.join(this.basePath, f))
         // filter out non directories
-        .filter(f => fs.statSync(f).isDirectory())
+        .filter(
+          f => fs.statSync(f).isDirectory() || path.extname(f) === '.asar'
+        )
         // filter out non node modules
         .filter(f => fs.existsSync(path.join(f, 'package.json')))
         // load dem plugins
@@ -61,8 +63,13 @@ class PluginManager extends EventEmitter {
     )
   }
 
-  async loadByPath (pluginPath, force = true) {
-    const pkg = reload(path.join(pluginPath, 'package.json'))
+  async loadByPath (pluginPath, force = true, dependency = false) {
+    const fileName =
+      path.basename(pluginPath) === 'package.json'
+        ? pluginPath
+        : path.join(pluginPath, 'package.json')
+
+    const pkg = reload(fileName)
     if (!force && this.pluginsEnabled[pkg.name] === false) {
       // dont load disabled plugins
       return
@@ -83,12 +90,16 @@ class PluginManager extends EventEmitter {
       loaded: false,
       loading: true,
       cls: null,
-      inst: null
+      inst: null,
+      dependency,
+      core: false
     })
 
     // check for dependencies
     if (Array.isArray(pkg.pluginDependencies)) {
-      await Promise.each(pkg.pluginDependencies, dep => this.load(dep))
+      await Promise.each(pkg.pluginDependencies, dep =>
+        this.load(dep, true, true)
+      )
     }
 
     // load the plugin
@@ -105,13 +116,13 @@ class PluginManager extends EventEmitter {
     }
   }
 
-  async load (plugin, force = true) {
+  async load (plugin, force = true, dependency = false) {
     const pluginPath = path.resolve(this.basePath, plugin)
     if (!fs.existsSync(path.join(pluginPath, 'package.json'))) {
       throw new Error('plugin not found', plugin)
     }
 
-    return this.loadByPath(pluginPath, force)
+    return this.loadByPath(pluginPath, force, dependency)
   }
 
   async unload (name) {
@@ -145,6 +156,44 @@ class PluginManager extends EventEmitter {
 
     await this.unload(name)
     return await this.load(name)
+  }
+
+  async install (pluginPath) {
+    const fileName =
+      path.basename(pluginPath) === 'package.json'
+        ? pluginPath
+        : path.join(pluginPath, 'package.json')
+
+    const pkg = require(fileName)
+
+    if (this.plugins[pkg.name]) {
+      throw new Error('Plugin', pkg.name, 'already loaded!')
+    }
+
+    await fs.ensureDir(path.join(pluginPath, pkg.name))
+    await fs.copy(path.basename(fileName), path.join(pluginPath, pkg.name))
+    return this.loadByPath(fileName)
+  }
+
+  async uninstall (name) {
+    const plugin = this.get(name, true)
+    // first unload
+    await this.unload(name)
+
+    // now remove the directory tree
+    delete this.plugins[name]
+    return fs.remove(plugin.path)
+  }
+
+  async remove (name, unload = true) {
+    const pluginPath = path.resolve(this.basePath, plugin)
+    if (!fs.existsSync(path.join(pluginPath, 'package.json'))) {
+      throw new Error('plugin not found', plugin)
+    }
+
+    if (unload) {
+      return this.unload(name)
+    }
   }
 
   async enable (name, load = false) {

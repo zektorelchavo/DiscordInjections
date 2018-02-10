@@ -12,6 +12,7 @@ module.exports = class SettingsOptionCheckbox extends Base {
   }
 
   click () {
+    if (this.props.disabled) return
     this.setProp(!this.getProp())
     this.setState(() => ({
       checked: this.getProp()
@@ -32,7 +33,8 @@ module.exports = class SettingsOptionCheckbox extends Base {
             ? 'checked-2TahvT'
             : ''}`}
           style={{
-            borderColor: this.getProp() ? 'rgb(114, 137, 218)' : ''
+            borderColor: this.getProp() ? 'rgb(114, 137, 218)' : '',
+            backgroundColor: this.props.disabled ? 'silver' : ''
           }}
         >
           <svg
