@@ -6,7 +6,7 @@ class Command {
 
     if (command.name.match(/[A-Z]/)) {
       plguin.warn(
-        'Registering a command with capitalization is unsupported and may result in unkown results.'
+        'Registering a command with capitalization is unsupported and may result in unforeseen results.'
       )
     }
 
