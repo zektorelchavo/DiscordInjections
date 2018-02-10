@@ -52,7 +52,6 @@ Object.defineProperty(DI, 'plugins', {
 // stage two
 // post launch patching
 process.once('loaded', async () => {
-  window.DI = DI
   const ready = new Promise(rs => getCurrentWebContents().on('dom-ready', rs))
 
   // add core modules
