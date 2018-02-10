@@ -261,7 +261,6 @@ module.exports = class css extends Plugin {
 
   moveStylesheet (source, destination) {
     this.console('debug', 'Moving style from', source, 'to', destination)
-    debugger
     const sheets = this.settings.stylesheets
     const sheet = sheets.splice(source, 1)[0]
     sheets.splice(destination, 0, sheet)
