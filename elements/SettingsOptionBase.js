@@ -1,13 +1,13 @@
 const React = require('react')
-const { Plugin } = require('.')
 
-class SettingsOptionBase extends React.Component {
+class SettingsOptionBase extends React.PureComponent {
   constructor (props) {
     super(props)
 
     if (
       !props.virtual &&
-      (!props.hasOwnProperty('plugin') || !(props.plugin instanceof Plugin))
+      (!props.hasOwnProperty('plugin') ||
+        !(props.plugin instanceof require('./index').Plugin))
     ) {
       throw new Error(
         'Settings Components must have a valid plugin property or be declared virtual!'
