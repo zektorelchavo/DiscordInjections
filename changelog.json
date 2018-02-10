@@ -7,7 +7,12 @@
       "Did you ever want to style the splash screen before discord launches? This is a thing now! Do your worst!",
       "Did someone say multiple stylesheets back there? No? Well, I don't care. You can now add multiple stylesheets!"
     ],
-    "Internal Fun Fact": "Discord Injections still doesn't edit any base files of Discord. It now doesn't add any script tags either and it doesn't use the dom-ready event anymore either. Everything is done in the preload script. Though we still need to add style tags so you can add your custom themes."
+    "Internal Fun Fact": "Discord Injections still doesn't edit any base files of Discord. It now doesn't add any script tags either and it doesn't use the dom-ready event anymore either. Everything is done in the preload script. Though we still need to add style tags so you can add your custom themes.",
+    "Things to come": [
+      "Automatic resolvement of unmet dependencies",
+      "Theme file dependencies",
+      "Possible plugin dependency tree unloading"
+    ]
   },
   "3.3.2": {
     "Changes": [
