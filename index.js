@@ -21,6 +21,7 @@ Object.assign(exports, {
     let splashPatched = false
     let mainWindowPatched = false
     let updaterPatched = false
+    let bootstrapPatched = false
 
     // overwrite (and restore) the .js compiler
     const oldLoader = Module._extensions['.js']
@@ -29,10 +30,7 @@ Object.assign(exports, {
       const fname = filename.toLowerCase()
 
       // splash screen patches
-      if (
-        fname.endsWith(`app_bootstrap${path.sep}splashscreen.js`) ||
-        fname.endsWith('splashwindow.js')
-      ) {
+      if (fname.endsWith(`app_bootstrap${path.sep}splashscreen.js`)) {
         splashPatched = true
 
         content = content
@@ -44,16 +42,13 @@ Object.assign(exports, {
           // now add the real patch
           .replace(
             'new _electron.BrowserWindow(windowConfig);',
-          `new _electron.BrowserWindow(Object.assign(windowConfig, { webPreferences: { preload: "${path
-            .join(preloadPath, 'style.js')
-            .replace(/\\/g, '/')}" } }));`
+            `new _electron.BrowserWindow(Object.assign(windowConfig, { webPreferences: { preload: "${path
+              .join(preloadPath, 'style.js')
+              .replace(/\\/g, '/')}" } }));`
           )
 
         // main window patches
-      } else if (
-        fname.endsWith(`app${path.sep}mainscreen.js`) ||
-        fname.endsWith(`app.asar${path.sep}index.js`)
-      ) {
+      } else if (fname.endsWith(`app${path.sep}mainscreen.js`)) {
         mainWindowPatched = true
 
         content = content
@@ -67,7 +62,7 @@ Object.assign(exports, {
           // transparency
           .replace('transparent: false', `transparent: ${conf.transparent}`)
         if (conf.transparent) {
-            content = content.replace('backgroundColor: ACCOUNT_GREY,', '')
+          content = content.replace('backgroundColor: ACCOUNT_GREY,', '')
         }
 
         if (typeof conf.frame === typeof true) {
@@ -79,9 +74,28 @@ Object.assign(exports, {
               `mainWindowOptions.frame = ${conf.frame};`
             )
         }
+      } else if (fname.endsWith(`app_bootstrap${path.sep}bootstrap.js`)) {
+        bootstrapPatched = true
+        const flags = JSON.stringify(
+          conf.chromeFlags.map(f => (Array.isArray(f) ? f : [f]))
+        )
+
+        content = content
+          // attach chrome flags
+          .replace(
+            'app.setVersion',
+            `${flags}.forEach(flag => {
+            app.commandLine.appendSwitch(flag[0], flag[1]);
+          });app.setVersion`
+          )
       }
 
-      if (splashPatched && mainWindowPatched && updaterPatched) {
+      if (
+        splashPatched &&
+        mainWindowPatched &&
+        updaterPatched &&
+        bootstrapPatched
+      ) {
         Module._extensions['.js'] = oldLoader
       }
 
