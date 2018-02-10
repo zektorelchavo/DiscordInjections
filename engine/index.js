@@ -2,6 +2,18 @@ const { getCurrentWindow, getCurrentWebContents } = require('electron').remote
 const path = require('path')
 const fs = require('fs')
 const Promise = require('bluebird')
+const buble = require('buble')
+
+// register custom extension compilation support
+require.extensions['.jsx'] = (module, filename) => {
+  const raw = fs.readFileSync(filename, 'utf8')
+  const transformed = buble.transform(raw, {
+    jsx: 'React.createElement',
+    objectAssign: 'Object.assign',
+    target: { chrome: 52 }
+  })
+  return module._compile(transformed.code, filename)
+}
 
 // stage one
 // prelaunch adjustments

@@ -12,3 +12,11 @@ exports.SettingsSection = require('./SettingsSection')
 exports.SettingsTitle = require('./SettingsTitle')
 exports.SettingsOptionCheckbox = require('./SettingsOptionCheckbox')
 exports.SettingsPanel = require('./SettingsPanel')
+
+// go as far up as possible
+let m = module
+while (m.parent && !m.filename.endsWith('pluginManager.js')) {
+  m = m.parent
+}
+
+exports.Plugin = m.require('../components/plugin')

@@ -1,4 +1,4 @@
-const Plugin = module.parent.require('../components/plugin')
+const { Plugin } = require('elements')
 
 module.exports = class settings extends Plugin {
   preload () {

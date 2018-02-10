@@ -1,4 +1,4 @@
-const Plugin = module.parent.require('../components/plugin')
+const { Plugin } = require('elements')
 
 //! TODO: custom settings page
 // => ability to hide commands
@@ -289,8 +289,7 @@ module.exports = class commands extends Plugin {
         : [0, 0, 0]
     }
 
-    const isDark = c =>
-      !(c[0] * 0.299 + c[1] * 0.587 + c[2] * 0.114 > 150)
+    const isDark = c => !(c[0] * 0.299 + c[1] * 0.587 + c[2] * 0.114 > 150)
 
     const color =
       typeof command.plugin.color === 'number'
@@ -338,7 +337,9 @@ module.exports = class commands extends Plugin {
   }
 
   hookCommand (command) {
-    if (this.commands[command.name]) { throw new Error(`A command with the name ${command.name} already exists!`) }
+    if (this.commands[command.name]) {
+      throw new Error(`A command with the name ${command.name} already exists!`)
+    }
 
     this.commands[command.name] = command
     this.commandElements[command.name] = this.createCommandRow(command)
@@ -419,6 +420,8 @@ module.exports = class commands extends Plugin {
       if (command) this.attachCommandRow(command)
     }
 
-    if (this.acRows[selectedIndex]) { this.onHover(this.acRows[selectedIndex].selector) } else if (this.acRows.length > 0) this.onHover(this.acRows[0].selector)
+    if (this.acRows[selectedIndex]) {
+      this.onHover(this.acRows[selectedIndex].selector)
+    } else if (this.acRows.length > 0) this.onHover(this.acRows[0].selector)
   }
 }

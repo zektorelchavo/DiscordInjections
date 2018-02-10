@@ -1,6 +1,4 @@
-const Plugin = module.parent.require('../components/plugin')
-const fs = require('fs')
-const buble = require('buble')
+const { Plugin } = require('elements')
 
 module.exports = class react extends Plugin {
   // WebPackLoad
@@ -15,20 +13,7 @@ module.exports = class react extends Plugin {
     }
   }
 
-  loadJsx (module, filename) {
-    const raw = fs.readFileSync(filename, 'utf8')
-    const transformed = buble.transform(raw, {
-      jsx: 'React.createElement',
-      objectAssign: 'Object.assign',
-      target: { chrome: 52 }
-    })
-    return module._compile(transformed.code, filename)
-  }
-
   registerReact () {
-    // register custom extension compilation support
-    require.extensions['.jsx'] = this.loadJsx
-
     return new Promise(rs =>
       this.webPackLoad((m, e, r) => {
         let reactExtracted = !!window.React

@@ -1,4 +1,4 @@
-const Plugin = module.parent.require('../components/plugin')
+const { Plugin } = require('elements')
 const Promise = require('bluebird')
 const postcss = require('postcss')
 const postcssImport = require('postcss-import')

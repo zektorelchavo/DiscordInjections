@@ -1,5 +1,5 @@
 const React = require('react')
-const Plugin = require('../components/plugin')
+const { Plugin } = require('.')
 
 class SettingsOptionBase extends React.Component {
   constructor (props) {

@@ -1,25 +1,25 @@
-const Plugin = module.parent.require("../components/plugin")
-const semver = require("semver")
-const changelogData = require("../../../changelog")
+const { Plugin } = require('elements')
+const semver = require('semver')
+const changelogData = require('../../../changelog')
 
 module.exports = class changelog extends Plugin {
-  preload() {
+  preload () {
     this.registerCommand({
-      name: "changelog",
-      info: "Display the DI changelog",
+      name: 'changelog',
+      info: 'Display the DI changelog',
       func: this.displayChangelog.bind(this)
     })
   }
 
-  load() {
-    const lastChangelog = this.getSettingsNode("lastChangelog", 0)
+  load () {
+    const lastChangelog = this.getSettingsNode('lastChangelog', 0)
     if (lastChangelog == 0 || semver.lt(lastChangelog, this.DI.version)) {
       this.displayChangelog()
-      this.setSettingsNode("lastChangelog", this.DI.version)
+      this.setSettingsNode('lastChangelog', this.DI.version)
     }
   }
 
-  displayChangelog() {
+  displayChangelog () {
     let output = []
 
     let keys = Object.keys(changelogData).slice(0, 5)
@@ -27,7 +27,7 @@ module.exports = class changelog extends Plugin {
       output.push(
         `<h1 class="added-3Q7OGu title-1PW5Fd marginTop-4_cfcL marginTop20-3UscxH" ${version !==
         this.DI.version
-          ? ""
+          ? ''
           : 'style="margin-top: 0px !important"'}>Version ${version}</h1>`
       )
       for (const key in changelogData[version]) {
@@ -40,7 +40,7 @@ module.exports = class changelog extends Plugin {
           output.push(
             `<ul>${changelogData[version][key]
               .map(k => `<li>${k}</li>`)
-              .join("\n")}</ul>`
+              .join('\n')}</ul>`
           )
         } else {
           output.push(`<p>${changes}</p>`)
@@ -48,7 +48,7 @@ module.exports = class changelog extends Plugin {
       }
     }
 
-    this.DI.plugins.get("react")
+    this.DI.plugins.get('react')
       .createModal(`<div class="flex-lFgbSz flex-3B1Tl4 horizontal-2BEEBe horizontal-2VE-Fw flex-3B1Tl4 directionRow-yNbSvJ justifyStart-2yIZo0 alignCenter-3VxkQP noWrap-v6g9vO header-3sp3cE">
     <div class="flexChild-1KGW5q" style="flex: 1 1 auto;">
         <h4 class="h4-2IXpeI title-1pmpPr size16-3IvaX_ height20-165WbF weightSemiBold-T8sxWH defaultColor-v22dK1 defaultMarginh4-jAopYe marginReset-3hwONl">
@@ -61,7 +61,7 @@ module.exports = class changelog extends Plugin {
 </div>
 <div class="scrollerWrap-2uBjct content-1Cut5s scrollerThemed-19vinI themeGhostHairline-2H8SiW">
     <div class="scroller-fzNley inner-tqJwAU content-3KEfmo">
-    ${output.join("\n")}
+    ${output.join('\n')}
 </div></div>
 `)
   }
