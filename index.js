@@ -71,18 +71,18 @@ Object.assign(exports, {
         }
       } else if (fname.endsWith(`app_bootstrap${path.sep}bootstrap.js`)) {
         bootstrapPatched = true
-        const flags = JSON.stringify(
-          conf.chromeFlags.map(f => (Array.isArray(f) ? f : [f]))
-        )
-
-        content = content
-          // attach chrome flags
-          .replace(
-            'app.setVersion',
-            `${flags}.forEach(flag => {
-            app.commandLine.appendSwitch(flag[0], flag[1]);
-          });app.setVersion`
+        if (conf.chromeFlags && Array.isArray(conf.chromeFlags)) {
+          const flags = JSON.stringify(
+            conf.chromeFlags.map(f => (Array.isArray(f) ? f : [f]))
           )
+
+          content = content
+            // attach chrome flags
+            .replace(
+              'app.setVersion',
+              `${flags}.forEach(flag => app.commandLine.appendSwitch(flag[0], flag[1]));app.setVersion`
+            )
+        }
       }
 
       if (
