@@ -158,15 +158,17 @@ module.exports = class css extends Plugin {
     let cssFile = resolved
 
     try {
-      try {
-        pkg = require(resolved)
-        filePath = path.dirname(filePath)
-      } catch (ex) {
-        pkg = require(path.join(resolved, 'package.json'))
-      }
+      if (fs.statSync(resolved).size > 2) {
+        try {
+          pkg = require(resolved)
+          filePath = path.dirname(filePath)
+        } catch (ex) {
+          pkg = require(path.join(resolved, 'package.json'))
+        }
 
-      raw = false
-      cssFile = path.join(path.dirname(resolved), pkg.main)
+        raw = false
+        cssFile = path.join(path.dirname(resolved), pkg.main)
+      }
     } catch (ex) {}
 
     const idx = raw ? filePath : pkg.name
