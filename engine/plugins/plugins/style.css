@@ -5,10 +5,52 @@
 #pluginList.droppable {
   background: rgba(255, 255, 255, 0.2);
   border: 5px solid rgba(128, 128, 128, 0.5);
+  border-radius: 5px;
 }
 
-#styleList li {
+#pluginList li {
   height: 110px;
+  padding-top: 5px;
+}
+
+#pluginList .item-2zi_5J {
+  height: 100px;
+}
+
+#pluginList .checked-2TahvT[style*=silver] {
+  background-color: #333 !important;
+}
+
+#pluginList .checked-2TahvT {
+  border: none;
+  background-color: #7289DA;
+}
+
+#pluginList .checked-2TahvT polyline {
+  stroke: #fff;
+}
+
+#pluginList .checkbox-1QwaS4:not(.checked-2TahvT) {
+  border-width: 2px;
+}
+
+.DI-plugin-buttonBar {
+  margin-bottom: 10px;
+}
+
+.DI-plugin-buttonBar button {
+  width: 48%;
+  padding: 10px;
+  display: inline-block;
+}
+
+.DI-plugin-buttonBar button div:before {
+  content: '';
+  display: inline-block;
+  background-image: url(data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xOSAxM2gtNnY2aC0ydi02SDV2LTJoNlY1aDJ2Nmg2djJ6Ii8+CiAgICA8cGF0aCBkPSJNMCAwaDI0djI0SDB6IiBmaWxsPSJub25lIi8+Cjwvc3ZnPg==);
+  height: 24px;
+  width: 24px;
+  margin: -15px 5px -7px 0;
 }
 
 .DI-plugin-infobox {
