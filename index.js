@@ -34,11 +34,6 @@ Object.assign(exports, {
         splashPatched = true
 
         content = content
-          // alias old var name
-          .replace(
-            'this._window = new _electron.BrowserWindow(windowConfig);',
-            'const splashWindow = this._window = new _electron.BrowserWindow(windowConfig);'
-          )
           // now add the real patch
           .replace(
             'new _electron.BrowserWindow(windowConfig);',
