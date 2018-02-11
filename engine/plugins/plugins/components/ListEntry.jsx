@@ -81,7 +81,7 @@ module.exports = class ListEntry extends PureComponent {
                   </a>
                 </span>
                 : null}
-              {entry.package.repository
+              {entry.package.license
                 ? <span className='license'>
                   {entry.package.license}
                 </span>
