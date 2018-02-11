@@ -81,9 +81,11 @@ module.exports = class ListEntry extends PureComponent {
                   </a>
                 </span>
                 : null}
-              <span className='license'>
-                {entry.package.license || <i>Unknown</i>}
-              </span>
+              {entry.package.repository
+                ? <span className='license'>
+                  {entry.package.license}
+                </span>
+                : null}
               <span className='author'>
                 {entry.package.author || <i>Unknown</i>}
               </span>
