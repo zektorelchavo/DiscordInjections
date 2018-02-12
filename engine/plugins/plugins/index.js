@@ -23,13 +23,17 @@ module.exports = class plugins extends Plugin {
       this.plugins.set(plugin.path, plugin)
     })
     this.manager.on('before-uninstall', pluginName => {
-      const plugin = this.DI.plugins.get(pluginName, true)
+      const plugin = this.get(pluginName)
       this.plugins.delete(plugin.path)
     })
   }
 
   async load () {
     this.registerSettingsTab('Plugin Manager', require('./SettingsPage'))
+  }
+
+  get(name){
+    return Array.from(this.plugins.values()).find(p => p.name === name);
   }
 
   unload () {}
