@@ -177,6 +177,7 @@ class PluginManager extends EventEmitter {
 
   async uninstall (name) {
     const plugin = this.get(name, true)
+    this.emit('before-uninstall', name)
     // first unload
     await this.unload(name)
 
