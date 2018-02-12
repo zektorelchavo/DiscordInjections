@@ -59,7 +59,7 @@ class PluginManager extends EventEmitter {
         .each(m => {
           return this.load(m, false)
         })
-        .then(this.emit('plugins-preloaded', Object.keys(this.plugins)))
+        .then(() => this.emit('plugins-preloaded', Object.keys(this.plugins)))
     )
   }
 
@@ -112,7 +112,7 @@ class PluginManager extends EventEmitter {
 
     if (this._ready) {
       p.inst._load()
-      this.emit('load', name)
+      this.emit('load', pkg.name)
     }
   }
 
@@ -182,13 +182,14 @@ class PluginManager extends EventEmitter {
 
     // now remove the directory tree
     delete this.plugins[name]
+    this.emit('uninstall', name)
     return fs.remove(plugin.path)
   }
 
   async remove (name, unload = true) {
-    const pluginPath = path.resolve(this.basePath, plugin)
+    const pluginPath = path.resolve(this.basePath, name)
     if (!fs.existsSync(path.join(pluginPath, 'package.json'))) {
-      throw new Error('plugin not found', plugin)
+      throw new Error('plugin not found', name)
     }
 
     if (unload) {
@@ -197,9 +198,9 @@ class PluginManager extends EventEmitter {
   }
 
   async enable (name, load = false) {
-    const pluginPath = path.resolve(this.basePath, plugin)
+    const pluginPath = path.resolve(this.basePath, name)
     if (!fs.existsSync(path.join(pluginPath, 'package.json'))) {
-      throw new Error('plugin not found', plugin)
+      throw new Error('plugin not found', name)
     }
 
     this.pluginsEnabled[name] = true
@@ -211,9 +212,9 @@ class PluginManager extends EventEmitter {
   }
 
   async disable (name, unload = false) {
-    const pluginPath = path.resolve(this.basePath, plugin)
+    const pluginPath = path.resolve(this.basePath, name)
     if (!fs.existsSync(path.join(pluginPath, 'package.json'))) {
-      throw new Error('plugin not found', plugin)
+      throw new Error('plugin not found', name)
     }
 
     this.pluginsEnabled[name] = false
