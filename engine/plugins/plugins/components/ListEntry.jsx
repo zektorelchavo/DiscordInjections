@@ -55,8 +55,6 @@ module.exports = class ListEntry extends PureComponent {
   render () {
     const { entry, index } = this.props
 
-    console.log(entry)
-
     return (
       <SettingsPanel>
         <div class='DI-plugin-infobox'>
