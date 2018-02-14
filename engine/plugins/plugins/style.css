@@ -91,3 +91,23 @@
   content: "☭";
   margin-right: 0.3rem;
 }
+
+.DI-plugin-meta strong[style*="background-image"]:before {
+    content: '';
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+    margin: -15px 5px -7px 0;
+    background-image: inherit;
+    background-size: cover;
+    border-radius: 3px;
+}
+
+.DI-plugin-meta strong[style*="background-image"] {
+    background-size: 0px;
+}
+
+.DI-plugin-meta strong {
+    margin-top: 3px;
+    display:  inline-block;
+}

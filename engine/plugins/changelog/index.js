@@ -19,6 +19,10 @@ module.exports = class changelog extends Plugin {
     }
   }
 
+  get iconURL() {
+    return 'http://discordinjections.xyz/img/logo.png'
+  }
+
   displayChangelog () {
     let output = []
 

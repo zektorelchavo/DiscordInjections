@@ -29,6 +29,10 @@ module.exports = class commands extends Plugin {
     document.addEventListener('keydown', (...args) => this.onKeyDown(...args))
   }
 
+  get iconURL() {
+    return 'http://discordinjections.xyz/img/logo.png'
+  }
+
   convertLegacySettings () {
     if (this.hasLegacySettings) {
       const legacySettings = this.legacySettings
