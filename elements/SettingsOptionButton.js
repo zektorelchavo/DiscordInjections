@@ -13,12 +13,12 @@ class SettingsButton extends React.Component {
         + 'flexChild-1KGW5q buttonRedOutlinedDefault-1VCgwL buttonOutlinedDefault-3FNQnZ buttonDefault-2OLW-v button-2t3of8 buttonOutlined-38aLSW buttonRedOutlined-2t9fm_'
   } 
   
-  get brandContentsClass () {  
-    return 'contentsDefault-nt2Ym5 contentsFilled-3M8HCx'  
+  get brandContentsClass () {
+    return 'contentsDefault-nt2Ym5 contentsFilled-3M8HCx'
   }  
 
-  get outlineContentsClass () {  
-    return 'contentsDefault-nt2Ym5 contentsOutlined-mJF6nQ'  
+  get outlineContentsClass () {
+    return 'contentsDefault-nt2Ym5 contentsOutlined-mJF6nQ'
   }
 
   render () {
