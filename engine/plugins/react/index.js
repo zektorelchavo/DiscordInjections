@@ -98,7 +98,7 @@ module.exports = class react extends Plugin {
   }
 
   get iconURL() {
-    return 'http://discordinjections.xyz/img/logo.png'
+    return '//discordinjections.xyz/img/logo.png'
   }
 
   getReactInstance (node) {
