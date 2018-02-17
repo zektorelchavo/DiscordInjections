@@ -13,7 +13,7 @@ module.exports = class plugins extends Plugin {
     this.manager.on('plugins-preloaded', plugins =>
       plugins.map(pluginName => {
         const plugin = this.DI.plugins.get(pluginName, true)
-        plugin.name = pluginName
+        plugin._name = pluginName
         this.plugins.set(plugin.path, plugin)
       })
     )
@@ -22,18 +22,15 @@ module.exports = class plugins extends Plugin {
       const plugin = this.DI.plugins.get(pluginName, true)
       this.plugins.set(plugin.path, plugin)
     })
+
     this.manager.on('before-uninstall', pluginName => {
-      const plugin = this.get(pluginName)
+      const plugin = this.DI.plugins.get(pluginName, true)
       this.plugins.delete(plugin.path)
     })
   }
 
   async load () {
     this.registerSettingsTab('Plugin Manager', require('./SettingsPage'))
-  }
-
-  get(name){
-    return Array.from(this.plugins.values()).find(p => p.name === name);
   }
 
   unload () {}
