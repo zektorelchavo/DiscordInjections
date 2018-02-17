@@ -5,12 +5,12 @@ const e = React.createElement
 class SettingsButton extends React.Component {
   get brandClass () {
     return 'button-2t3of8 lookFilled-luDKDo colorBrand-3PmwCE sizeSmall-3g6RX8 grow-25YQ8u' // canary
-        + 'flexChild-1KGW5q buttonBrandFilledDefault-2Rs6u5 buttonFilledDefault-AELjWf buttonDefault-2OLW-v button-2t3of8 buttonFilled-29g7b5 buttonBrandFilled-3Mv0Ra'
+        + ' flexChild-1KGW5q buttonBrandFilledDefault-2Rs6u5 buttonFilledDefault-AELjWf buttonDefault-2OLW-v button-2t3of8 buttonFilled-29g7b5 buttonBrandFilled-3Mv0Ra'
   }
 
   get outlineClass () {
     return 'button-2t3of8 lookOutlined-1c5nhl colorRed-3HTNPV sizeSmall-3g6RX8 grow-25YQ8u' // canary
-        + 'flexChild-1KGW5q buttonRedOutlinedDefault-1VCgwL buttonOutlinedDefault-3FNQnZ buttonDefault-2OLW-v button-2t3of8 buttonOutlined-38aLSW buttonRedOutlined-2t9fm_'
+        + ' flexChild-1KGW5q buttonRedOutlinedDefault-1VCgwL buttonOutlinedDefault-3FNQnZ buttonDefault-2OLW-v button-2t3of8 buttonOutlined-38aLSW buttonRedOutlined-2t9fm_'
   } 
   
   get brandContentsClass () {
@@ -35,7 +35,7 @@ class SettingsButton extends React.Component {
       e(
         'div',
         {
-          className: 'contents-4L4hQM' + (this.props.outline
+          className: 'contents-4L4hQM ' + (this.props.outline
             ? this.outlineContentsClass  
             : this.brandContentsClass)
         },
