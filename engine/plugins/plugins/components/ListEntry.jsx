@@ -65,7 +65,7 @@ module.exports = class ListEntry extends PureComponent {
             defaultValue={entry.loaded}
           />
           <div class='DI-plugin-meta'>
-            <strong style={{ backgroundImage: `url(${entry.inst.iconURL || 'https://discordinjections.xyz/img/logo-alt-nobg.svg'}` }}>
+            <strong style={{ backgroundImage: `url(${entry.inst.iconURL || 'https://discordinjections.xyz/img/logo-alt-nobg.svg'}`, color: `#${entry.inst.color}` }}>
               {entry.package.name}
             </strong>
 
