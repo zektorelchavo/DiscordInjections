@@ -59,7 +59,7 @@ class PluginManager extends EventEmitter {
         .each(m => {
           return this.load(m, false)
         })
-        .then(this.emit('plugins-preloaded', Object.keys(this.plugins)))
+        .then(() => this.emit('plugins-preloaded', Object.keys(this.plugins)))
     )
   }
 
