@@ -13,7 +13,6 @@ module.exports = class plugins extends Plugin {
     this.manager.on('plugins-preloaded', plugins =>
       plugins.map(pluginName => {
         const plugin = this.DI.plugins.get(pluginName, true)
-        plugin._name = pluginName
         this.plugins.set(plugin.path, plugin)
       })
     )
@@ -52,6 +51,6 @@ module.exports = class plugins extends Plugin {
   delete (index) {
     const plugin = Array.from(this.plugins.values())[index]
 
-    return this.DI.plugins.uninstall(plugin._name)
+    return this.DI.plugins.uninstall(plugin.inst._name)
   }
 }
