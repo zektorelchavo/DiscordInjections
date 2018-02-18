@@ -17,14 +17,18 @@
   height: 100px;
 }
 
+#pluginList .lookOutlined-1c5nhl,
 #pluginList .buttonRedOutlinedDefault-1VCgwL {
   background: url(data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xOSA2LjQxTDE3LjU5IDUgMTIgMTAuNTkgNi40MSA1IDUgNi40MSAxMC41OSAxMiA1IDE3LjU5IDYuNDEgMTkgMTIgMTMuNDEgMTcuNTkgMTkgMTkgMTcuNTkgMTMuNDEgMTJ6Ii8+CiAgICA8cGF0aCBkPSJNMCAwaDI0djI0SDB6IiBmaWxsPSJub25lIi8+Cjwvc3ZnPg==) center center #e74c3c;
   border-radius: 3px;
   box-sizing: border-box;
   height: 24px;
+  width: 24px;
   font-size: 0;
   transition: background-color ease .2s;
   border: none;
+  min-width: 0;
+  min-height: 0;
 }
 
 #pluginList .checked-2TahvT[style*=silver] {
