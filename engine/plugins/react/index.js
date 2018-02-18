@@ -247,7 +247,7 @@ module.exports = class react extends Plugin {
         )
         this.emit(
           'settingsTab',
-          this.settingsTabs[element.innerText] || 'unkown',
+          this.settingsTabs[element.innerText] || 'unknown',
           mut
         )
       } else if (changed.classList && changed.classList.contains('chat')) {

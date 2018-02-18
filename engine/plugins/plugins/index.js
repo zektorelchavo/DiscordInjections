@@ -21,7 +21,8 @@ module.exports = class plugins extends Plugin {
       const plugin = this.DI.plugins.get(pluginName, true)
       this.plugins.set(plugin.path, plugin)
     })
-    this.manager.on('unload', pluginName => {
+
+    this.manager.on('before-uninstall', pluginName => {
       const plugin = this.DI.plugins.get(pluginName, true)
       this.plugins.delete(plugin.path)
     })
@@ -48,8 +49,8 @@ module.exports = class plugins extends Plugin {
   }
 
   delete (index) {
-    const key = Array.from(this.plugins.keys())[index]
+    const plugin = Array.from(this.plugins.values())[index]
 
-    return this.DI.plguins.uninstall(key)
+    return this.DI.plugins.uninstall(plugin.inst._name)
   }
 }
