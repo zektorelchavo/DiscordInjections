@@ -12,6 +12,7 @@ exports.SettingsSection = require('./SettingsSection')
 exports.SettingsTitle = require('./SettingsTitle')
 exports.SettingsOptionCheckbox = require('./SettingsOptionCheckbox')
 exports.SettingsPanel = require('./SettingsPanel')
+exports.SettingsOptionSelect = require('./SettingsOptionSelect')
 
 // go as far up as possible
 let m = module
