@@ -105,6 +105,8 @@ class PluginManager extends EventEmitter {
     // load the plugin
     p.cls = reload(pluginPath)
     p.inst = new p.cls(this, p)
+    p.icon = p.inst.iconURL
+    p.color = p.inst.color
     p.loaded = true
     p.loading = false
 

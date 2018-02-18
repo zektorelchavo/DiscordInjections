@@ -55,6 +55,10 @@ module.exports = class settings extends Plugin {
 
   load () {}
 
+  get iconURL() {
+    return '//discordinjections.xyz/img/logo.png'
+  }
+
   _registerSettingsTab (plugin, name, component) {
     if (name && !component) {
       component = name

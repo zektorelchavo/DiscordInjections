@@ -97,6 +97,10 @@ module.exports = class react extends Plugin {
     })
   }
 
+  get iconURL() {
+    return '//discordinjections.xyz/img/logo.png'
+  }
+
   getReactInstance (node) {
     return node[
       Object.keys(node).find(key => key.startsWith('__reactInternalInstance'))

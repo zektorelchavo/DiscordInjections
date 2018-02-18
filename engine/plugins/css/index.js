@@ -67,6 +67,10 @@ module.exports = class css extends Plugin {
     )
   }
 
+  get iconURL() {
+    return '//discordinjections.xyz/img/logo.png'
+  }
+
   unload () {}
 
   get loadedStylesheets () {

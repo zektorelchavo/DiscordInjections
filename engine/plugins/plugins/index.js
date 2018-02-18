@@ -32,6 +32,10 @@ module.exports = class plugins extends Plugin {
     this.registerSettingsTab('Plugin Manager', require('./SettingsPage'))
   }
 
+  get iconURL() {
+    return '//discordinjections.xyz/img/logo.png'
+  }
+
   unload () {}
 
   addPlugin (path) {
