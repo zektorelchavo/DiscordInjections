@@ -222,6 +222,7 @@ module.exports = class css extends Plugin {
       el = document.body.appendChild(
         this._createStyle('', '$userstyle$', filePath)
       )
+      el.removeChild(el.firstChild)
     }
 
     if (meta.disabled && !force) {
@@ -236,7 +237,7 @@ module.exports = class css extends Plugin {
       map: { annotation: false, inline: false, safe: false }
     })
 
-    if (el.children.length > 0) {
+    if (el.childNodes.length > 0) {
       this.log(`clearing userstyle [${filePath}]`)
       while (el.firstChild) el.removeChild(el.firstChild)
     } else {
