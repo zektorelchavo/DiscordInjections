@@ -52,6 +52,6 @@ module.exports = class plugins extends Plugin {
   delete (index) {
     const plugin = Array.from(this.plugins.values())[index]
 
-    return this.DI.plugins.uninstall(plugin.name)
+    return this.DI.plugins.uninstall(plugin._name)
   }
 }
