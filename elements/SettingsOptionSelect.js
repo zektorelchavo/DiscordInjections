@@ -20,8 +20,8 @@ class SettingsOptionSelect extends Base {
         {
           className: `Select-option ${this.getProp() === o ? 'is-selected' : ''} ${focused ? 'is-focused' : ''}`,
           id: `react-select-5--option-${index}`,
-          onClick: this.optionClick.bind(this),
-          onMouseOver: this.optionHover.bind(this)
+          onClick: this.optionClick.bind(this, o),
+          onMouseOver: this.optionHover.bind(this, index)
         },
         o
       ))
@@ -128,8 +128,8 @@ class SettingsOptionSelect extends Base {
     this._reactInternalFiber.child.stateNode.querySelector(`#react-select-5--option-${this.state.focusedIndex}`).scrollIntoViewIfNeeded(false)
   }
 
-  optionClick (event) {
-    this.setProp(event.target.innerText)
+  optionClick (option, event) {
+    this.setProp(option)
     this.setState({ 
       value: this.getProp(),
       expanded: false
@@ -137,9 +137,9 @@ class SettingsOptionSelect extends Base {
     if (this.props.onChange) this.props.onChange(event)
   }
 
-  optionHover (event) {
+  optionHover (index) {
     this.setState({ 
-      focusedIndex: this.props.options.indexOf(event.target.innerText)
+      focusedIndex: index
     })
   }
 
