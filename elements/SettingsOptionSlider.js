@@ -66,7 +66,6 @@ class SettingsOptionSlider extends Base {
   }
 
   grabberDown () {
-    console.log('md')
     this.state.bind = this.documentDrag.bind(this)
     this.state.mouseBind = this.grabberUp.bind(this)
     document.addEventListener('mousemove', this.state.bind)
@@ -74,7 +73,6 @@ class SettingsOptionSlider extends Base {
   }
 
   grabberUp () {
-    console.log('mu')
     document.removeEventListener('mousemove', this.state.bind)
     document.removeEventListener('mouseup', this.state.mouseBind)
   }
