@@ -56,6 +56,7 @@ class SettingsOptionSelect extends Base {
         this.documentClick()
         break
     }
+    event.preventDefault()
   }
 
   render () {
