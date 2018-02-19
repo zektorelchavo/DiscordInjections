@@ -145,7 +145,7 @@ class SettingsOptionSelect extends Base {
 
   componentDidUpdate() {
     if(this.state.expanded && this.state.focusedIndex === this.props.options.indexOf(this.getProp()))
-      this._reactInternalFiber.child.stateNode.querySelector('.is-selected').scrollIntoView(true)
+      this._reactInternalFiber.child.stateNode.querySelector('.is-selected').scrollIntoView(false)
   }
 
 
