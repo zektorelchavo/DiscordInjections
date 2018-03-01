@@ -5,7 +5,7 @@ sync:
   - SettingsSync
   - Constants
 
-unkown:
+unknown:
   - Helper (send as clyde/send as plugin)
 
 {

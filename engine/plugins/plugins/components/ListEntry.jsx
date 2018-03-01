@@ -65,7 +65,7 @@ module.exports = class ListEntry extends PureComponent {
             defaultValue={entry.loaded}
           />
           <div class='DI-plugin-meta'>
-            <strong>
+            <strong style={{ backgroundImage: `url(${entry.icon || 'https://discordinjections.xyz/img/logo-alt-nobg.svg'}` }}>
               {entry.package.name}
             </strong>
 
@@ -82,10 +82,10 @@ module.exports = class ListEntry extends PureComponent {
                 </span>
                 : null}
               <span className='license'>
-                {entry.package.license || <i>Unkown</i>}
+                {entry.package.license || <i>Unknown</i>}
               </span>
               <span className='author'>
-                {entry.package.author || <i>Unkown</i>}
+                {entry.package.author || <i>Unknown</i>}
               </span>
               {entry.package.repository
                 ? <span className='repository'>

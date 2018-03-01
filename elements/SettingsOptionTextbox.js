@@ -15,19 +15,24 @@ class SettingsOptionTextbox extends Base {
   }
 
   render () {
-    let titles = [
-      e(
-        'div',
-        {
-          className:
-            'flex-lFgbSz flex-3B1Tl4 horizontal-2BEEBe horizontal-2VE-Fw flex-3B1Tl4 directionRow-yNbSvJ justifyStart-2yIZo0 alignStretch-1hwxMa noWrap-v6g9vO',
-          style: {
-            flex: '1 1 auto'
-          }
-        },
-        e(SettingsOptionTitle, { text: this.props.title })
+    let titles = []
+
+    if (this.props.title) {
+      titles.push(
+        e(
+          'div',
+          {
+            className:
+              'flex-lFgbSz flex-3B1Tl4 horizontal-2BEEBe horizontal-2VE-Fw flex-3B1Tl4 directionRow-yNbSvJ justifyStart-2yIZo0 alignStretch-1hwxMa noWrap-v6g9vO',
+            style: {
+              flex: '1 1 auto'
+            }
+          },
+          e(SettingsOptionTitle, { text: this.props.title })
+        )
       )
-    ]
+    }
+
     if (this.props.description) {
       titles.push(
         e(SettingsOptionDescription, { text: this.props.description })
