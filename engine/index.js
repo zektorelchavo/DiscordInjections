@@ -41,7 +41,9 @@ Object.defineProperty(DI, 'localStorage', {
 
 Object.defineProperty(DI, 'client', {
   writable: false,
-  value: require('./client')(DI)
+  value: null
+  // Disabled due to uer account bot reports
+  // value: require('./client')(DI)
 })
 
 Object.defineProperty(DI, 'plugins', {
