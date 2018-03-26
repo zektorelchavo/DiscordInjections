@@ -39,13 +39,6 @@ Object.defineProperty(DI, 'localStorage', {
   value: require('./localStorage')
 })
 
-Object.defineProperty(DI, 'client', {
-  writable: false,
-  value: null
-  // Disabled due to uer account bot reports
-  // value: require('./client')(DI)
-})
-
 Object.defineProperty(DI, 'plugins', {
   writable: false,
   value: new (require('./pluginManager'))(DI)
@@ -59,6 +52,7 @@ process.once('loaded', async () => {
     enumerable: false,
     set () {},
     get () {
+      return DI
       throw new Error('Erm nope, this thing wont do shit anymore')
     }
   })
