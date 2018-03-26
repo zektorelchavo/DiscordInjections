@@ -29,7 +29,7 @@ module.exports = class commands extends Plugin {
     document.addEventListener('keydown', (...args) => this.onKeyDown(...args))
   }
 
-  get iconURL() {
+  get iconURL () {
     return '//discordinjections.xyz/img/logo.png'
   }
 
@@ -183,6 +183,7 @@ module.exports = class commands extends Plugin {
             let output = await Promise.resolve(
               this.commands[name]._execute(args)
             )
+
             if (output) {
               this.DI.client.selectedChannel.send(output)
             }
