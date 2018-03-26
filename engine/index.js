@@ -48,14 +48,6 @@ Object.defineProperty(DI, 'plugins', {
 // post launch patching
 process.once('loaded', async () => {
   const ready = new Promise(rs => getCurrentWebContents().on('dom-ready', rs))
-  Object.defineProperty(window, 'DI', {
-    enumerable: false,
-    set () {},
-    get () {
-      return DI
-      throw new Error('Erm nope, this thing wont do shit anymore')
-    }
-  })
 
   // add core modules
   await DI.plugins.loadByPath(
