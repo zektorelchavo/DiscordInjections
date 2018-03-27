@@ -4,6 +4,8 @@ const { Plugin } = require('elements')
 // => ability to hide commands
 // => ability to rename commands?
 
+const { Event } = window
+
 module.exports = class commands extends Plugin {
   preload () {
     this.convertLegacySettings()

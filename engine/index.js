@@ -1,4 +1,4 @@
-const { getCurrentWindow, getCurrentWebContents } = require('electron').remote
+const { getCurrentWebContents } = require('electron').remote
 const path = require('path')
 const fs = require('fs')
 const Promise = require('bluebird')
@@ -47,7 +47,9 @@ Object.defineProperty(DI, 'plugins', {
 // stage two
 // post launch patching
 process.once('loaded', async () => {
-  const ready = new Promise(rs => getCurrentWebContents().on('dom-ready', rs))
+  const ready = new Promise(resolve =>
+    getCurrentWebContents().on('dom-ready', resolve)
+  )
 
   // add core modules
   await DI.plugins.loadByPath(
