@@ -43,21 +43,31 @@ Object.assign(exports, {
           )
 
         // main window patches
-      } else if (fname.endsWith(`app${path.sep}mainscreen.js`)) {
+      } else if (fname.endsWith(`mainscreen.js`)) {
         mainWindowPatched = true
 
         content = content
-          // preload our script
-          .replace(
+          // transparency
+          .replace('transparent: false', `transparent: ${conf.transparent}`)
+        if (conf.transparent) {
+          content = content.replace('backgroundColor: ACCOUNT_GREY,', '')
+        }
+
+        // preload our script
+        if (content.match(/mainScreenPreload.js'\)/)) {
+          content = content.replace(
+            "mainScreenPreload.js')",
+            `mainScreenPreload.js'), preload: "${path
+              .join(preloadPath, 'index.js')
+              .replace(/\\/g, '/')}",`
+          )
+        } else {
+          content = content.replace(
             'webPreferences: {',
             `webPreferences: { preload: "${path
               .join(preloadPath, 'index.js')
               .replace(/\\/g, '/')}",`
           )
-          // transparency
-          .replace('transparent: false', `transparent: ${conf.transparent}`)
-        if (conf.transparent) {
-          content = content.replace('backgroundColor: ACCOUNT_GREY,', '')
         }
 
         if (typeof conf.frame === typeof true) {

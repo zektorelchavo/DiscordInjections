@@ -1,4 +1,4 @@
-const { getCurrentWebContents } = require('electron').remote
+const { getCurrentWebContents, app } = require('electron').remote
 const path = require('path')
 const fs = require('fs')
 const Promise = require('bluebird')
@@ -13,6 +13,33 @@ require.extensions['.jsx'] = (module, filename) => {
     target: { chrome: 52 }
   })
   return module._compile(transformed.code, filename)
+}
+
+// stage zero
+// load original preload script if there is one
+try {
+  const appData = app.getPath('appData')
+  const dist = Object.keys(process.versions)
+    .find(k => k.includes('iscord'))
+    .toLocaleLowerCase()
+  const version = fs
+    .readdirSync(path.join(appData, dist))
+    .filter(d => d.match(/\d+\.\d+\.\d+/))
+    .pop()
+
+  require(path.join(
+    appData,
+    dist,
+    version,
+    'modules',
+    'discord_desktop_core',
+    'core.asar',
+    'app',
+    'mainScreenPreload.js'
+  ))
+} catch (err) {
+  // ignore if not existant
+  console.error(err)
 }
 
 // stage one
@@ -47,6 +74,9 @@ Object.defineProperty(DI, 'plugins', {
 // stage two
 // post launch patching
 process.once('loaded', async () => {
+  global.process = process
+  global.require = require
+
   const ready = new Promise(resolve =>
     getCurrentWebContents().on('dom-ready', resolve)
   )
