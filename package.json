@@ -16,7 +16,6 @@
   "dependencies": {
     "bluebird": "^3.5.1",
     "buble": "^0.18.0",
-    "discord.js": "^11.3.0",
     "elements": "./elements",
     "eventemitter3": "^3.0.0",
     "fs-extra": "^5.0.0",
