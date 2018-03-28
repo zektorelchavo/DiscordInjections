@@ -21,7 +21,7 @@ try {
   const appData = app.getPath('appData')
   const dist = Object.keys(process.versions)
     .find(k => k.includes('iscord'))
-    .toLocaleLowerCase()
+    .toLowerCase()
   const version = fs
     .readdirSync(path.join(appData, dist))
     .filter(d => d.match(/\d+\.\d+\.\d+/))
