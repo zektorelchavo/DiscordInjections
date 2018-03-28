@@ -1,4 +1,4 @@
-const { getCurrentWebContents, app } = require('electron').remote
+const { getCurrentWebContents, app, getGlobal } = require('electron').remote
 const path = require('path')
 const fs = require('fs')
 const Promise = require('bluebird')
@@ -39,7 +39,11 @@ try {
   ))
 } catch (err) {
   // ignore if not existant
-  console.error(err)
+
+  // stable and ptb fix
+  const features = getGlobal('features')
+  features.flags.delete('voice_in_renderer')
+  features.flags.delete('utils_in_renderer')
 }
 
 // stage one
