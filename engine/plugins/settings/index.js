@@ -1,4 +1,6 @@
 const { Plugin } = require('elements')
+const React = require('react')
+const ReactDOM = require('react-dom')
 
 module.exports = class settings extends Plugin {
   preload () {
@@ -55,7 +57,7 @@ module.exports = class settings extends Plugin {
 
   load () {}
 
-  get iconURL() {
+  get iconURL () {
     return '//discordinjections.xyz/img/logo.png'
   }
 
