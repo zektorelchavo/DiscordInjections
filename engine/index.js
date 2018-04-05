@@ -39,11 +39,6 @@ try {
   ))
 } catch (err) {
   // ignore if not existant
-
-  // stable and ptb fix
-  const features = getGlobal('features')
-  features.flags.delete('voice_in_renderer')
-  features.flags.delete('utils_in_renderer')
 }
 
 // stage one
@@ -78,8 +73,8 @@ Object.defineProperty(DI, 'plugins', {
 // stage two
 // post launch patching
 process.once('loaded', async () => {
-  global.process = process
-  global.require = require
+  if (!global.process) global.process = process
+  if (!global.require) global.require = require
 
   const ready = new Promise(resolve =>
     getCurrentWebContents().on('dom-ready', resolve)
