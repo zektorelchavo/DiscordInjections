@@ -21,7 +21,7 @@ class SettingsOptionBase extends React.PureComponent {
 
   getProp () {
     if (this.props.virtual) {
-      return this.value !== null ? this.value : this.props.defaultValue
+      return this.value != null ? this.value : this.props.defaultValue
     }
 
     return this.plugin.getSettingsNode(

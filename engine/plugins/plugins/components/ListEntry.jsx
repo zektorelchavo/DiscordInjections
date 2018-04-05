@@ -57,15 +57,20 @@ module.exports = class ListEntry extends PureComponent {
 
     return (
       <SettingsPanel>
-        <div class='DI-plugin-infobox'>
+        <div className='DI-plugin-infobox'>
           <SettingsOptionCheckbox
             virtual
             disabled={entry.dependency}
             onSave={newVal => this.props.onDisable(!newVal)}
             defaultValue={entry.loaded}
           />
-          <div class='DI-plugin-meta'>
-            <strong style={{ backgroundImage: `url(${entry.icon || 'https://discordinjections.xyz/img/logo-alt-nobg.svg'}` }}>
+          <div className='DI-plugin-meta'>
+            <strong
+              style={{
+                backgroundImage: `url(${entry.icon ||
+                  'https://discordinjections.xyz/img/logo-alt-nobg.svg'}`
+              }}
+            >
               {entry.package.name}
             </strong>
 

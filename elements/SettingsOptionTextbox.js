@@ -68,7 +68,7 @@ class SettingsOptionTextbox extends Base {
           placeholder:
             this.props.defaultValue || this.props.placeholder || undefined,
           name: this.props.name || undefined,
-          maxlength: this.props.maxlength || undefined,
+          maxLength: this.props.maxlength || undefined,
           value: this.state.value,
           onChange: this.change.bind(this),
           style: {
@@ -103,7 +103,9 @@ class SettingsOptionTextbox extends Base {
 
   change (event) {
     this.setState({ value: event.target.value })
-    if (!this.props.apply) { this.setProp(event.target.value || this.props.defaultValue) }
+    if (!this.props.apply) {
+      this.setProp(event.target.value || this.props.defaultValue)
+    }
   }
 
   reset (event) {

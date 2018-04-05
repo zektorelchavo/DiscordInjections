@@ -21,10 +21,10 @@ module.exports = class SettingsOptionCheckbox extends Base {
 
   render () {
     return (
-      <label class='checkboxWrapper-2Yvr_Y'>
+      <label className='checkboxWrapper-2Yvr_Y'>
         <input
           type='checkbox'
-          class='inputDefault-2tiBIA input-oWyROL'
+          className='inputDefault-2tiBIA input-oWyROL'
           checked={this.state.checked}
           onClick={() => this.click()}
         />
@@ -44,10 +44,10 @@ module.exports = class SettingsOptionCheckbox extends Base {
             viewBox='0 0 18 18'
             xmlns='http://www.w3.org/2000/svg'
           >
-            <g fill='none' fill-rule='evenodd'>
+            <g fill='none' fillRule='evenodd'>
               <polyline
                 stroke={this.getProp() ? '#7289da' : 'transparent'}
-                stroke-width='2'
+                strokeWidth='2'
                 points='3.5 9.5 7 13 15 5'
               />
             </g>

@@ -58,14 +58,14 @@ module.exports = class ListEntry extends PureComponent {
 
     return (
       <SettingsPanel>
-        <div class='DI-css-infobox'>
+        <div className='DI-css-infobox'>
           <SettingsOptionCheckbox
             virtual
             onSave={newVal => this.props.onDisable(!newVal)}
             defaultValue={!entry.disabled}
           />
 
-          <div class='DI-css-meta'>
+          <div className='DI-css-meta'>
             <strong>
               {entry.raw ? path.basename(entry.name, '.css') : entry.name}
             </strong>
