@@ -1,4 +1,5 @@
 const { Plugin } = require('elements')
+const { MutationObserver } = window
 
 module.exports = class react extends Plugin {
   // WebPackLoad
@@ -97,7 +98,7 @@ module.exports = class react extends Plugin {
     })
   }
 
-  get iconURL() {
+  get iconURL () {
     return '//discordinjections.xyz/img/logo.png'
   }
 
@@ -222,11 +223,7 @@ module.exports = class react extends Plugin {
       const added = mut.addedNodes.length > 0
 
       // Settings
-      if (
-        changed.classList &&
-        (changed.classList.contains('layer') ||
-          changed.classList.contains('layer-kosS71'))
-      ) {
+      if (changed.classList && changed.matches('[class*=layer]')) {
         const programSettings = !!changed.querySelector(
           '[class*="socialLinks"]'
         )
@@ -242,12 +239,12 @@ module.exports = class react extends Plugin {
         }
       } else if (
         added &&
-        changed.parentNode &&
-        changed.parentNode.className === 'content-column default'
+        changed.closest &&
+        changed.closest('.content-region')
       ) {
         //! TODO: make this multilingual
         const element = document.querySelector(
-          '[class*="layer"] .sidebar .selected-eNoxEK'
+          '[class*="layer"] .sidebar [class*="selected"]'
         )
         this.emit(
           'settingsTab',

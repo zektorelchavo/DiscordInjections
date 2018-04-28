@@ -27,6 +27,7 @@ module.exports = class SettingsOptionCheckbox extends Base {
           className='inputDefault-2tiBIA input-oWyROL'
           checked={this.state.checked}
           onClick={() => this.click()}
+          onChange={() => this.click()}
         />
         <div
           className={`checkbox-1QwaS4 flexCenter-28Hs0n flex-3B1Tl4 justifyCenter-29N31w alignCenter-3VxkQP box-XhjOl4 ${this.getProp()

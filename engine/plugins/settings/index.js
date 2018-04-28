@@ -17,11 +17,13 @@ module.exports = class settings extends Plugin {
     })
 
     r.on('settingsTab', type => {
+      if (!type || type === 'unknown') return
+
       if (this.map.hasOwnProperty(type)) {
         const element = document.querySelector(
-          '[class*="layer"] .sidebar .selected-eNoxEK'
+          '[class*="layer"] .sidebar [class*=selected]'
         )
-        element.className = this.unselectedCss
+        if (element) element.className = this.unselectedCss
         this.map[type].tab.className = this.selectedCss
 
         ReactDOM.render(
@@ -40,12 +42,12 @@ module.exports = class settings extends Plugin {
     })
 
     this.header = document.createElement('div')
-    this.header.className = 'header-1-f9X5'
+    this.header.className = 'header-1-f9X5 header-2RyJ0Y'
     this.header.appendChild(document.createTextNode('Discord Injections'))
 
     this.divider = document.createElement('div')
     this.divider.className =
-      'separator-3z7STW marginTop8-2gOa2N marginBottom8-1mABJ4'
+      'separator-3z7STW marginTop8-2gOa2N marginBottom8-1mABJ4 separator-gCa7yv marginTop8-1DLZ1n marginBottom8-AtZOdT'
 
     this.manager.on('unload', plugin => {
       Object.keys(this.map)
@@ -86,21 +88,21 @@ module.exports = class settings extends Plugin {
   }
 
   get unselectedCss () {
-    return 'itemDefault-3NDwnY item-3879bf notSelected-PgwTMa'
+    return 'itemDefault-3NDwnY item-3879bf notSelected-PgwTMa itemDefault-3Jdr52 item-PXvHYJ notSelected-1N1G5p'
   }
 
   get selectedCss () {
-    return 'itemSelected-3XxAMf item-3879bf selected-eNoxEK'
+    return 'itemSelected-3XxAMf item-3879bf selected-eNoxEK itemSelected-1qLhcL item-PXvHYJ selected-3s45Ha'
   }
 
   get settingsTabs () {
-    return document.querySelector('[class*="layer"] .sidebar .side-2nYO0F')
+    return document.querySelector('[class*="layer"] .sidebar [class*=side]')
   }
 
   injectSettingsTab () {
     if (!this.settingsTabs) return
 
-    const el = this.settingsTabs.querySelector('.socialLinks-1oZoF3')
+    const el = this.settingsTabs.querySelector('[class*="socialLinks"]')
     if (!el) return
 
     const header =
