@@ -13,6 +13,7 @@ module.exports = class SettingsOptionCheckbox extends Base {
 
   click () {
     if (this.props.disabled) return
+    debugger
     this.setProp(!this.getProp())
     this.setState(() => ({
       checked: this.getProp()
@@ -24,14 +25,13 @@ module.exports = class SettingsOptionCheckbox extends Base {
       <label className='checkboxWrapper-2Yvr_Y'>
         <input
           type='checkbox'
-          className='inputDefault-2tiBIA input-oWyROL'
+          className='inputDefault-2tiBIA input-oWyROL inputDefault-3JxKJ2 input-3ITkQf'
           checked={this.state.checked}
-          onClick={() => this.click()}
           onChange={() => this.click()}
         />
         <div
-          className={`checkbox-1QwaS4 flexCenter-28Hs0n flex-3B1Tl4 justifyCenter-29N31w alignCenter-3VxkQP box-XhjOl4 ${this.getProp()
-            ? 'checked-2TahvT'
+          className={`checkbox-1QwaS4 flexCenter-28Hs0n flex-3B1Tl4 justifyCenter-29N31w alignCenter-3VxkQP box-XhjOl4 checkbox-1ix_J3 flexCenter-3_1bcw flex-1O1GKY justifyCenter-3D2jYp alignCenter-1dQNNs box-mmYMsp ${this.getProp()
+            ? 'checked-2TahvT checked-3_4uQ9'
             : ''}`}
           style={{
             borderColor: this.getProp() ? 'rgb(114, 137, 218)' : '',
