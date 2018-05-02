@@ -1,4 +1,4 @@
-const { getCurrentWebContents, app, getGlobal } = require('electron').remote
+const { getCurrentWebContents, app } = require('electron').remote
 const path = require('path')
 const fs = require('fs')
 const Promise = require('bluebird')
@@ -18,19 +18,20 @@ require.extensions['.jsx'] = (module, filename) => {
 // stage zero
 // load original preload script if there is one
 try {
+  const buildInfo = require(path.join(
+    process.resourcesPath,
+    'app.asar',
+    'build_info.json'
+  ))
+  if (buildInfo.releaseChannel === 'stable') {
+    buildInfo.releaseChannel = ''
+  }
   const appData = app.getPath('appData')
-  const dist = Object.keys(process.versions)
-    .find(k => k.includes('iscord'))
-    .toLowerCase()
-  const version = fs
-    .readdirSync(path.join(appData, dist))
-    .filter(d => d.match(/\d+\.\d+\.\d+/))
-    .pop()
 
   require(path.join(
     appData,
-    dist,
-    version,
+    'discord' + buildInfo.releaseChannel,
+    buildInfo.version,
     'modules',
     'discord_desktop_core',
     'core.asar',
@@ -39,6 +40,7 @@ try {
   ))
 } catch (err) {
   // ignore if not existant
+  console.error('Failed to inject native preloader!', err)
 }
 
 // stage one
