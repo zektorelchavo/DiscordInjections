@@ -45,7 +45,7 @@ module.exports = class SettingsPage extends React.PureComponent {
   render () {
     return (
       <div>
-        <div className="DI-plugin-buttonBar">
+        <div className='DI-plugin-buttonBar'>
           <SettingsOptionButton
             text='Add new Plugin'
             onClick={() => this.addLocal()}
@@ -54,7 +54,7 @@ module.exports = class SettingsPage extends React.PureComponent {
         <List
           disable={(idx, flag) => this.setDisabled(idx, flag)}
           delete={idx => this.delete(idx)}
-          items={Array.from(this.state.plugins.values())}
+          items={Array.from(this.state.manager.plugins.values())}
         />
       </div>
     )
