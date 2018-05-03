@@ -1,85 +1,60 @@
 const { Plugin } = require('elements')
+const Promise = require('bluebird')
+
 const { MutationObserver } = window
 
 module.exports = class react extends Plugin {
-  // WebPackLoad
-  webPackLoad (fn, name = Math.random().toString()) {
-    if (!window.webpackJsonp) {
-      // if webpack isn't loaded yet, reschedule
-      setTimeout(this.webPackLoad.bind(this), 100, fn, name)
-    } else {
-      return setTimeout(window.webpackJsonp, 100, [name], { [name]: fn }, [
-        name
-      ])
-    }
-  }
-
-  registerReact () {
-    return new Promise(rs =>
-      this.webPackLoad((m, e, r) => {
-        let reactExtracted = !!window.React
-        let reactDOMExtracted = !!window.ReactDOM
-
-        // search for react
-        for (const key in r.c) {
-          let mod = r.c[key]
-          if (
-            mod.exports.hasOwnProperty('PureComponent') &&
-            mod.exports.hasOwnProperty('createElement')
-          ) {
-            this.React = mod.exports
-            reactExtracted = true
-          } else if (
-            mod.exports.hasOwnProperty('render') &&
-            mod.exports.hasOwnProperty('findDOMNode')
-          ) {
-            this.ReactDOM = mod.exports
-            reactDOMExtracted = true
-          }
-
-          // no need to check other components if we got react and reactdom already
-          if (reactExtracted && reactDOMExtracted) break
-        }
-
-        /*
-      we know how to fake send messages again i think.
-      maybe we can use them again
-
-      let i = 0,
-        interval
-      let tick = () => {
-        if (DI._sendAsClydeRaw && DI._fakeMessageRaw) return clearInterval(interval)
-        let d
-        try {
-          d = r.c[i].exports
-        } catch (e) {
-          ++i
-          return
-        }
-        for (let key in d) {
-          if (key === 'sendBotMessage' && typeof d[key] === 'function') {
-            console.log('Found sendBotMessage')
-            DI._sendAsClydeRaw = d[key].bind(d)
-          }
-          if (key === 'receiveMessage' && typeof d[key] === 'function') {
-            console.log('Found receiveMessage')
-            DI._fakeMessageRaw = d[key].bind(d)
-          }
-        }
-        if (++i >= 7000) return clearInterval(interval)
-      }
-      interval = setInterval(tick, 5)
-    })
-    */
-      })
-    )
-  }
-
   async preload () {
+    this._messageHandler = null
     this.observer = new MutationObserver(mutation => this.onMutate(mutation))
 
-    let reactRegistered = await this.registerReact()
-    while (!reactRegistered) reactRegistered = await this.registerReact()
+    await this.registerReact()
+  }
+
+  // WebPackLoad
+  async webPackLoad (cb, name = Math.random().toString()) {
+    while (!window.webpackJsonp) {
+      await Promise.delay(1)
+    }
+
+    return window.webpackJsonp([name], { [name]: cb }, [name])
+  }
+
+  async registerReact () {
+    let modIdx = 0
+    const collectCallbacks = () =>
+      this.webPackLoad((_module, _exports, _require) => {
+        for (modIdx; modIdx < Object.values(_require.c).length; modIdx++) {
+          const modDefinition = _require.c[modIdx]
+          if (!modDefinition || !modDefinition.exports) {
+            continue
+          }
+          const mod = modDefinition.exports
+
+          if (
+            mod.sendBotMessage ||
+            (mod.default && mod.default.sendBotMessage)
+          ) {
+            this.debug('found messageHandler!')
+            this._messageHandler = mod
+
+            Object.keys(this._messageHandler).forEach(k => {
+              this.debug(`hiding ${k}`)
+              this._messageHandler['$$' + k] = this._messageHandler[k]
+              this._messageHandler[k] = (channel, ...args) => {
+                this.debug('{handler}', k, channel, ...args)
+                return this._messageHandler['$$' + k](channel, ...args)
+              }
+            })
+
+            return true
+          }
+        }
+
+        return Promise.delay(1).then(collectCallbacks)
+      })
+
+    return collectCallbacks()
   }
 
   load () {
@@ -99,9 +74,10 @@ module.exports = class react extends Plugin {
   }
 
   getReactInstance (node) {
-    return node[
-      Object.keys(node).find(key => key.startsWith('__reactInternalInstance'))
-    ]
+    const key = Object.keys(node).find(key =>
+      key.startsWith('__reactInternalInstance')
+    )
+    return node[key]
   }
 
   createElement (text) {

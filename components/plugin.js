@@ -169,6 +169,10 @@ class Plugin extends EventEmitter {
     this.console('log', ...args)
   }
 
+  debug (...args) {
+    this.console('debug', ...args)
+  }
+
   info (...args) {
     this.console('info', ...args)
   }
@@ -189,6 +193,34 @@ class Plugin extends EventEmitter {
     )
   }
 
+  get currentGuildID () {
+    const pathParts = window.location.pathname.split('/')
+    return +pathParts[2] || null // convert "@me" to null
+  }
+
+  get currentChannelID () {
+    const pathParts = window.location.pathname.split('/')
+    return pathParts.length >= 4 ? pathParts[3] : null
+  }
+
+  get deleteNode () {
+    const n = this.manager
+      .get('react')
+      .createElement(
+        `<div class="local-bot-message">Only you can see this — <a rel="noreferrer">delete this message</a>.</div>`
+      ).firstElementChild
+    n.addEventListener('click', ev => {
+      const grp = ev.target.closest('[data-di-local]')
+      const lst = grp.parentElement
+      grp.remove()
+      if (lst.lastElementChild.classList.contains('divider')) {
+        lst.lastElementChild.remove()
+      }
+    })
+
+    return n
+  }
+
   registerCommand (options) {
     const command = new Command(this, options)
     this.manager.get('commands').hookCommand(command)
@@ -197,10 +229,57 @@ class Plugin extends EventEmitter {
   registerSettingsTab (name, component) {
     this.manager.get('settings')._registerSettingsTab(this, name, component)
   }
-  /*
-  sendLocalMessage (message, sanitize) {
-    return this.DI.Helpers.sendLog(this._name, message, this.iconURL, sanitize)
-  } */
+
+  sendLocalMessage (message, channel = null) {
+    const react = this.manager.get('react')
+    const handler = react._messageHandler
+
+    const channelID = channel || this.currentChannelID
+    if (!channelID) {
+      return false
+    }
+
+    // build the bot message
+    const timestamp = new Date()
+    let id = ((timestamp.getTime() - 1420070400000) * 4194304).toString()
+
+    const o = {
+      attachments: [],
+      embeds: [],
+      edited_timestamp: null,
+      mention_everyone: false,
+      mention_roles: [],
+      mentions: [],
+      pinned: false,
+      tts: false,
+      type: 0,
+
+      id,
+      nonce: id,
+      channel_id: channelID,
+
+      author: {
+        avatar: 'test',
+        discriminator: '0000',
+        id: 'DI-' + this.meta.id,
+        username: this.meta.username
+      },
+      timestamp: timestamp.toISOString(),
+      content: message
+    }
+
+    handler.receiveMessage(channelID, o)
+    const grp = document.querySelector('.message-group:last-child')
+    grp.classList.add('is-local-bot-message')
+    grp.dataset.diLocal = 'true'
+
+    grp.firstElementChild.style.backgroundImage = `url(${this.iconURL})`
+    Array.from(grp.querySelectorAll('.local-bot-message')).forEach(e =>
+      e.remove()
+    )
+
+    grp.lastElementChild.appendChild(this.deleteNode)
+  }
 }
 
 module.exports = Plugin
