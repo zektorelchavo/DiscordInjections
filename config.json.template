@@ -2,5 +2,7 @@
     "transparent": false,
     "frame": null,
     "splash": "./loader.css",
-    "chromeFlags": ["simple-flag", ["advanced-flag", "with user value"]]
+    "chromeFlags": ["simple-flag", ["advanced-flag", "with user value"]],
+    "pluginPath": "global plugin path overwrite, see docs for details",
+    "splash": "./customsplash.css"
 }

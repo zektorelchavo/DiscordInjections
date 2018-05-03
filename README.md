@@ -44,7 +44,7 @@ This module optionally requires [git](https://git-scm.com/downloads) for easier 
 
 2. Download the files
 
-     #### With releases
+     #### With releases (currently no v4 realease has been released!)
     1. Download the [latest release](https://github.com/DiscordInjections/DiscordInjections/releases)
     2. Extract to the desired location
 
@@ -64,7 +64,7 @@ To reinstall, run `npm run reinject`
 
 ## Updating
 
-**WARNING**: If you currently have version 1.X.X or 2.X.X installed, you *must* run `npm run uninject` before doing this step, and then `npm run inject` afterwards!
+**WARNING**: If you currently have any version below 4.X.X installed, you *must* run `npm run uninject` before doing this step, and then `npm run inject` afterwards!
 
 ### With releases
 1. Download the [latest release](https://github.com/DiscordInjections/DiscordInjections/releases)
@@ -73,6 +73,10 @@ To reinstall, run `npm run reinject`
 ### With git
 1. Run `git fetch --tags`
 2. Run `git checkout tags/<VERSION>`
+
+or
+
+1. Run `git pull` if you are using master
 
 ### Next Steps
 1. Make sure all dependencies are installed (run `npm install` - new dependencies might have been added)
@@ -84,6 +88,24 @@ All usage takes place in the folder you installed DiscordInjections into.
 ### Config
 
 DiscordInjections has some configuration options. A default config.json file is provided as config.json.template. Feel free to copy over and customize it to your liking.
+
+Every option that accepts paths can start with a placeholder:
+<dl>
+  <dt>`.`</dt>
+  <dd>The working directory of DI</dd>
+
+  <dt>`~`</dt>
+  <dd>The users home path</dd>
+
+  <dt>`%%`</dt>
+  <dd>The config folder `discordinjections`. On Windows, it is located in `%APPDATA%`, on Linux, you can find it usually under `~/.config`</dd>
+
+  <dt>`%`</dt>
+  <dd>The config folder for your discord distribution (`discord`, `discordptb`, `discordcanary`, `discorddevelopment`). On Windows, it is located in `%APPDATA%`, on Linux, you can find it usually under `~/.config`</dd>
+
+  <dt>`&`</dt>
+  <dd>The runtime folder for your discord distribution (`discord`, `discordptb`, `discordcanary`, `discorddevelopment`). On Windows, it is located in `%LOCALAPPDATA%`, on Linux, you can find it usually under `~/.share`</dd>
+</dl>
 
 ### CSS
 

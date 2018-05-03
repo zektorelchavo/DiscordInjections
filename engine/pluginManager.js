@@ -26,7 +26,7 @@ class PluginManager extends EventEmitter {
       } catch (ex) {}
     }
 
-    this.basePath = this.expand(DI.conf.pluginPath || '%/plugins')
+    this.basePath = this.expand(DI.conf.pluginPath || '%%/plugins')
     fs.ensureDirSync(this.basePath)
   }
 
@@ -38,6 +38,10 @@ class PluginManager extends EventEmitter {
       .replace(/\\/g, '/')
       .replace(/^\.\//, path.join(__dirname, '..') + '/')
       .replace(/^~\//, app.getPath('home') + '/')
+      .replace(
+        /^%%\//,
+        path.join(app.getPath('appData'), 'discordinjections') + '/'
+      )
       .replace(/^%\//, app.getPath('userData') + '/')
       .replace(/^&\//, discordPath)
   }
