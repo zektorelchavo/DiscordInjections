@@ -52,7 +52,7 @@ module.exports = class changelog extends Plugin {
       }
     }
 
-    this.DI.plugins.get('react').createModal(`<div class="DI-changelog">
+    this.manager.get('react').createModal(`<div class="DI-changelog">
         <div class="header" style="flex: 1 1 auto;">
             <h4>DiscordInjections Changelog</h4>
             <div class="version">Current Version: ${this.DI.version}</div>
