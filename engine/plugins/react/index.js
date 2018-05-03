@@ -119,9 +119,9 @@ module.exports = class react extends Plugin {
     this._modal = this.createElement(`
             <div class="theme-dark DI-modal">
                 <div class="callout-backdrop"></div>
-                <div class="modal-2LIEKY" style="opacity: 1">
-                    <div class="inner-1_1f7b DI-modal-inner expanded">
-                        <div class="modal-3HOjGZ sizeMedium-1-2BNS">
+                <div class="DI-modal-outer" style="opacity: 1">
+                    <div class="DI-modal-inner expanded">
+                        <div class="DI-modal-body">
                             ${content}
                         </div>
                     </div>
