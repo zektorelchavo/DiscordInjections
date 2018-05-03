@@ -71,10 +71,6 @@ module.exports = class react extends Plugin {
       interval = setInterval(tick, 5)
     })
     */
-        // inject react into global namespace
-        window.React = this.React
-        window.ReactDOM = this.ReactDOM
-        rs(reactExtracted && reactDOMExtracted)
       })
     )
   }
@@ -271,6 +267,35 @@ module.exports = class react extends Plugin {
         } else {
           this.emit('friendsListClosed', mut)
         }
+      } else if (
+        added &&
+        changed.querySelector &&
+        changed.querySelector('.avatar-large + .comment')
+      ) {
+        // mod the thing
+        Array.from(changed.querySelectorAll('.avatar-large')).forEach(ava => {
+          const matches = ava.style.backgroundImage.match(/avatars\/(\d+)/)
+          if (!matches) {
+            return
+          }
+          const uid = matches[1]
+          const name = this.DI.contributors[uid]
+          if (!name) {
+            return
+          }
+
+          const nametag = ava.nextElementSibling.querySelector(
+            '.username-wrapper'
+          )
+
+          nametag.appendChild(
+            this.createElement(
+              `<div class="DI-contrib">
+                <div class="tooltip tooltip-top tooltip-black">DI Contributor ${name}</div>
+              </div>`
+            )
+          )
+        })
       }
     })
   }

@@ -1,0 +1,29 @@
+.DI-contrib {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: url(https://discordinjections.xyz/img/logo-alt-red.svg);
+  margin-left: 5px;
+  margin-bottom: -3px;
+  border-radius: 50%;
+  position: relative;
+  overflow: visible;
+  cursor: pointer;
+}
+
+.DI-contrib .tooltip {
+  position: absolute;
+  width: 150px;
+  bottom: 20px;
+  margin-left: -67px;
+  text-align: center;
+  display: none;
+}
+
+.DI-contrib:hover .tooltip {
+  display: block;
+}
+
+.message-group.hide-overflow {
+  overflow: visible;
+}

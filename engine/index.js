@@ -58,6 +58,23 @@ const DI = {
 
   get version () {
     return this.package.version
+  },
+
+  get contributors () {
+    if (!this._contributors) {
+      this._contributors = {}
+
+      const contrib = fs
+        .readFileSync(path.join(__dirname, '..', 'CONTRIBUTORS.md'), 'utf-8')
+        .split('\n')
+        .filter(line => line.startsWith('*'))
+        .map(line => line.match(/\*\*(.+)\*\* <!-- (\d+) -->/))
+        .forEach(([_, name, id]) => (this._contributors[id] = name))
+
+      console.log(contrib)
+    }
+
+    return this._contributors
   }
 }
 
