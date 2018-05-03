@@ -13,7 +13,7 @@ module.exports = class changelog extends Plugin {
 
   load () {
     const lastChangelog = this.getSettingsNode('lastChangelog', 0)
-    if (lastChangelog == 0 || semver.lt(lastChangelog, this.DI.version)) {
+    if (lastChangelog === 0 || semver.lt(lastChangelog, this.DI.version)) {
       this.displayChangelog()
       this.setSettingsNode('lastChangelog', this.DI.version)
     }
