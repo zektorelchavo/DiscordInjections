@@ -83,7 +83,7 @@ module.exports = class commands extends Plugin {
   }
 
   get selectedClass () {
-    return 'selectorSelected-2M0IGv'
+    return 'selected'
   }
 
   onInput (ev) {
@@ -212,11 +212,18 @@ module.exports = class commands extends Plugin {
     const elem = document.querySelector('form textarea')
     if (elem) {
       let element = this.manager.get('react')
-        .createElement(`<div class="autocomplete-1TnWNR autocomplete-1LLKUa di-autocomplete">
-            <div class="autocompleteRowVertical-3_UxVA autocompleteRow-31UJBI header">
-            <div class="selector-nbyEfM" style="display: flex;"><div class="di-autocomplete-header-label contentTitle-sL6DrN primary400-1OkqpL weightBold-2qbcng">
-            DiscordInjections Commands</div><div style="flex: 1 1;" class="di-autocomplete-header-label contentTitle-sL6DrN di-autocomplete-commandinfo primary400-1OkqpL weightBold-2qbcng">
-            PREFIX: ${this.settings.commandPrefix}</div></div></div></div>`)
+        .createElement(`<div class="di-autocomplete">
+            <div class="header">
+              <div class="selector" style="display: flex;">
+                <div class="di-autocomplete-header-label">
+                  DiscordInjections Commands
+                </div>
+                <div style="flex: 1 1;" class="di-autocomplete-header-label di-autocomplete-commandinfo">
+                  PREFIX: ${this.settings.commandPrefix}
+                </div>
+              </div>
+            </div>
+          </div>`)
       elem.parentElement.insertBefore(element, elem.nextSibling)
       this.autoComplete.addEventListener('click', ev => {
         const el = ev.target.closest('[data-command]')
@@ -303,21 +310,18 @@ module.exports = class commands extends Plugin {
         ? command.plugin.color.toString(16)
         : command.plugin.color
 
-    return this.manager.get('react')
-      .createElement(`<div class="autocompleteRowVertical-3_UxVA autocompleteRow-31UJBI command">
-        <div class="selector-nbyEfM selectable-3iSmAf" data-command="${command.name}">
-          <div class="flex-lFgbSz flex-3B1Tl4 horizontal-2BEEBe horizontal-2VE-Fw flex-3B1Tl4 directionRow-yNbSvJ justifyStart-2yIZo0 alignCenter-3VxkQP noWrap-v6g9vO content-249Pr9"
-          style="flex: 1 1 auto;">
-            <img class="icon-3XfMwL" src="https://discordinjections.xyz/img/logo-alt-nobg.svg">
-            <div class="marginLeft4-3RAvyQ">${command.name}</div>
-            <div class="marginLeft4-3RAvyQ primary400-1OkqpL">${command.usage ||
+    return this.manager.get('react').createElement(`<div class="command">
+        <div class="selector" data-command="${command.name}">
+          <div class="row" style="flex: 1 1 auto;">
+            <img class="di-autocomplete-commandicon" src="https://discordinjections.xyz/img/logo-alt-nobg.svg">
+            <div class="di-autocomplete-commandname">${command.name}</div>
+            <div class="di-autocomplete-commandusage">${command.usage ||
               ''}</div>
-            <div class="ellipsis-1MzbWB primary400-1OkqpL di-autocomplete-commandinfo" style="flex: 1 1 auto";>
-              ${command.info} <span class='command-plugin-tag${isDark(
-      h2rgb(color)
-    )
-      ? ' dark'
-      : ''}'
+            <div class="di-autocomplete-commandinfo" style="flex: 1 1 auto";>
+              ${command.info}
+              <span class='command-plugin-tag${isDark(h2rgb(color))
+                ? ' dark'
+                : ''}'
               style="background-color: rgba(${h2rgb(color).join(
                 ', '
               )}, 0.5)">${command.plugin._name}</span>

@@ -1,28 +1,121 @@
 .di-autocomplete {
-    display: block !important;
+  display: block !important;
+
+  background-color: #2f3136;
+  border-radius: 5px 5px 0 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  z-index: 3;
+  bottom: 100%;
+  left: 0;
+  overflow: hidden;
+  position: absolute;
+  right: 0;
 }
 
-.di-autocomplete-commandinfo {
-    text-align: right !important;
+.di-autocomplete .header,
+.di-autocomplete .command {
+  font-size: 14px;
+  line-height: 16px;
+  padding: 0 8px;
 }
 
-.command-usage {
-    text-align: left !important;
-    margin-left: 10px;
+.di-autocomplete .command {
+  margin-bottom: 5px;
 }
 
-.command-plugin-tag {
-    color: #222;
-    border-radius: 3px;
-    border: #222 solid 1px;
-    padding: 3px;
+.di-autocomplete .selector {
+  border-radius: 3px;
+  padding: 5px;
+
+  cursor: pointer;
 }
 
-.command-plugin-tag.dark {
-    border-color: #ddd;
-    color: #ddd;
+.di-autocomplete .selector.selected {
+  background-color: #36393f;
 }
 
 .di-autocomplete-header-label {
-    display: inline-block !important;
+  display: inline-block !important;
+  padding: 4px 0;
+  text-transform: uppercase;
+  color: #72767d;
+  font-weight: 700;
 }
+
+.di-autocomplete-commandinfo {
+  text-align: right !important;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #72767d;
+  padding: 5px 0;
+}
+
+.di-autocomplete-commandname {
+  margin-left: 4px;
+}
+
+.di-autocomplete-commandusage {
+  margin-left: 4px;
+  color: #72767d;
+}
+
+.command-usage {
+  text-align: left !important;
+  margin-left: 10px;
+}
+
+.command-plugin-tag {
+  color: #222;
+  border-radius: 3px;
+  border: #222 solid 1px;
+  padding: 3px;
+}
+
+.command-plugin-tag.dark {
+  border-color: #ddd;
+  color: #ddd;
+}
+
+.di-autocomplete-commandicon {
+  cursor: pointer;
+  display: inline-block;
+  fill: #fff;
+  height: 18px;
+  opacity: .3;
+  width: 18px;
+}
+
+.di-autocomplete-commandicon:active {
+  transform: translateY(.5px);
+}
+
+.di-autocomplete-commandicon:hover {
+  opacity: .6;
+}
+
+.di-autocomplete .command .row {
+  min-height: 16px;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: row;
+  display: flex;
+}
+
+/*
+.horizontal-1ae9ci>.flex-1xMQg5,.horizontal-1ae9ci>.flexChild-faoVW3 {
+    margin-left: 10px;
+    margin-right: 10px
+}
+
+.horizontal-1ae9ci>.flex-1xMQg5:first-child,.horizontal-1ae9ci>.flexChild-faoVW3:first-child {
+    margin-left: 0
+}
+
+.horizontal-1ae9ci>.flex-1xMQg5:last-child,.horizontal-1ae9ci>.flexChild-faoVW3:last-child {
+    margin-right: 0
+}
+*/
