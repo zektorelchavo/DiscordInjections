@@ -13,7 +13,7 @@ class PluginManager extends EventEmitter {
     this.plugins = {}
 
     this.pluginsEnabled = {}
-    if (DI.localStorage['DI-Plugins'] != '') {
+    if (DI.localStorage['DI-Plugins'] !== '') {
       try {
         this.pluginsEnabled = JSON.parse(DI.localStorage['DI-Plugins'])
       } catch (ex) {}
