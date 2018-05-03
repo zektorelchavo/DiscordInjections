@@ -9,7 +9,7 @@ module.exports = class SettingsPage extends React.PureComponent {
     super(props)
 
     this.state = {
-      plugins: props.plugin.plugins
+      plugins: props.plugin.manager.plugins
     }
   }
 
@@ -24,21 +24,21 @@ module.exports = class SettingsPage extends React.PureComponent {
 
     this.props.plugin.addPlugin(fname)
     this.setState({
-      plugins: this.props.plugin.plugins
+      plugins: this.props.plugin.manager.plugins
     })
   }
 
   async setDisabled (idx, flag) {
     await this.props.plugin.disable(idx, flag)
     this.setState({
-      plugins: this.props.plugin.plugins
+      plugins: this.props.plugin.manager.plugins
     })
   }
 
   async delete (idx) {
     await this.props.plugin.delete(idx)
     this.setState({
-      plugins: this.props.plugin.plugins
+      plugins: this.props.plugin.manager.plugins
     })
   }
 
@@ -54,7 +54,7 @@ module.exports = class SettingsPage extends React.PureComponent {
         <List
           disable={(idx, flag) => this.setDisabled(idx, flag)}
           delete={idx => this.delete(idx)}
-          items={Array.from(this.state.manager.plugins.values())}
+          items={Array.from(this.state.plugins.values())}
         />
       </div>
     )
