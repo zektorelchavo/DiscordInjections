@@ -3,6 +3,7 @@ const fs = require('fs-extra')
 const path = require('path')
 const reload = require('require-reload')
 const Promise = require('bluebird')
+const { app } = require('electron').remote
 
 class PluginManager extends EventEmitter {
   constructor (DI) {
@@ -20,8 +21,6 @@ class PluginManager extends EventEmitter {
 
     this.basePath = this.expand(DI.conf.pluginPath || './Plugins')
     fs.ensureDirSync(this.basePath)
-
-    const dependencies = []
   }
 
   expand (basePath) {
@@ -29,9 +28,7 @@ class PluginManager extends EventEmitter {
       process.env.HOME ||
       process.env.USERPROFILE ||
       process.env.HOMEDRIVE + process.env.HOMEPATH
-    const appData = process.env.HOME
-      ? path.join(process.env.HOME, '.config', 'DiscordInjections')
-      : path.join(process.env.APPDATA, 'DiscordInjections')
+    const appData = path.join(app.getPath('appData'), 'DiscordInjections')
     const discordPath = path.join(process.resourcesPath, '..', '..')
 
     fs.ensureDirSync(appData)
@@ -40,7 +37,7 @@ class PluginManager extends EventEmitter {
       .replace(/^\.\//, path.join(__dirname, '..') + '/')
       .replace(/^~\//, home + '/')
       .replace(/^%\//, appData)
-      .replace(/^\&\//, discordPath)
+      .replace(/^&\//, discordPath)
   }
 
   loadPluginPath () {
@@ -89,7 +86,7 @@ class PluginManager extends EventEmitter {
       package: pkg,
       loaded: false,
       loading: true,
-      cls: null,
+      Cls: null,
       inst: null,
       dependency,
       core: false
@@ -103,8 +100,8 @@ class PluginManager extends EventEmitter {
     }
 
     // load the plugin
-    p.cls = reload(pluginPath)
-    p.inst = new p.cls(this, p)
+    p.Cls = reload(pluginPath)
+    p.inst = new p.Cls(this, p)
     p.icon = p.inst.iconURL
     p.color = p.inst.color
     p.loaded = true
