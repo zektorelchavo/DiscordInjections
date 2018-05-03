@@ -13,7 +13,6 @@ module.exports = class SettingsOptionCheckbox extends Base {
 
   click () {
     if (this.props.disabled) return
-    debugger
     this.setProp(!this.getProp())
     this.setState(() => ({
       checked: this.getProp()
