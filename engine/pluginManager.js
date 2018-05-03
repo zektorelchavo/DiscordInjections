@@ -26,7 +26,7 @@ class PluginManager extends EventEmitter {
       } catch (ex) {}
     }
 
-    this.basePath = this.expand(DI.conf.pluginPath || '%%/plugins')
+    this.basePath = this.expand(DI.conf.pluginPath || '%/plugins')
     fs.ensureDirSync(this.basePath)
   }
 
