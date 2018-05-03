@@ -4,5 +4,6 @@
   "main": "index.js",
   "author": "Kura",
   "description": "DI Command Handler",
-  "css": ["autocomplete.css"]
+  "css": ["autocomplete.css"],
+  "pluginDependencies": ["react", "settings"]
 }

@@ -1,7 +1,6 @@
-const { getCurrentWebContents, app } = require('electron').remote
+const { app } = require('electron').remote
 const path = require('path')
 const fs = require('fs')
-const Promise = require('bluebird')
 const buble = require('buble')
 
 // register custom extension compilation support
@@ -64,10 +63,15 @@ const DI = {
 
 Object.defineProperty(DI, 'localStorage', {
   writable: false,
-  value: require('./localStorage')
+  value: window.localStorage
 })
 
-Object.defineProperty(DI, 'plugins', {
+Object.defineProperty(DI, 'sessionStorage', {
+  writable: false,
+  value: window.sessionStorage
+})
+
+Object.defineProperty(DI, 'pluginManager', {
   writable: false,
   value: new (require('./pluginManager'))(DI)
 })
@@ -75,45 +79,15 @@ Object.defineProperty(DI, 'plugins', {
 // stage two
 // post launch patching
 process.once('loaded', async () => {
-  if (!global.process) global.process = process
-  if (!global.require) global.require = require
+  // make sure process and require are available in the global scope
+  // discord may have nodeintegration disabled which borks literally everything
+  if (!global.process) {
+    global.process = process
+  }
+  if (!global.require) {
+    global.require = require
+  }
 
-  const ready = new Promise(resolve =>
-    getCurrentWebContents().on('dom-ready', resolve)
-  )
-
-  // add core modules
-  await DI.plugins.loadByPath(
-    path.join(__dirname, 'plugins', 'react'),
-    true,
-    true
-  )
-  await DI.plugins.loadByPath(
-    path.join(__dirname, 'plugins', 'settings'),
-    true,
-    true
-  )
-  await DI.plugins.loadByPath(
-    path.join(__dirname, 'plugins', 'plugins'),
-    true,
-    true
-  )
-  await DI.plugins.loadByPath(
-    path.join(__dirname, 'plugins', 'commands'),
-    true,
-    true
-  )
-  await DI.plugins.loadByPath(path.join(__dirname, 'plugins', 'changelog'))
-  DI.plugins.get('changelog', true).core = true
-
-  await DI.plugins.loadByPath(
-    path.join(__dirname, 'plugins', 'css'),
-    true,
-    true
-  )
-
-  // add external modules
-  await DI.plugins.loadPluginPath()
-
-  ready.then(() => DI.plugins.ready())
+  // lets boot our plugin manager
+  DI.pluginManager.initialize()
 })

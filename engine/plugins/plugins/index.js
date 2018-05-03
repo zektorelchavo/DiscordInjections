@@ -6,33 +6,14 @@ const fs = require('fs-extra')
 const path = require('path')
 const Watcher = module.parent.require('../lib/watcher')
 
+const glob = require('globby')
+
 module.exports = class plugins extends Plugin {
-  preload () {
-    this.plugins = new Map()
-
-    this.manager.on('plugins-preloaded', plugins =>
-      plugins.map(pluginName => {
-        const plugin = this.DI.plugins.get(pluginName, true)
-        this.plugins.set(plugin.path, plugin)
-      })
-    )
-
-    this.manager.on('load', pluginName => {
-      const plugin = this.DI.plugins.get(pluginName, true)
-      this.plugins.set(plugin.path, plugin)
-    })
-
-    this.manager.on('before-uninstall', pluginName => {
-      const plugin = this.DI.plugins.get(pluginName, true)
-      this.plugins.delete(plugin.path)
-    })
-  }
-
   async load () {
     this.registerSettingsTab('Plugin Manager', require('./SettingsPage'))
   }
 
-  get iconURL() {
+  get iconURL () {
     return '//discordinjections.xyz/img/logo.png'
   }
 
@@ -56,5 +37,41 @@ module.exports = class plugins extends Plugin {
     const plugin = Array.from(this.plugins.values())[index]
 
     return this.DI.plugins.uninstall(plugin.inst._name)
+  }
+
+  getPluginID (path, pkg) {
+    // TODO more sophisticated package id generator
+    // base it on the package path (which will be the repo)
+    // .../plugins/github.com/cking/emoji-menu => github.com/cking/emoji-menu
+    // use package.name only as a fallback (for example for dev modules and custom paths)
+
+    return pkg.name
+  }
+
+  async loadPlugins () {
+    // first load all system plugins
+    const systemPlugins = await glob('**/package.json', {
+      cwd: path.dirname(__dirname),
+      absolute: true
+    })
+
+    await Promise.each(systemPlugins, pkg => this.manager.loadByPath(pkg, true))
+
+    // now check the plugin path
+    this.manager.loadPluginPath()
+
+    // last, but not least, load the missing plugins
+    console.warn('MANUAL PATH THINGY!')
+
+    /*
+    const globalRoot = this.manager.basePath
+
+    // now load every global plugin
+    const plugins = await glob('** /package.json', globalRoot)
+    console.log(this) */
+  }
+
+  isSystemPlugin (id) {
+    return fs.existsSync(path.join(__dirname, '..', id, 'package.json'))
   }
 }

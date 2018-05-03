@@ -9,12 +9,12 @@ class Plugin extends EventEmitter {
     this.manager = pm
     this.DI = pm.DI
     this.meta = meta
-    if (this.constructor == Plugin) {
+    if (this.constructor === Plugin) {
       throw new Error('Cannot instantiate an abstract class!')
     }
     this._name = meta.package.name
     this._commands = []
-    this.log('created')
+    this.log('created from', meta.path)
   }
 
   /**
@@ -47,7 +47,7 @@ class Plugin extends EventEmitter {
     this.log('preloaded')
   }
 
-  _load () {
+  async _load () {
     this.load()
     this.log('loaded')
   }

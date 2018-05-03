@@ -19,6 +19,7 @@
     "elements": "./elements",
     "eventemitter3": "^3.0.0",
     "fs-extra": "^5.0.0",
+    "globby": "^8.0.1",
     "postcss": "^6.0.16",
     "postcss-import": "^11.0.0",
     "ps-node": "^0.1.5",

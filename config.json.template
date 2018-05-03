@@ -2,5 +2,5 @@
     "transparent": false,
     "frame": null,
     "splash": "./loader.css",
-    "chromeFlags": []
+    "chromeFlags": ["simple-flag", ["advanced-flag", "with user value"]]
 }

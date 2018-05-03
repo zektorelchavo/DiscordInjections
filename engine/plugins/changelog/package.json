@@ -4,5 +4,6 @@
   "main": "index.js",
   "author": "Kura",
   "description": "Display DI Changelog",
-  "css": ["changelog.css"]
+  "css": ["changelog.css"],
+  "pluginDependencies": ["commands"]
 }
