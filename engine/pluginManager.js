@@ -60,17 +60,31 @@ class PluginManager extends EventEmitter {
   }
 
   async loadByPath (pluginPath, force = true, dependency = false) {
-    const fileName =
+    let pkg = {}
+
+    let fileName =
       path.basename(pluginPath) === 'package.json'
         ? pluginPath
         : path.join(pluginPath, 'package.json')
 
-    let pkg = {}
+    let main = path.dirname(fileName)
+
     try {
       pkg = reload(fileName)
     } catch (err) {
-      console.error('[PM] failed to load requested plugin!', err)
-      throw new Error('plugin not found')
+      if (path.extname(pluginPath) !== '.css') {
+        console.error('[PM] failed to load requested plugin!', err)
+        throw new Error('plugin not found')
+      } else {
+        pkg = {
+          name: path.basename(pluginPath, '.css'),
+          version: '1.0.0',
+          type: 'theme'
+        }
+
+        main = pluginPath
+        fileName = pluginPath
+      }
     }
 
     const id = this.system ? this.system.getPluginID(pkg) : 'plugins'
@@ -104,7 +118,7 @@ class PluginManager extends EventEmitter {
       path: path.dirname(fileName),
 
       // main class
-      main: path.dirname(fileName),
+      main,
 
       // package id
       id,
