@@ -38,6 +38,7 @@ module.exports = class hooks extends Plugin {
     let modIdx = 0
     const findModule = () =>
       this.webPackLoad((_module, _exports, _require) => {
+        this.debug('Searching module...', def.name, modIdx)
         for (modIdx; modIdx < Object.values(_require.c).length; modIdx++) {
           // ignore failed modules
           const modDefinition = _require.c[modIdx]
@@ -50,9 +51,9 @@ module.exports = class hooks extends Plugin {
 
           if (
             def.hooks.every(endpoint => {
-              let node = mod[endpoint]
+              let node = mod[endpoint.name]
               if (!node && mod.default) {
-                node = mod.default[endpoint]
+                node = mod.default[endpoint.name]
               }
               if (!node) {
                 return false
@@ -65,11 +66,13 @@ module.exports = class hooks extends Plugin {
               return true
             })
           ) {
+            this.debug('Found module!', def.name)
             this._hooks.set(def.name, mod)
             return mod
           }
         }
 
+        this.debug('...fill buffer', def.name)
         return Promise.delay(1).then(findModule)
       })
 
