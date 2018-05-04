@@ -3,6 +3,10 @@ const path = require('path')
 const fs = require('fs')
 const buble = require('buble')
 
+const postcss = require('postcss')
+const postcssImport = require('postcss-import')
+const postcssUrl = require('postcss-url')
+
 // register custom extension compilation support
 require.extensions['.jsx'] = (module, filename) => {
   const raw = fs.readFileSync(filename, 'utf8')
@@ -91,6 +95,16 @@ Object.defineProperty(DI, 'sessionStorage', {
 Object.defineProperty(DI, 'pluginManager', {
   writable: false,
   value: new (require('./pluginManager'))(DI)
+})
+
+Object.defineProperty(DI, 'postcss', {
+  writable: false,
+  value: postcss([
+    postcssImport(),
+    postcssUrl({
+      url: 'inline'
+    })
+  ])
 })
 
 // stage two

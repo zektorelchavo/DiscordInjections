@@ -1,6 +1,9 @@
 const Command = require('./command')
 const EventEmitter = require('eventemitter3')
 const path = require('path')
+const Watcher = module.parent.require('../lib/watcher')
+const fs = require('fs-extra')
+const Promise = require('bluebird')
 
 class Plugin extends EventEmitter {
   constructor (pm, meta) {
@@ -12,6 +15,7 @@ class Plugin extends EventEmitter {
     if (this.constructor === Plugin) {
       throw new Error('Cannot instantiate an abstract class!')
     }
+    this._id = meta.id
     this._name = meta.package.name
     this._commands = []
     this.log('created from', meta.path)
@@ -44,6 +48,7 @@ class Plugin extends EventEmitter {
     this.path = path
     this._verifyPackage()
     await Promise.resolve(this.preload())
+    this.loadCSSStack(this.watchCSSbyDefault)
     this.log('preloaded')
   }
 
@@ -66,9 +71,10 @@ class Plugin extends EventEmitter {
     for (const command of this._commands) {
       this.DI.CommandHandler.unhookCommand(command.name)
     }
-    if (this._cssWatcher) this._cssWatcher.close()
-    let cssElement = document.getElementById(`CSS-${this._name}`)
-    if (cssElement) cssElement.parentElement.removeChild(cssElement)
+
+    Array.from(
+      document.querySelectorAll(`style[data-plugin="${this._id}"]`)
+    ).forEach(el => el.remove())
 
     this.removeAllListeners()
 
@@ -187,7 +193,7 @@ class Plugin extends EventEmitter {
 
   console (action, ...args) {
     console[action](
-      `%c[${this._name}]`,
+      `%c[${this._id}]`,
       `color: #${this.color}; font-weight: bold; `,
       ...args
     )
@@ -279,6 +285,78 @@ class Plugin extends EventEmitter {
     )
 
     grp.lastElementChild.appendChild(this.deleteNode)
+  }
+
+  get watchCSSbyDefault () {
+    return false
+  }
+
+  loadCSSStack (watch = false) {
+    if (!this.meta.package.css) {
+      return
+    }
+
+    return Promise.each(this.meta.package.css, file =>
+      this.loadCSS(file, watch)
+    )
+  }
+
+  async loadCSS (file, watch = false) {
+    if (watch && !this.watcher) {
+      this.watcher = new Watcher()
+
+      this.watcher.on('change', (fileName, identifier) =>
+        this._onFileChange(identifier, fileName)
+      )
+    }
+
+    const cssPath = path.resolve(this.meta.path, file)
+    try {
+      let content = await fs.readFile(cssPath, 'utf-8')
+      content = await this.DI.postcss.process(content, {
+        from: cssPath,
+        to: cssPath,
+        map: {
+          annotation: false,
+          inline: false,
+          safe: false
+        }
+      })
+
+      let el = document.querySelector(
+        `style[data-plugin="${this._id}"][data-filename="${file.replace(
+          /\\/g,
+          '\\\\'
+        )}"]`
+      )
+      if (!el) {
+        this.info('Attaching css file', file)
+        document.body.appendChild(this._createStyle(content, this._id, file))
+      } else {
+        this.info('Updating css file', file)
+        while (el.firstChild) {
+          el.firstChild.remove()
+        }
+        el.appendChild(document.createTextNode(content))
+      }
+
+      if (watch) {
+        this.watcher.addFile(cssPath)
+      }
+    } catch (err) {
+      this.error('Failed to import css file', this._name, err)
+    }
+  }
+  _createStyle (content, plugin, filename) {
+    const style = document.createElement('style')
+    style.dataset.plugin = plugin
+    style.dataset.filename = filename
+    style.appendChild(document.createTextNode(content))
+    return style
+  }
+
+  async _onFileChange (fileName, filePath) {
+    this.loadCSS(fileName)
   }
 }
 

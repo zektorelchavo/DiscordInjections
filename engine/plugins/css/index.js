@@ -17,28 +17,6 @@ module.exports = class css extends Plugin {
     )
 
     this.cssStack = {}
-    this.manager.on('plugins-preloaded', plugins => {
-      plugins.map(plugin => this.manager.get(plugin, true)).forEach(plugin => {
-        const name = plugin.package.name
-        const css = plugin.package.css || []
-        if (!css.length) {
-          return this.log(name, 'did not specify any css files, skipping')
-        } else {
-          this.cssStack[name] = {
-            path: plugin.path,
-            files: css
-          }
-          return this.log(name, 'requested', css.length, 'css files to attach')
-        }
-      })
-    })
-
-    this.manager.on('load', plugin =>
-      this.loadPluginCss(this.manager.get(plugin, true))
-    )
-    this.manager.on('unload', plugin =>
-      this.unloadPluginCss(this.manager.get(plugin, true))
-    )
   }
 
   async load () {
@@ -67,7 +45,7 @@ module.exports = class css extends Plugin {
     )
   }
 
-  get iconURL() {
+  get iconURL () {
     return '//discordinjections.xyz/img/logo.png'
   }
 

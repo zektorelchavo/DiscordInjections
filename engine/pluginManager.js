@@ -5,7 +5,7 @@ const reload = require('require-reload')
 const Promise = require('bluebird')
 const { app, getCurrentWebContents } = require('electron').remote
 
-const elements = require('../elements/index')
+const elements = require('elements')
 const glob = require('globby')
 
 class PluginManager extends EventEmitter {
@@ -73,16 +73,12 @@ class PluginManager extends EventEmitter {
       throw new Error('plugin not found')
     }
 
-    const id = this.system
-      ? this.system.getPluginID(path.dirname(fileName), pkg)
-      : 'plugins'
+    const id = this.system ? this.system.getPluginID(pkg) : 'plugins'
 
-    /*
-    if (!force && this.pluginsEnabled[pkg.name] === false) {
+    if (this.system && !force && this.system.isPluginEnabled(id) === false) {
       // dont load disabled plugins
       return
     }
-    */
 
     if (this.plugins.has(id) && this.plugins.get(id).loaded) {
       // no need to reload an already loaded plugin
@@ -106,6 +102,12 @@ class PluginManager extends EventEmitter {
     const p = {
       // the base path to the plugin
       path: path.dirname(fileName),
+
+      // main class
+      main: path.dirname(fileName),
+
+      // package id
+      id,
 
       // the package.json of the plugin
       package: pkg,
@@ -145,9 +147,23 @@ class PluginManager extends EventEmitter {
     }
 
     // load the plugin
-    console.warn('todo: plugin type support!')
+    switch (pkg.type) {
+      case 'theme':
+        try {
+          require.resolve(p.main)
+        } catch (err) {
+          // its a simple css theme without js extension
+          p.main = elements.Theme
+        }
+        break
 
-    p.Cls = reload(p.path) // loads index.js or file defined in package.json > "main"
+      case 'plugin':
+      default:
+        // default behavior
+        break
+    }
+
+    p.Cls = reload(p.main) // loads index.js or file defined in package.json > "main"
     try {
       p.inst = new p.Cls(this, p) // creates the plugin instance
     } catch (err) {

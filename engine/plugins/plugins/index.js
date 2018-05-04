@@ -1,10 +1,8 @@
 const { Plugin } = require('elements')
 const Promise = require('bluebird')
-const postcss = require('postcss')
-const postcssImport = require('postcss-import')
 const fs = require('fs-extra')
 const path = require('path')
-const Watcher = module.parent.require('../lib/watcher')
+const { URL } = require('url')
 
 const glob = require('globby')
 
@@ -39,13 +37,39 @@ module.exports = class plugins extends Plugin {
     return this.DI.plugins.uninstall(plugin.inst._name)
   }
 
-  getPluginID (path, pkg) {
-    // TODO more sophisticated package id generator
-    // base it on the package path (which will be the repo)
-    // .../plugins/github.com/cking/emoji-menu => github.com/cking/emoji-menu
-    // use package.name only as a fallback (for example for dev modules and custom paths)
+  getPluginID (pkg) {
+    if (!pkg.repository) {
+      return pkg.name
+    }
 
-    return pkg.name
+    if (pkg.repository.url) {
+      // only git supported
+      if (pkg.repository.type && pkg.repository.type !== 'git') {
+        return pkg.name
+      }
+
+      const url = new URL(pkg.repository.url)
+      return path.join(url.hostname, url.pathname.replace(/\.git$/, '')) // remove protocol part and (optional) .git extension
+    } else if (pkg.repository.startsWith('github:')) {
+      // special case github: prefix
+      return path.join('github.com', pkg.repository.substr(7))
+    } else if (pkg.repository.startsWith('gitlab:')) {
+      // special case gitlab: prefix
+      return path.join('gitlab.com', pkg.repository.substr(7))
+    } else if (pkg.repository.startsWith('bitbucket:')) {
+      // special case bitbucket: prefix
+      return path.join('bitbucket.org', pkg.repository.substr(10))
+    } else if (pkg.repository.startsWith('gist:')) {
+      // github gists not supported
+      return pkg.name
+    } else if (!pkg.repository.contains(':')) {
+      // special case prefix and scheme less (github)
+      return path.join('github.com', pkg.repository)
+    } else {
+      // regular url
+      const url = new URL(pkg.repository)
+      return path.join(url.hostname, url.pathname.replace(/\.git$/, '')) // remove protocol part and (optional) .git extension
+    }
   }
 
   async loadPlugins () {
@@ -62,16 +86,17 @@ module.exports = class plugins extends Plugin {
 
     // last, but not least, load the missing plugins
     console.warn('MANUAL PATH THINGY!')
-
-    /*
-    const globalRoot = this.manager.basePath
-
-    // now load every global plugin
-    const plugins = await glob('** /package.json', globalRoot)
-    console.log(this) */
   }
 
   isSystemPlugin (id) {
     return fs.existsSync(path.join(__dirname, '..', id, 'package.json'))
+  }
+
+  isPluginEnabled (id) {
+    if (this.isSystemPlugin(id)) {
+      return true
+    }
+
+    return !!this.settings.plugins[id].enabled
   }
 }

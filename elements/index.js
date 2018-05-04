@@ -27,3 +27,4 @@ while (m.parent && !m.filename.endsWith('pluginManager.js')) {
 }
 
 exports.Plugin = m.require('../components/plugin')
+exports.Theme = require('./theme.js')
