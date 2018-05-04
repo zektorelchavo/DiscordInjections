@@ -1,60 +1,10 @@
 const { Plugin } = require('elements')
-const Promise = require('bluebird')
 
 const { MutationObserver } = window
 
 module.exports = class react extends Plugin {
   async preload () {
-    this._messageHandler = null
     this.observer = new MutationObserver(mutation => this.onMutate(mutation))
-
-    await this.registerReact()
-  }
-
-  // WebPackLoad
-  async webPackLoad (cb, name = Math.random().toString()) {
-    while (!window.webpackJsonp) {
-      await Promise.delay(1)
-    }
-
-    return window.webpackJsonp([name], { [name]: cb }, [name])
-  }
-
-  async registerReact () {
-    let modIdx = 0
-    const collectCallbacks = () =>
-      this.webPackLoad((_module, _exports, _require) => {
-        for (modIdx; modIdx < Object.values(_require.c).length; modIdx++) {
-          const modDefinition = _require.c[modIdx]
-          if (!modDefinition || !modDefinition.exports) {
-            continue
-          }
-          const mod = modDefinition.exports
-
-          if (
-            mod.sendBotMessage ||
-            (mod.default && mod.default.sendBotMessage)
-          ) {
-            this.debug('found messageHandler!')
-            this._messageHandler = mod
-
-            Object.keys(this._messageHandler).forEach(k => {
-              this.debug(`hiding ${k}`)
-              this._messageHandler['$$' + k] = this._messageHandler[k]
-              this._messageHandler[k] = (channel, ...args) => {
-                this.debug('{handler}', k, channel, ...args)
-                return this._messageHandler['$$' + k](channel, ...args)
-              }
-            })
-
-            return true
-          }
-        }
-
-        return Promise.delay(1).then(collectCallbacks)
-      })
-
-    return collectCallbacks()
   }
 
   load () {
@@ -243,39 +193,6 @@ module.exports = class react extends Plugin {
         } else {
           this.emit('friendsListClosed', mut)
         }
-      } else if (
-        added &&
-        changed.querySelector &&
-        changed.querySelector('.avatar-large + .comment')
-      ) {
-        // mod the thing
-        Array.from(changed.querySelectorAll('.avatar-large')).forEach(ava => {
-          const matches = ava.style.backgroundImage.match(/avatars\/(\d+)/)
-          if (!matches) {
-            return
-          }
-          const uid = matches[1]
-          const name = this.DI.contributors[uid]
-          if (!name) {
-            return
-          }
-
-          const nametag = ava.nextElementSibling.querySelector(
-            '.username-wrapper'
-          )
-
-          if (nametag) {
-            nametag.appendChild(
-              this.createElement(
-                `<div class="DI-contrib">
-                <div class="tooltip tooltip-top tooltip-black">DI Contributor ${name}</div>
-              </div>`
-              )
-            )
-          } else {
-            this.warn('failed to apply nametag badge', uid, name, nametag)
-          }
-        })
       }
     })
   }

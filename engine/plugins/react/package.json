@@ -4,5 +4,5 @@
   "main": "index.js",
   "author": "Kura",
   "description": "Basic react interaction with Discord",
-  "css": ["modal.css", "contrib.css"]
+  "css": ["modal.css"]
 }

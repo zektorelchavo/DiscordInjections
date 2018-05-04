@@ -1,0 +1,9 @@
+{
+  "name": "contrib",
+  "version": "0.0.1",
+  "main": "index.js",
+  "author": "Kura",
+  "description": "Basic hooks into Discord",
+  "pluginDependencies": ["react"],
+  "css": ["contrib.css"]
+}

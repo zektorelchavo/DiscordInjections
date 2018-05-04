@@ -237,7 +237,7 @@ class Plugin extends EventEmitter {
   }
 
   sendLocalMessage (message, channel = null) {
-    const react = this.manager.get('react')
+    const react = this.manager.get('hooks')
     const handler = react._messageHandler
 
     const channelID = channel || this.currentChannelID
