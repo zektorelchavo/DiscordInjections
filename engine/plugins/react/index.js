@@ -264,13 +264,17 @@ module.exports = class react extends Plugin {
             '.username-wrapper'
           )
 
-          nametag.appendChild(
-            this.createElement(
-              `<div class="DI-contrib">
+          if (nametag) {
+            nametag.appendChild(
+              this.createElement(
+                `<div class="DI-contrib">
                 <div class="tooltip tooltip-top tooltip-black">DI Contributor ${name}</div>
               </div>`
+              )
             )
-          )
+          } else {
+            this.warn('failed to apply nametag badge', uid, name, nametag)
+          }
         })
       }
     })
