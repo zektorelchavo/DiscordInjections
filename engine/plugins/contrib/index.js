@@ -24,13 +24,20 @@ module.exports = class hooks extends Plugin {
       }
 
       const rInst = this.r.getReactInstance(node)
-      const avatar = rInst.memoizedProps.children[0]
+      const avatar = rInst.memoizedProps
+        ? rInst.memoizedProps.children[0]
+        : rInst.props.children[0]
 
       let user = null
       try {
-        user = avatar.props.children.props.user
+        const avatarProps = avatar.props.children
+
+        user = avatarProps.memoizedProps
+          ? avatarProps.memoizedrops.user
+          : avatarProps.props.user
       } catch (err) {
-        this.error('failed to fetch the user', err)
+        this.error('failed to fetch the user', user, err)
+        return
       }
 
       const name = this.DI.contributors[user.id]
