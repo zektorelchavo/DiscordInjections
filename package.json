@@ -14,7 +14,6 @@
   "license": "MIT",
   "repository": "https://github.com/DiscordInjections/DiscordInjections",
   "dependencies": {
-    "acorn": "^5.5.3",
     "bluebird": "^3.5.1",
     "buble": "^0.19.0",
     "elements": "./elements",
