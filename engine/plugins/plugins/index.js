@@ -9,10 +9,30 @@ const glob = require('globby')
 module.exports = class plugins extends Plugin {
   async load () {
     this.registerSettingsTab('Plugin Manager', require('./SettingsPage'))
+
+    this.registerCommand({
+      name: 'reset',
+      info:
+        'Clears the whole local storage from Discord Injections and reloads Discord',
+      func: this.resetLocalStorage.bind(this)
+    })
   }
 
   get iconURL () {
     return '//discordinjections.xyz/img/logo.png'
+  }
+
+  resetLocalStorage () {
+    const ls = this.DI.localStorage
+
+    for (let idx = 0; idx < ls.length; idx++) {
+      const key = ls.key(idx)
+      if (key.startsWith('DI-')) {
+        ls.removeItem(key)
+      }
+    }
+
+    window.location.reload()
   }
 
   unload () {}
