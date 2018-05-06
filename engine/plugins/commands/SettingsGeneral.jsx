@@ -11,6 +11,7 @@ module.exports = class SettingsGeneral extends React.PureComponent {
           plugin={this.props.plugin}
           lsNode='commandPrefix'
           defaultValue='//'
+          value={this.props.plugin.settings.commandPrefix}
           reset
         />
       </div>
