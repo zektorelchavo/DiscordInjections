@@ -73,7 +73,7 @@ class SettingsOptionTextbox extends Base {
             }
             name={this.props.name || null}
             maxLength={this.props.maxlength || null}
-            value={this.props.value}
+            value={this.state.value}
             onChange={this.change.bind(this)}
             style={{
               flex: '1 1 auto',
