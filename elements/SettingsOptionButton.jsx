@@ -28,7 +28,11 @@ class SettingsButton extends React.Component {
   render () {
     return (
       <button
-        className={this.props.outline ? this.outlineClass : this.brandClass}
+        className={
+          this.props.className +
+          ' ' +
+          (this.props.outline ? this.outlineClass : this.brandClass)
+        }
         type='button'
         onClick={this.props.onClick}
         style={{ flex: '0 1 auto' }}
