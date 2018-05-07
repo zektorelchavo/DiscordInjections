@@ -1,6 +1,7 @@
 const { Plugin } = require('elements')
 const React = require('react')
 const ReactDOM = require('react-dom')
+const util = require('util')
 
 module.exports = class settings extends Plugin {
   preload () {
@@ -30,7 +31,8 @@ module.exports = class settings extends Plugin {
           React.createElement(require('./SettingsBase'), {
             component: this.map[type].component,
             plugin: this.map[type].plugin,
-            title: this.map[type].name
+            title: this.map[type].name,
+            id: this.map[type].elementID
           }),
           document.querySelector('[class*="layer"] .content-column div')
         )
@@ -63,13 +65,21 @@ module.exports = class settings extends Plugin {
     return '//discordinjections.xyz/img/logo.png'
   }
 
-  _registerSettingsTab (plugin, name, component) {
-    if (name && !component) {
+  _registerSettingsTab (plugin, name, component, elementID) {
+    if (arguments.length === 2) {
       component = name
-      name = plugin._name
+      name = plugin._id
+    } else if (arguments.length === 3) {
+      if (!util.isString(name)) {
+        elementID = component
+        component = name
+        name = plugin._name
+      } else {
+        elementID = (plugin._id + '-' + name).replace(/[^-a-zA-Z0-9_]/g, '_')
+      }
     }
 
-    const id = `di-${plugin._name}-${name}`
+    const id = `di-${plugin._id}-${name}`
     const tab = document.createElement('div')
     tab.className = this.unselectedCss
     tab.appendChild(document.createTextNode(name))
@@ -82,6 +92,7 @@ module.exports = class settings extends Plugin {
       tab,
       component,
       id,
+      elementID,
       name,
       plugin
     }
