@@ -19,6 +19,9 @@ exports.SettingsFormNotice = require('./SettingsFormNotice')
 exports.SettingsOptionSlider = require('./SettingsOptionSlider')
 exports.SettingsGhostPill = require('./SettingsGhostPill')
 exports.SettingsSubTitle = require('./SettingsSubTitle')
+exports.SettingsTabs = require('./SettingsTabs')
+exports.SettingsTab = require('./SettingsTab')
+exports.SettingsList = require('./SettingsList')
 
 // go as far up as possible
 let m = module
