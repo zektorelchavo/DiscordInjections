@@ -175,7 +175,14 @@ class Plugin extends EventEmitter {
     this.console('log', ...args)
   }
 
+  get debugEnabled () {
+    return !!this.DI.conf.debug
+  }
+
   debug (...args) {
+    if (!this.debugEnabled) {
+      return
+    }
     this.console('debug', ...args)
   }
 
@@ -232,8 +239,8 @@ class Plugin extends EventEmitter {
     this.manager.get('commands').hookCommand(command)
   }
 
-  registerSettingsTab (name, component) {
-    this.manager.get('settings')._registerSettingsTab(this, name, component)
+  registerSettingsTab (name, component, id = null) {
+    this.manager.get('settings')._registerSettingsTab(this, name, component, id)
   }
 
   sendLocalMessage (message, channel = null) {
