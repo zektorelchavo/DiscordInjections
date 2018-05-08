@@ -16,7 +16,7 @@ module.exports = class List extends PureComponent {
     for (var idx = 0; idx < this.props.length; idx++) {
       const content = this.props.itemRenderer(idx)
       list.push(
-        <li>
+        <li key={idx}>
           {content}
         </li>
       )
