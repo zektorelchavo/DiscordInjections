@@ -131,9 +131,7 @@ class PluginManager extends EventEmitter {
 
       // dependencies
       dependency: [],
-      reverseDependency: [],
-
-      disabled: false
+      reverseDependency: []
     }
 
     // store the temporary plugin

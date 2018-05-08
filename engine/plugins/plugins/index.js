@@ -14,6 +14,18 @@ module.exports = class plugins extends Plugin {
       'DI-plugins-repo'
     )
 
+    this.registerSettingsTab(
+      'Plugin Manager',
+      require('./SettingsPluginPage'),
+      'DI-plugins-plugin'
+    )
+
+    this.registerSettingsTab(
+      'Theme Manager',
+      require('./SettingsThemePage'),
+      'DI-plugins-themes'
+    )
+
     this.registerCommand({
       name: 'reset',
       info:
@@ -47,17 +59,17 @@ module.exports = class plugins extends Plugin {
 
   disable (id, flag = true) {
     // first fetch the raw plugin
-    if (!this.manager.has(id)) {
+    if (!this.manager.plugins.has(id)) {
       // no worries about non existant plugins
       return
     }
-    const p = this.manager.get(id, true)
-    p.disabled = flag
+    this.setPluginInfo(id, 'disabled', flag)
+    const p = this.manager.plugins.get(id)
 
-    if (p.disabled && p.loaded) {
+    if (flag && p.loaded) {
       // unload disabled plugins
       return this.manager.unload(id)
-    } else if (!p.disabled && !p.loaded) {
+    } else if (!flag && !p.loaded) {
       return this.manager.loadFromCache(p.id, true)
     }
   }
@@ -137,6 +149,12 @@ module.exports = class plugins extends Plugin {
     }
 
     return this.settings.plugins[id]
+  }
+
+  setPluginInfo (id, key, value) {
+    const p = this.getPluginInfo(id)
+    p[key] = value
+    this.setSettingsNode(`plugins.${id}`, p)
   }
 
   isSystemPlugin (id) {

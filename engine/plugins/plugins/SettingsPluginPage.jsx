@@ -38,7 +38,7 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
   }
 
   async toggleDisable (id) {
-    const enabled = this.props.plugins.isPluginEnabled(id)
+    const enabled = this.props.plugin.isPluginEnabled(id)
     // is enabled => true, disable(true) disables ;D
     await this.props.plugin.disable(id, enabled)
 
