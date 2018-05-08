@@ -89,11 +89,6 @@ class PluginManager extends EventEmitter {
 
     const id = this.system ? this.system.getPluginID(pkg) : 'plugins'
 
-    if (this.system && !force && this.system.isPluginEnabled(id) === false) {
-      // dont load disabled plugins
-      return
-    }
-
     if (this.plugins.has(id) && this.plugins.get(id).loaded) {
       // no need to reload an already loaded plugin
       if (
@@ -136,22 +131,60 @@ class PluginManager extends EventEmitter {
 
       // dependencies
       dependency: [],
-      reverseDependency: []
+      reverseDependency: [],
+
+      disabled: false
     }
 
+    // store the temporary plugin
+    this.plugins.set(id, p)
+
+    // chain into the loadFromCache logic
+    return this.loadFromCache(id, force, dependency)
+  }
+
+  async load (plugin, force = true, dependency = false) {
+    const pluginPath = path.resolve(this.basePath, plugin)
+    if (!fs.existsSync(path.join(pluginPath, 'package.json'))) {
+      throw new Error('plugin not found', plugin)
+    }
+
+    return this.loadByPath(pluginPath, force, dependency)
+  }
+
+  async loadFromCache (plugin, force = true, dependency = false) {
+    if (
+      this.system &&
+      !force &&
+      this.system.isPluginEnabled(plugin) === false
+    ) {
+      // dont load disabled plugins
+      return
+    }
+
+    if (!this.plugins.has(plugin)) {
+      throw new Error(`<${plugin}> not found in registry`)
+    }
+
+    const p = this.plugins.get(plugin)
+
     if (dependency) {
-      console.debug('[PM] adding reverse dependency', dependency, 'to', id)
+      console.debug('[PM] adding reverse dependency', dependency, 'to', plugin)
       p.reverseDependency.push(dependency)
     }
 
     // check for dependencies
-    if (Array.isArray(pkg.pluginDependencies)) {
-      await Promise.each(pkg.pluginDependencies, async dep => {
-        console.debug('[PM] adding dependency', dep, 'to', id)
+    if (Array.isArray(p.package.pluginDependencies)) {
+      await Promise.each(p.package.pluginDependencies, async dep => {
+        console.debug('[PM] adding dependency', dep, 'to', plugin)
 
         // is this a system plugin?
         if (this.system.isSystemPlugin(dep)) {
-          await this.loadByPath(path.join(__dirname, 'plugins', dep), true, id)
+          await this.loadByPath(
+            path.join(__dirname, 'plugins', dep),
+            true,
+            plugin
+          )
           p.dependency.push(dep)
         } else {
           console.warn('DEPTREE LUL!!')
@@ -161,7 +194,7 @@ class PluginManager extends EventEmitter {
     }
 
     // load the plugin
-    switch (pkg.type) {
+    switch (p.package.type) {
       case 'theme':
         try {
           require.resolve(p.main)
@@ -181,23 +214,20 @@ class PluginManager extends EventEmitter {
     try {
       p.inst = new p.Cls(this, p) // creates the plugin instance
     } catch (err) {
-      console.error('[PM] failed to instanciate plugin', id, err)
+      console.error('[PM] failed to instanciate plugin', plugin, err)
       throw err
     }
 
     if (!(p.inst instanceof elements.Plugin)) {
-      console.error('[PM] cannot instanciate an unkown module', id)
+      console.error('[PM] cannot instanciate an unkown module', plugin)
       throw new Error('unkown module loaded!')
     }
-
-    // permanently store our plugin
-    this.plugins.set(id, p)
 
     // preload the plugin
     try {
       await p.inst._preload()
     } catch (err) {
-      console.error('[PM] failed to preload plugin', id, err)
+      console.error('[PM] failed to preload plugin', plugin, err)
       throw err
     }
     p.loaded = true
@@ -205,36 +235,31 @@ class PluginManager extends EventEmitter {
 
     // if we are already running, load the module immediatly
     if (this._ready) {
-      p.inst._load().then(() => this.emit('load', id))
+      p.inst._load().then(() => this.emit('load', plugin))
     }
 
     // return the (partially) loaded plugin
     return p
   }
 
-  async load (plugin, force = true, dependency = false) {
-    const pluginPath = path.resolve(this.basePath, plugin)
-    if (!fs.existsSync(path.join(pluginPath, 'package.json'))) {
-      throw new Error('plugin not found', plugin)
-    }
-
-    return this.loadByPath(pluginPath, force, dependency)
-  }
-
-  async unload (name) {
-    if (!this.plugins[name] || !this.plugins[name].loaded) {
+  async unload (id) {
+    if (!this.plugins.has(id)) {
       return true
     }
 
-    if (this._ready) {
-      this.emit('unload', name)
+    const p = this.plugins.get(id)
+
+    if (p.loaded) {
+      if (this._ready) {
+        this.emit('unload', id)
+      }
+
+      // unload
+      await Promise.resolve(p.inst._unload())
+      p.inst = null
+      p.loaded = false
     }
 
-    const p = this.plugins[name]
-    // unload
-    await Promise.resolve(p.inst._unload())
-    p.inst = null
-    p.loaded = false
     return true
   }
 
