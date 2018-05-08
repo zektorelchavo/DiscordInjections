@@ -48,8 +48,8 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
     })
   }
 
-  async delete (idx) {
-    await this.props.plugin.delete(idx)
+  async delete (id) {
+    await this.props.plugin.delete(id)
     this.setState({
       plugins: this.props.plugin.manager.plugins
     })

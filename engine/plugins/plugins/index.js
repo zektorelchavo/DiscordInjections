@@ -74,10 +74,12 @@ module.exports = class plugins extends Plugin {
     }
   }
 
-  delete (index) {
-    const plugin = Array.from(this.plugins.values())[index]
+  delete (id) {
+    if (!this.manager.plugins.has(id)) {
+      return
+    }
 
-    return this.DI.plugins.uninstall(plugin.inst._name)
+    return this.manager.uninstall(id)
   }
 
   getPluginID (pkg) {
@@ -167,5 +169,9 @@ module.exports = class plugins extends Plugin {
     }
 
     return !this.getPluginInfo(id).disabled
+  }
+
+  removeLocal (id) {
+    this.setPluginInfo(id, 'path', null)
   }
 }

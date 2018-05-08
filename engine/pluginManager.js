@@ -294,16 +294,25 @@ class PluginManager extends EventEmitter {
     return this.loadByPath(fileName)
   }
 
-  async uninstall (name) {
-    const plugin = this.get(name, true)
-    this.emit('before-uninstall', name)
+  async uninstall (id) {
+    const plugin = this.plugins.get(id)
+    this.emit('before-uninstall', id)
     // first unload
-    await this.unload(name)
+    await this.unload(id)
 
-    // now remove the directory tree
-    delete this.plugins[name]
-    this.emit('uninstall', name)
-    return fs.remove(plugin.path)
+    this.emit('uninstall', id)
+
+    // remove the plugin reference
+    this.plugins.delete(id)
+
+    // is this a load path plugin?
+    if (path.relative(this.basePath, plugin.path) === id) {
+      // delete the full path
+      return fs.remove(plugin.path)
+    } else {
+      // remove the reference in the custom tree
+      return this.system.removeLocal(id)
+    }
   }
 
   async remove (name, unload = true) {
