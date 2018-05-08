@@ -1,6 +1,6 @@
 const React = require('react')
 const { PureComponent } = React
-const { dialog } = require('electron').remote
+const { dialog, getCurrentWindow } = require('electron').remote
 const {
   SettingsList: List,
   SettingsOptionDescription,
@@ -49,6 +49,21 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
   }
 
   async delete (id) {
+    if (
+      !dialog.showMessageBox(getCurrentWindow(), {
+        type: 'question',
+        title: 'Uninstall Plugin',
+        message: `Do you really want to remove and uninstall "${this.state.plugins.get(
+          id
+        ).package.name}"?`,
+        buttons: ['Yes', 'No'],
+        defaultId: 1,
+        cancelId: 1
+      })
+    ) {
+      return
+    }
+
     await this.props.plugin.delete(id)
     this.setState({
       plugins: this.props.plugin.manager.plugins
