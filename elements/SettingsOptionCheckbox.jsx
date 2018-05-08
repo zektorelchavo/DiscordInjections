@@ -21,7 +21,7 @@ module.exports = class SettingsOptionCheckbox extends Base {
 
   render () {
     return (
-      <label className='checkboxWrapper-2Yvr_Y'>
+      <label className='checkboxWrapper-2Yvr_Y checkboxWrapper-SkhIWG'>
         <input
           type='checkbox'
           className='inputDefault-2tiBIA input-oWyROL inputDefault-3JxKJ2 input-3ITkQf'
