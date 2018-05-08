@@ -8,7 +8,11 @@ const glob = require('globby')
 
 module.exports = class plugins extends Plugin {
   async load () {
-    this.registerSettingsTab('Plugin Manager', require('./SettingsPage'))
+    this.registerSettingsTab(
+      'Customize DI',
+      require('./SettingsRepositoryPage'),
+      'DI-plugins-repo'
+    )
 
     this.registerCommand({
       name: 'reset',
@@ -41,13 +45,20 @@ module.exports = class plugins extends Plugin {
     this.DI.plugins.install(path)
   }
 
-  disable (index, flag) {
-    const key = Array.from(this.plugins.keys())[index]
+  disable (id, flag = true) {
+    // first fetch the raw plugin
+    if (!this.manager.has(id)) {
+      // no worries about non existant plugins
+      return
+    }
+    const p = this.manager.get(id, true)
+    p.disabled = flag
 
-    if (flag) {
-      return this.DI.plugins.disable(this.plugins.get(key).package.name, true)
-    } else {
-      return this.DI.plugins.enable(this.plugins.get(key).package.name, true)
+    if (p.disabled && p.loaded) {
+      // unload disabled plugins
+      return this.manager.unload(id)
+    } else if (!p.disabled && !p.loaded) {
+      return this.manager.loadFromCache(p.id, true)
     }
   }
 
@@ -58,6 +69,10 @@ module.exports = class plugins extends Plugin {
   }
 
   getPluginID (pkg) {
+    if (this.isSystemPlugin(pkg.name)) {
+      return pkg.name
+    }
+
     if (!pkg.repository) {
       return pkg.name
     }
@@ -108,6 +123,22 @@ module.exports = class plugins extends Plugin {
     console.warn('MANUAL PATH THINGY!')
   }
 
+  getPluginInfo (id) {
+    if (!this.settings.plugins) {
+      const s = this.settings
+      s.plugins = s.plugins || {}
+      this.settings = s
+    }
+
+    if (!this.settings.plugins[id]) {
+      const s = this.settings
+      s.plugins[id] = {}
+      this.settings = s
+    }
+
+    return this.settings.plugins[id]
+  }
+
   isSystemPlugin (id) {
     return fs.existsSync(path.join(__dirname, '..', id, 'package.json'))
   }
@@ -117,6 +148,6 @@ module.exports = class plugins extends Plugin {
       return true
     }
 
-    return !!this.settings.plugins[id].enabled
+    return !this.getPluginInfo(id).disabled
   }
 }
