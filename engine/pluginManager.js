@@ -56,7 +56,7 @@ class PluginManager extends EventEmitter {
     console.info('[PM] loading plugins from', this.basePath)
     console.debug('[PM] found following plugins', plugins)
 
-    return Promise.each(plugins, plugin => this.loadByPath(plugin))
+    return Promise.each(plugins, plugin => this.loadByPath(plugin, false))
   }
 
   async loadByPath (pluginPath, force = true, dependency = false) {
