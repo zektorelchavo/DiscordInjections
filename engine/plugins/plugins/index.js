@@ -91,6 +91,7 @@ module.exports = class plugins extends Plugin {
       return pkg.name
     }
 
+    let repoURL = ''
     if (pkg.repository.url) {
       // only git supported
       if (pkg.repository.type && pkg.repository.type !== 'git') {
@@ -98,27 +99,29 @@ module.exports = class plugins extends Plugin {
       }
 
       const url = new URL(pkg.repository.url)
-      return path.join(url.hostname, url.pathname.replace(/\.git$/, '')) // remove protocol part and (optional) .git extension
+      repoURL = path.join(url.hostname, url.pathname.replace(/\.git$/, '')) // remove protocol part and (optional) .git extension
     } else if (pkg.repository.startsWith('github:')) {
       // special case github: prefix
-      return path.join('github.com', pkg.repository.substr(7))
+      repoURL = path.join('github.com', pkg.repository.substr(7))
     } else if (pkg.repository.startsWith('gitlab:')) {
       // special case gitlab: prefix
-      return path.join('gitlab.com', pkg.repository.substr(7))
+      repoURL = path.join('gitlab.com', pkg.repository.substr(7))
     } else if (pkg.repository.startsWith('bitbucket:')) {
       // special case bitbucket: prefix
-      return path.join('bitbucket.org', pkg.repository.substr(10))
+      repoURL = path.join('bitbucket.org', pkg.repository.substr(10))
     } else if (pkg.repository.startsWith('gist:')) {
       // github gists not supported
       return pkg.name
     } else if (!pkg.repository.contains(':')) {
       // special case prefix and scheme less (github)
-      return path.join('github.com', pkg.repository)
+      repoURL = path.join('github.com', pkg.repository)
     } else {
       // regular url
       const url = new URL(pkg.repository)
-      return path.join(url.hostname, url.pathname.replace(/\.git$/, '')) // remove protocol part and (optional) .git extension
+      repoURL = path.join(url.hostname, url.pathname.replace(/\.git$/, '')) // remove protocol part and (optional) .git extension
     }
+
+    return repoURL.replace(/\//g, '_').replace(/[^a-zA-Z.-_0-9]/g, '')
   }
 
   async loadPlugins () {
