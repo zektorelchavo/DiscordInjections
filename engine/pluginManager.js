@@ -3,7 +3,12 @@ const fs = require('fs-extra')
 const path = require('path')
 const reload = require('require-reload')
 const Promise = require('bluebird')
-const { app, getCurrentWebContents } = require('electron').remote
+const {
+  app,
+  dialog,
+  getCurrentWebContents,
+  getCurrentWindow
+} = require('electron').remote
 
 const elements = require('elements')
 const glob = require('globby')
@@ -132,6 +137,23 @@ class PluginManager extends EventEmitter {
       // dependencies
       dependency: [],
       reverseDependency: []
+    }
+
+    if (
+      this.system &&
+      !this.system.isSystemPlugin(id) &&
+      id === pkg.name &&
+      pkg.type !== 'theme'
+    ) {
+      dialog.showMessageBox(getCurrentWindow(), {
+        type: 'warning',
+        title: 'Could not generate ID',
+        message: `Unable to generate a plugin ID for <${pkg.name}> found at <${p.path}>.
+          Please make sure to provide the repository field in your package definition!`.replace(
+          /^\s+/gm,
+          ''
+        )
+      })
     }
 
     // store the temporary plugin
