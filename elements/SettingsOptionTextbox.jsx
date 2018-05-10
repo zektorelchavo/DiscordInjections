@@ -96,8 +96,13 @@ class SettingsOptionTextbox extends Base {
 
   change (event) {
     this.setState({ value: event.target.value })
+
     if (!this.props.apply) {
       this.setProp(event.target.value || this.props.defaultValue)
+    }
+
+    if (this.props.onChange) {
+      this.props.onChange(event.target.value)
     }
   }
 
