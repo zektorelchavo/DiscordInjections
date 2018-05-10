@@ -70,7 +70,7 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
     if (this.props.plugin.debugEnabled) {
       const lines = `
           Name:        ${entry.package.name}
-          Version:     ${entry.package.verion}
+          Version:     ${entry.package.version}
           Repository:  ${repoLink}
       `.replace(/^\s+/gm, '')
       debug = (
