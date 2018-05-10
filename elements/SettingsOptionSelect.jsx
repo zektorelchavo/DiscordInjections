@@ -132,7 +132,7 @@ class SettingsOptionSelect extends Base {
       value: this.getProp(),
       expanded: false
     })
-    if (this.props.onChange) this.props.onChange(event)
+    if (this.props.onChange) this.props.onChange(option, event)
   }
 
   optionHover (index) {

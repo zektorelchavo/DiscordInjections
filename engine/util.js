@@ -67,3 +67,9 @@ exports.parseAuthor = function author (author) {
 
   return author
 }
+
+exports.round = function round (num, digits = 2) {
+  const exp = Math.pow(10, digits)
+  const cut = Math.round(num * exp)
+  return cut / exp
+}

@@ -10,7 +10,7 @@ const {
   SettingsList: List,
   SettingsPanel
 } = require('elements')
-const { shortLink, repositoryLink, parseAuthor } = require('../../util')
+const { shortLink, repositoryLink, parseAuthor, round } = require('../../util')
 
 const { json: npmFetch } = require('npm-registry-fetch')
 
@@ -21,7 +21,8 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
     this.state = {
       loading: true,
       keywords: 'di-plugin,di-theme',
-      results: null
+      results: null,
+      search: ''
     }
   }
 
@@ -31,16 +32,28 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
 
   async updateList () {
     this.setState({ loading: true })
+    const text = 'keywords:' + this.state.keywords + ' ' + this.state.search
+    this.props.plugin.debug('Querying NPM with', text)
     const results = await npmFetch('/-/v1/search', {
       query: {
         size: 15,
-        text: 'keywords:' + this.state.keywords
+        text
       }
     })
     this.setState({ loading: false, results })
   }
 
-  onChangeSearch (value) {}
+  onChangeSearch (value) {
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout)
+      this.searchTimeout = null
+    }
+
+    this.searchTimeout = setTimeout(() => {
+      this.props.plugin.debug('Setting searchterm to', value)
+      this.setState({ search: value }, () => this.updateList())
+    }, 500)
+  }
 
   onChangeFilter (value) {
     let keywords = 'di-plugin,di-theme'
@@ -51,6 +64,8 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
       case 'Themes':
         keywords = 'di-theme'
     }
+
+    this.props.plugin.debug('Setting keywords to', keywords)
 
     this.setState({ keywords }, () => this.updateList())
   }
@@ -72,6 +87,12 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
           Name:        ${entry.package.name}
           Version:     ${entry.package.version}
           Repository:  ${repoLink}
+          Score:       ${round(entry.score.final)} (${round(
+        entry.score.detail.quality
+      )} / ${round(entry.score.detail.popularity)} / ${round(
+        entry.score.detail.maintenance
+      )})
+          SScore:      ${round(entry.searchScore)}
       `.replace(/^\s+/gm, '')
       debug = (
         <div className='DI-plugins-debug'>
@@ -79,7 +100,7 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
         </div>
       )
     }
-    this.props.plugin.info(entry.package)
+
     return (
       <SettingsPanel>
         <div className='DI-plugin-infobox' data-plugin-id={entry.package.name}>
@@ -160,7 +181,9 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
       if (!this.state.results || !this.state.results.total) {
         content = (
           <div className='DI-plugins-spinner'>
-            <Description>Loading list...</Description>
+            <SettingsPanel>
+              <Description>No results found!</Description>
+            </SettingsPanel>
           </div>
         )
       } else {
