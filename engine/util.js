@@ -1,4 +1,6 @@
 const { URL } = require('url')
+const { isString } = require('util')
+const parseAuthor = require('parse-author')
 
 exports.shortLink = function shortLink (longLink) {
   const link = new URL(longLink)
@@ -40,4 +42,28 @@ exports.repositoryLink = function repositoryLink (longLink) {
   }
 
   return parsed.href
+}
+
+exports.parseAuthor = function author (author) {
+  if (!author) {
+    return null
+  }
+
+  if (isString(author)) {
+    author = parseAuthor(author)
+  } else {
+    author = Object.assign({}, author)
+  }
+
+  if (!author.url && author.email) {
+    author.url = 'mailto:' + author.email
+  }
+
+  if (!author.name) {
+    author.name = 'Unkown'
+  }
+
+  author.hasLink = !!author.url
+
+  return author
 }

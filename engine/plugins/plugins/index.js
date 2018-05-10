@@ -112,7 +112,7 @@ module.exports = class plugins extends Plugin {
     } else if (pkg.repository.startsWith('gist:')) {
       // github gists not supported
       return pkg.name
-    } else if (!pkg.repository.contains(':')) {
+    } else if (!pkg.repository.includes(':')) {
       // special case prefix and scheme less (github)
       repoURL = path.join('github.com', pkg.repository)
     } else {
@@ -121,7 +121,7 @@ module.exports = class plugins extends Plugin {
       repoURL = path.join(url.hostname, url.pathname.replace(/\.git$/, '')) // remove protocol part and (optional) .git extension
     }
 
-    return repoURL.replace(/\//g, '_').replace(/[^a-zA-Z.-_0-9]/g, '')
+    return repoURL.replace(/[\\/]/g, '_').replace(/[^-a-zA-Z._0-9]/g, '')
   }
 
   async loadPlugins () {

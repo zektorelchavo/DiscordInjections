@@ -9,7 +9,7 @@ const {
   SettingsOptionCheckbox
 } = require('elements')
 
-const { shortLink, repositoryLink } = require('../../util')
+const { shortLink, repositoryLink, parseAuthor } = require('../../util')
 
 module.exports = class SettingsPluginPage extends React.PureComponent {
   constructor (props) {
@@ -70,7 +70,7 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
     })
   }
 
-  renderItem (index, key) {
+  renderItem (index) {
     const entry = Array.from(this.state.plugins.values())[index]
 
     const checkboxDisabled =
@@ -79,6 +79,9 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
 
     const repoLink = entry.package.repository
       ? repositoryLink(entry.package.repository)
+      : null
+    const author = entry.package.author
+      ? parseAuthor(entry.package.author)
       : null
 
     let debug = null
@@ -99,7 +102,7 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
     }
 
     return (
-      <SettingsPanel key={key}>
+      <SettingsPanel>
         <div className='DI-plugin-infobox' data-plugin-id={entry.id}>
           <SettingsOptionCheckbox
             virtual
@@ -134,7 +137,13 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
               </span>
 
               <span className='author'>
-                {entry.package.author || <i>Unknown</i>}
+                {author
+                  ? !author.hasLink
+                    ? author.name
+                    : <a href={author.url} target='_BLANK'>
+                      {author.name}
+                    </a>
+                  : <i>Unknown</i>}
               </span>
 
               {repoLink
