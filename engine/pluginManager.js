@@ -92,7 +92,7 @@ class PluginManager extends EventEmitter {
       }
     }
 
-    const id = this.system ? this.system.getPluginID(pkg) : 'plugins'
+    const id = pkg.name
 
     if (this.plugins.has(id) && this.plugins.get(id).loaded) {
       // no need to reload an already loaded plugin
