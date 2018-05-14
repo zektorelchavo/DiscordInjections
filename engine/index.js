@@ -7,9 +7,16 @@ const postcss = require('postcss')
 const postcssImport = require('postcss-import')
 const postcssUrl = require('postcss-url')
 
+const conf = fs.existsSync(path.join(__dirname, '..', 'config.json'))
+  ? require(path.join(__dirname, '..', 'config.json'))
+  : {}
+
 // register custom extension compilation support
 require.extensions['.jsx'] = (module, filename) => {
+  if (conf.debug) console.debug('[JSX] converting', filename)
+
   const raw = fs.readFileSync(filename, 'utf8')
+
   const transformed = buble.transform(raw, {
     jsx: 'React.createElement',
     objectAssign: 'Object.assign',
@@ -50,9 +57,6 @@ try {
 // prelaunch adjustments
 const DI = {
   get conf () {
-    const conf = fs.existsSync(path.join(__dirname, '..', 'config.json'))
-      ? require(path.join(__dirname, '..', 'config.json'))
-      : {}
     return conf
   },
 
