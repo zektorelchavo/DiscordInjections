@@ -3,13 +3,8 @@ const fs = require('fs-extra')
 const path = require('path')
 const reload = require('require-reload')
 const Promise = require('bluebird')
-const {
-  app,
-  dialog,
-  getCurrentWebContents,
-  getCurrentWindow
-} = require('electron').remote
-
+const { app } = require('electron').remote
+const Module = require('module')
 const elements = require('elements')
 const glob = require('globby')
 
@@ -29,6 +24,19 @@ class PluginManager extends EventEmitter {
       try {
         this.pluginsEnabled = JSON.parse(DI.localStorage['DI-Plugins'])
       } catch (ex) {}
+    }
+
+    this._mLoad = Module._load
+    Module._load = (request, parent, isMain) => {
+      if (request === 'elements') {
+        console.debug('[PM] rewriting elements request', parent.filename)
+        // fetch entrypoint
+        const key = Object.keys(require.cache)
+          .filter(mod => mod.includes('elements') && mod.includes('index.js'))
+          .pop()
+        return this._mLoad(key, parent, isMain)
+      }
+      return this._mLoad(request, parent, isMain)
     }
 
     this.basePath = this.expand(DI.conf.pluginPath || '%/plugins')
@@ -137,23 +145,6 @@ class PluginManager extends EventEmitter {
       // dependencies
       dependency: [],
       reverseDependency: []
-    }
-
-    if (
-      this.system &&
-      !this.system.isSystemPlugin(id) &&
-      id === pkg.name &&
-      pkg.type !== 'theme'
-    ) {
-      dialog.showMessageBox(getCurrentWindow(), {
-        type: 'warning',
-        title: 'Could not generate ID',
-        message: `Unable to generate a plugin ID for <${pkg.name}> found at <${p.path}>.
-          Please make sure to provide the repository field in your package definition!`.replace(
-          /^\s+/gm,
-          ''
-        )
-      })
     }
 
     // store the temporary plugin
@@ -297,23 +288,6 @@ class PluginManager extends EventEmitter {
 
     await this.unload(name)
     return await this.load(name)
-  }
-
-  async install (pluginPath) {
-    const fileName =
-      path.basename(pluginPath) === 'package.json'
-        ? pluginPath
-        : path.join(pluginPath, 'package.json')
-
-    const pkg = require(fileName)
-
-    if (this.plugins[pkg.name]) {
-      throw new Error('Plugin', pkg.name, 'already loaded!')
-    }
-
-    await fs.ensureDir(path.join(pluginPath, pkg.name))
-    await fs.copy(path.basename(fileName), path.join(pluginPath, pkg.name))
-    return this.loadByPath(fileName)
   }
 
   async uninstall (id) {

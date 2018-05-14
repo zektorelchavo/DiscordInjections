@@ -2,9 +2,15 @@ const { Plugin } = require('elements')
 const Promise = require('bluebird')
 const fs = require('fs-extra')
 const path = require('path')
-const { URL } = require('url')
-
 const glob = require('globby')
+
+// make `npmi` happy
+const npmPath = require.resolve('npm')
+process.env.GLOBAL_NPM_BIN = 'idc'
+process.env.GLOBAL_NPM_PATH = npmPath
+const npmi = Promise.promisify(require('npmi'))
+
+const download = require('download')
 
 module.exports = class plugins extends Plugin {
   async load () {
@@ -55,6 +61,35 @@ module.exports = class plugins extends Plugin {
 
   addPlugin (path) {
     this.DI.plugins.install(path)
+  }
+
+  async install (pkgName, pkgDownload, force = false) {
+    try {
+      const installPath = path.join(this.manager.basePath, pkgName)
+      const dlPath = path.join(this.manager.basePath, '_' + pkgName)
+      this.debug('Downloading', pkgName, 'to', dlPath)
+      await download(pkgDownload, dlPath, { extract: true })
+      await fs.move(path.join(dlPath, 'package'), installPath)
+      await fs.remove(dlPath)
+
+      this.debug('Installing deps for', pkgName)
+      await npmi({
+        name: installPath,
+        path: installPath,
+        forceInstall: false,
+        localInstall: false,
+        // dont create npm log entries pls
+        npmLoad: {
+          loglevel: 'silent'
+        }
+      })
+
+      this.manager.loadByPath(installPath, force)
+      return true
+    } catch (err) {
+      this.error('failed to install packages', err)
+      return false
+    }
   }
 
   disable (id, flag = true) {

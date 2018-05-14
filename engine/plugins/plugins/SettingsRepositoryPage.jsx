@@ -1,6 +1,6 @@
 const React = require('react')
 const { PureComponent } = React
-const { dialog } = require('electron').remote
+const { dialog, getCurrentWindow } = require('electron').remote
 const {
   SettingsOptionTextbox: Textbox,
   SettingsOptionButton: Button,
@@ -22,7 +22,8 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
       loading: true,
       keywords: 'di-plugin,di-theme',
       results: null,
-      search: ''
+      search: '',
+      plugins: props.plugin.manager.plugins
     }
   }
 
@@ -80,6 +81,8 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
     const author = entry.package.author
       ? parseAuthor(entry.package.author)
       : null
+
+    const alreadyInstalled = this.state.plugins.has(entry.package.name)
 
     let debug = null
     if (this.props.plugin.debugEnabled) {
@@ -144,23 +147,51 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
                 : null}
             </div>
 
-            {repoLink
-              ? null
-              : <div className='DI-plugin-warning'>
-                <strong>
-                    This package is missing an attached repository!
-                  </strong>
-                <br />
-                  Some undefined behaviour might happen!
-                </div>}
-
             {debug}
           </div>
 
-          <div>TODO: The install button :)</div>
+          <div>
+            {alreadyInstalled
+              ? null
+              : <Button
+                outline
+                className='DI-plugins-button-install'
+                text='➕'
+                onClick={() => this.install(entry.package)}
+                />}
+          </div>
         </div>
       </SettingsPanel>
     )
+  }
+
+  async install (pkg) {
+    // grab the package info
+    const info = await npmFetch('/' + encodeURI(pkg.name))
+    if (
+      dialog.showMessageBox(getCurrentWindow(), {
+        type: 'question',
+        title: 'Install Plugin',
+        message: `Do you really want to install "${pkg.name}"?`,
+        buttons: ['Yes', 'No'],
+        defaultId: 0,
+        cancelId: 1
+      }) !== 0
+    ) {
+      return this.props.plugin.debug('Aborting install of', pkg.name)
+    }
+
+    this.props.plugin.debug('Installing', pkg.name)
+    this.setState({ loading: true }, async () => {
+      await this.props.plugin.install(
+        pkg.name,
+        info.versions[info['dist-tags'].latest].dist.tarball
+      )
+      this.setState({
+        loading: false,
+        plugins: this.props.plugin.manager.plugins
+      })
+    })
   }
 
   render () {
@@ -220,6 +251,7 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
           <Textbox
             virtual
             title='Search'
+            defaultValue=''
             onChange={val => this.onChangeSearch(val)}
           />
         </div>

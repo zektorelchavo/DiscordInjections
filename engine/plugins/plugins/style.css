@@ -122,6 +122,20 @@
   min-height: 0;
 }
 
+.DI-plugins-button-install {
+  background: url(data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xOSAxM2gtNnY2aC0ydi02SDV2LTJoNlY1aDJ2Nmg2djJ6Ii8+CiAgICA8cGF0aCBkPSJNMCAwaDI0djI0SDB6IiBmaWxsPSJub25lIi8+Cjwvc3ZnPg==)
+    center center #3ce74d;
+  border-radius: 3px;
+  box-sizing: border-box;
+  height: 24px;
+  width: 24px;
+  font-size: 0;
+  transition: background-color ease .2s;
+  border: none;
+  min-width: 0;
+  min-height: 0;
+}
+
 #DI-plugins-plugin .DI-checkbox-unchecked {
   background-color: #333 !important;
   border-width: 2px;
