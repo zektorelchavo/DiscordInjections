@@ -7,6 +7,8 @@ Please search on the [issue tracker](../) before creating one.
 
 ## Current Behavior
 <!--- If describing a bug, tell us what happens instead of the expected behavior -->
+<!--- If possible paste a raw text version of the web inspector console output
+  --- Press `CTRL+SHIFT+I`, select the console tab, upload the file and paste the link in here -->
 <!--- If suggesting a change/improvement, explain the difference from current behavior -->
 
 ## Possible Solution
@@ -28,7 +30,7 @@ Please search on the [issue tracker](../) before creating one.
 
 ## Your Environment
 <!--- Include as many relevant details about the environment you experienced the bug in -->
-* DI Version used:
+* DI Version:
 * Discord version:
-* Operating System and version (desktop or mobile):
+* Operating System and version:
 * Used Plugins:
