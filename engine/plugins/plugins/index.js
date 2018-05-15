@@ -22,15 +22,9 @@ module.exports = class plugins extends Plugin {
     )
 
     this.registerSettingsTab(
-      'Plugin Manager',
+      'Plugins & Themes',
       require('./SettingsPluginPage'),
       'DI-plugins-plugin'
-    )
-
-    this.registerSettingsTab(
-      'Theme Manager',
-      require('./SettingsThemePage'),
-      'DI-plugins-themes'
     )
 
     this.registerCommand({

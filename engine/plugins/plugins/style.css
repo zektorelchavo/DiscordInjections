@@ -166,3 +166,20 @@
   border: 1px solid rgba(255, 255, 0, 0.6);
   border-radius: 5px;
 }
+
+.DI-plugin-type-plugin:after,
+.DI-plugin-type-theme:after {
+  content: "Plugin";
+  border: 1px solid rgba(255, 0, 0, 0.8);
+  background: rgba(255, 0, 0, 0.4);
+  font-size: 0.7rem;
+  margin-left: .5rem;
+  border-radius: 5px;
+  padding: 1px 3px;
+}
+
+.DI-plugin-type-theme {
+  content: "Theme";
+  border: 1px solid rgba(0, 255, 0, 0.8);
+  background: rgba(0, 255, 0, 0.4);
+}
