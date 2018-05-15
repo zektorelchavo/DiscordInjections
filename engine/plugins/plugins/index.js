@@ -3,6 +3,7 @@ const Promise = require('bluebird')
 const fs = require('fs-extra')
 const path = require('path')
 const glob = require('globby')
+const { json: npmFetch } = require('npm-registry-fetch')
 
 // make `npmi` happy
 const npmPath = require.resolve('npm')
@@ -60,11 +61,16 @@ module.exports = class plugins extends Plugin {
   unload () {}
 
   addPlugin (path) {
-    this.DI.plugins.install(path)
+    return this.install(path)
   }
 
-  async install (pkgName, pkgDownload, force = false) {
+  async install (pkgName, pkgDownload = null, force = false) {
     try {
+      if (!pkgDownload || !pkgDownload.length) {
+        const info = await npmFetch('/' + encodeURI(pkgName))
+        pkgDownload = info.versions[info['dist-tags'].latest].dist.tarball
+      }
+
       const installPath = path.join(this.manager.basePath, pkgName)
       const dlPath = path.join(this.manager.basePath, '_' + pkgName)
       this.debug('Downloading', pkgName, 'to', dlPath)

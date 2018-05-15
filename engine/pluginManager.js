@@ -3,7 +3,7 @@ const fs = require('fs-extra')
 const path = require('path')
 const reload = require('require-reload')
 const Promise = require('bluebird')
-const { app , getCurrentWebContents } = require('electron').remote
+const { app, getCurrentWebContents } = require('electron').remote
 const Module = require('module')
 const elements = require('elements')
 const glob = require('globby')
@@ -157,7 +157,8 @@ class PluginManager extends EventEmitter {
   async load (plugin, force = true, dependency = false) {
     const pluginPath = path.resolve(this.basePath, plugin)
     if (!fs.existsSync(path.join(pluginPath, 'package.json'))) {
-      throw new Error('plugin not found', plugin)
+      console.warn(`[PM] <${plugin}> not found in registry, asking repo`)
+      await this.system.install(plugin)
     }
 
     return this.loadByPath(pluginPath, force, dependency)
@@ -174,7 +175,7 @@ class PluginManager extends EventEmitter {
     }
 
     if (!this.plugins.has(plugin)) {
-      throw new Error(`<${plugin}> not found in registry`)
+      throw new Error(`<${plugin}> not found in cache!`)
     }
 
     const p = this.plugins.get(plugin)
@@ -198,7 +199,6 @@ class PluginManager extends EventEmitter {
           )
           p.dependency.push(dep)
         } else {
-          console.warn('DEPTREE LUL!!')
           this.load(dep, true, true)
         }
       })
