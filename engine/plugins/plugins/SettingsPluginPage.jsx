@@ -66,7 +66,7 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
 
   async delete (id) {
     if (
-      !dialog.showMessageBox(getCurrentWindow(), {
+      dialog.showMessageBox(getCurrentWindow(), {
         type: 'question',
         title: 'Uninstall Plugin',
         message: `Do you really want to remove and uninstall "${this.state.plugins.get(
@@ -75,7 +75,7 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
         buttons: ['Yes', 'No'],
         defaultId: 1,
         cancelId: 1
-      })
+      }) === 1
     ) {
       return
     }
