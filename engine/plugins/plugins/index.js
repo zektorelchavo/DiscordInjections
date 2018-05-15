@@ -81,15 +81,14 @@ module.exports = class plugins extends Plugin {
         await fs.remove(dlPath)
       }
 
-      this.debug('Installing deps for', pkgName)
+      this.debug('Installing deps for', pkgName, 'in', installPath)
       await npmi({
-        name: installPath,
         path: installPath,
         forceInstall: false,
         localInstall: false,
         // dont create npm log entries pls
         npmLoad: {
-          loglevel: 'silent'
+          loglevel: this.debugEnabled ? 'silly' : 'silent'
         }
       })
 
@@ -146,7 +145,7 @@ module.exports = class plugins extends Plugin {
     return Object.keys(this.settings.plugins)
       .map(k => this.settings.plugins[k])
       .filter(p => p.path)
-      .forEach(p => this.manager.loadByPath(p.path))
+      .forEach(p => this.manager.loadByPath(p.path, force))
   }
 
   getPluginInfo (id) {
