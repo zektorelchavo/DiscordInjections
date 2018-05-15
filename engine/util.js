@@ -1,28 +1,24 @@
-const { URL } = require('url')
+const { parse, format } = require('url')
 const { isString } = require('util')
 const parseAuthor = require('parse-author')
 
 exports.shortLink = function shortLink (longLink) {
-  const link = new URL(longLink)
+  const link = parse(longLink)
 
   if (link.protocol.startsWith('http')) {
     // remove https?://
     return longLink.substr(link.protocol.length + 2)
   }
 
-  return link.href
+  return longLink
 }
 
 exports.repositoryLink = function repositoryLink (longLink) {
   let link = longLink.url || longLink
-  let parsed = {}
-  try {
-    parsed = new URL(link)
-  } catch (err) {
-    parsed = new URL('github:' + link)
-  }
+  let parsed = parse(link)
 
   switch (parsed.protocol) {
+    case null:
     case 'github:':
       parsed.protocol = 'https:'
       parsed.host = 'github.com'
@@ -41,7 +37,7 @@ exports.repositoryLink = function repositoryLink (longLink) {
       break
   }
 
-  return parsed.href
+  return format(parsed)
 }
 
 exports.parseAuthor = function author (author) {
