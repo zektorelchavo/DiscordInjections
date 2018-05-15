@@ -125,7 +125,7 @@ module.exports = class settings extends Plugin {
 
     this.settingsTabs.insertBefore(this.divider, header)
     this.settingsTabs.insertBefore(this.header, header)
-    console.log(this.order)
+
     this.order.forEach(key =>
       this.settingsTabs.insertBefore(this.map[key].tab, header)
     )
