@@ -145,7 +145,7 @@ module.exports = class plugins extends Plugin {
     return Object.keys(this.settings.plugins)
       .map(k => this.settings.plugins[k])
       .filter(p => p.path)
-      .forEach(p => this.manager.loadByPath(p.path, force))
+      .forEach(p => this.manager.loadByPath(p.path, false))
   }
 
   getPluginInfo (id) {
