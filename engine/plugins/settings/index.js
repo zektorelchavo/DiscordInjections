@@ -8,6 +8,7 @@ module.exports = class settings extends Plugin {
     const r = (this.react = this.manager.get('react'))
 
     this.map = {}
+    this.order = []
 
     r.on('settingsOpened', () => this.injectSettingsTab())
     r.on('languageChange', () => this.injectSettingsTab())
@@ -96,6 +97,8 @@ module.exports = class settings extends Plugin {
       name,
       plugin
     }
+    this.debug('Pushing settings tab', plugin, id)
+    this.order.push(id)
   }
 
   get unselectedCss () {
@@ -122,8 +125,9 @@ module.exports = class settings extends Plugin {
 
     this.settingsTabs.insertBefore(this.divider, header)
     this.settingsTabs.insertBefore(this.header, header)
-    for (const key in this.map) {
+    console.log(this.order)
+    this.order.forEach(key =>
       this.settingsTabs.insertBefore(this.map[key].tab, header)
-    }
+    )
   }
 }
