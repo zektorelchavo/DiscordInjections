@@ -90,9 +90,12 @@ class PluginManager extends EventEmitter {
         throw new Error('plugin not found')
       } else {
         pkg = {
-          name: path.basename(pluginPath, '.css'),
+          name: path.basename(pluginPath),
           version: '1.0.0',
-          type: 'theme'
+          type: 'theme',
+          author: 'Unknown',
+          description: 'A css file',
+          css: [pluginPath]
         }
 
         main = pluginPath
@@ -165,11 +168,15 @@ class PluginManager extends EventEmitter {
   }
 
   async loadFromCache (plugin, force = true, dependency = false) {
+    const p = this.plugins.get(plugin)
+
     if (
       this.system &&
       !force &&
       this.system.isPluginEnabled(plugin) === false
     ) {
+      p.loading = false
+      p.loaded = false
       // dont load disabled plugins
       return
     }
@@ -177,8 +184,6 @@ class PluginManager extends EventEmitter {
     if (!this.plugins.has(plugin)) {
       throw new Error(`<${plugin}> not found in cache!`)
     }
-
-    const p = this.plugins.get(plugin)
 
     if (dependency) {
       console.debug('[PM] adding reverse dependency', dependency, 'to', plugin)
@@ -208,20 +213,21 @@ class PluginManager extends EventEmitter {
     switch (p.package.type) {
       case 'theme':
         try {
-          require.resolve(p.main)
+          p.Cls = reload(p.main)
         } catch (err) {
           // its a simple css theme without js extension
-          p.main = elements.Theme
+          p.Cls = elements.Theme
         }
         break
 
       case 'plugin':
       default:
         // default behavior
+        p.Cls = reload(p.main) // loads index.js or file defined in package.json > "main"
+
         break
     }
 
-    p.Cls = reload(p.main) // loads index.js or file defined in package.json > "main"
     try {
       p.inst = new p.Cls(this, p) // creates the plugin instance
     } catch (err) {

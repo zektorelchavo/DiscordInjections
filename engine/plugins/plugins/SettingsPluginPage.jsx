@@ -8,6 +8,7 @@ const {
   SettingsPanel,
   SettingsOptionCheckbox
 } = require('elements')
+const path = require('path')
 
 const { shortLink, repositoryLink, parseAuthor } = require('../../util')
 
@@ -16,25 +17,40 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
     super(props)
 
     this.state = {
-      plugins: props.plugin.manager.plugins
+      plugins: props.plugin.manager.plugins,
+      count: props.plugin.manager.plugins.size
     }
   }
 
-  addLocal () {
-    /*
-    const fname = dialog
+  async addLocal () {
+    let fname = dialog
       .showOpenDialog({
         title: 'Select a plugin or theme',
         properties: ['openFile'],
-        filters: [{ name: 'Plugin files', extensions: ['asar', 'json'] }]
+        filters: [
+          { name: 'Plugins & Themes', extensions: ['asar', 'json', 'css'] }
+        ]
       })
       .pop()
 
-    this.props.plugin.addPlugin(fname)
+    if (!fname) {
+      return
+    }
+
+    const ext = path.extname(fname)
+    if (ext === '.json') {
+      fname = path.dirname(fname)
+    }
+
+    if (ext !== '.css') {
+      await this.props.plugin.addPlugin(fname)
+    } else {
+      await this.props.plugin.addTheme(fname)
+    }
+
     this.setState({
-      plugins: this.props.plugin.manager.plugins
+      count: this.props.plugin.manager.plugins.size
     })
-    */
   }
 
   async toggleDisable (id) {
@@ -44,7 +60,7 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
 
     // force refresh pluginlist (hopefully)
     this.setState({
-      plugins: this.props.plugin.manager.plugins
+      count: this.props.plugin.manager.plugins.size
     })
   }
 
@@ -66,7 +82,7 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
 
     await this.props.plugin.delete(id)
     this.setState({
-      plugins: this.props.plugin.manager.plugins
+      count: this.props.plugin.manager.plugins.size
     })
   }
 
@@ -93,7 +109,7 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
           L/L:                  ${entry.loading} / ${entry.loaded}
           Dependencies:         ${entry.dependency.join(',')}
           Reverse Dependencies: ${entry.reverseDependency.join(',')}
-          Type:                 ${entry.type || 'plugin'}
+          Type:                 ${entry.package.type || 'plugin'}
       `.replace(/^\s+/gm, '')
       debug = (
         <div className='DI-plugins-debug'>
@@ -113,7 +129,7 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
           />
           <div className='DI-plugin-meta'>
             <strong
-              className={`DI-plugin-type-${entry.type || 'plugin'}`}
+              className={`DI-plugin-type-${entry.package.type || 'plugin'}`}
               style={{
                 backgroundImage: `url(${entry.icon ||
                   'https://discordinjections.xyz/img/logo-alt-nobg.svg'}`
@@ -193,7 +209,7 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
             onClick={() => this.addLocal()}
           />
         </div>
-        <List length={this.state.plugins.size} itemRenderer={renderer} />
+        <List length={this.state.count} itemRenderer={renderer} />
       </div>
     )
   }

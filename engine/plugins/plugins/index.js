@@ -54,23 +54,32 @@ module.exports = class plugins extends Plugin {
 
   unload () {}
 
-  addPlugin (path) {
-    return this.install(path)
+  async addPlugin (installPath, skipInstall = false) {
+    if (await this.install(installPath)) {
+      const pkgName = require(path.join(installPath, 'package.json')).name
+      this.setPluginInfo(pkgName, 'path', installPath)
+    }
+  }
+
+  async addTheme (installPath) {
+    const pkgName = path.basename(installPath)
+    await this.manager.loadByPath(installPath)
+    this.setPluginInfo(pkgName, 'path', installPath)
   }
 
   async install (pkgName, pkgDownload = null, force = false) {
     try {
-      if (!pkgDownload || !pkgDownload.length) {
-        const info = await npmFetch('/' + encodeURI(pkgName))
-        pkgDownload = info.versions[info['dist-tags'].latest].dist.tarball
-      }
+      let installPath = pkgName
+      pkgName = require(path.join(installPath, 'package.json')).name
 
-      const installPath = path.join(this.manager.basePath, pkgName)
-      const dlPath = path.join(this.manager.basePath, '_' + pkgName)
-      this.debug('Downloading', pkgName, 'to', dlPath)
-      await download(pkgDownload, dlPath, { extract: true })
-      await fs.move(path.join(dlPath, 'package'), installPath)
-      await fs.remove(dlPath)
+      if (pkgDownload) {
+        installPath = path.join(this.manager.basePath, pkgName)
+        const dlPath = path.join(this.manager.basePath, '_' + pkgName)
+        this.debug('Downloading', pkgName, 'to', dlPath)
+        await download(pkgDownload, dlPath, { extract: true })
+        await fs.move(path.join(dlPath, 'package'), installPath)
+        await fs.remove(dlPath)
+      }
 
       this.debug('Installing deps for', pkgName)
       await npmi({
@@ -130,7 +139,14 @@ module.exports = class plugins extends Plugin {
     this.manager.loadPluginPath()
 
     // last, but not least, load the missing plugins
-    console.warn('MANUAL PATH THINGY!')
+    if (!this.settings.plugins) {
+      return
+    }
+
+    return Object.keys(this.settings.plugins)
+      .map(k => this.settings.plugins[k])
+      .filter(p => p.path)
+      .forEach(p => this.manager.loadByPath(p.path))
   }
 
   getPluginInfo (id) {
@@ -139,6 +155,8 @@ module.exports = class plugins extends Plugin {
       s.plugins = s.plugins || {}
       this.settings = s
     }
+
+    id = id.replace(/\./g, '_')
 
     if (!this.settings.plugins[id]) {
       const s = this.settings
@@ -150,6 +168,7 @@ module.exports = class plugins extends Plugin {
   }
 
   setPluginInfo (id, key, value) {
+    id = id.replace(/\./g, '_')
     const p = this.getPluginInfo(id)
     p[key] = value
     this.setSettingsNode(`plugins.${id}`, p)
