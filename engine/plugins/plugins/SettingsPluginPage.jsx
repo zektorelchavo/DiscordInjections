@@ -93,6 +93,7 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
           L/L:                  ${entry.loading} / ${entry.loaded}
           Dependencies:         ${entry.dependency.join(',')}
           Reverse Dependencies: ${entry.reverseDependency.join(',')}
+          Type:                 ${entry.type || 'plugin'}
       `.replace(/^\s+/gm, '')
       debug = (
         <div className='DI-plugins-debug'>
@@ -112,6 +113,7 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
           />
           <div className='DI-plugin-meta'>
             <strong
+              className={`DI-plugin-type-${entry.type || 'plugin'}`}
               style={{
                 backgroundImage: `url(${entry.icon ||
                   'https://discordinjections.xyz/img/logo-alt-nobg.svg'}`
