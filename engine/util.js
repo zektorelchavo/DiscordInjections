@@ -10,7 +10,7 @@ exports.shortLink = function shortLink (longLink) {
     return longLink.substr(link.protocol.length + 2)
   }
 
-  return longLink.href
+  return link.href
 }
 
 exports.repositoryLink = function repositoryLink (longLink) {
