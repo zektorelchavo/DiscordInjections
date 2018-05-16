@@ -197,14 +197,13 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
       <div>
         <div className='DI-plugins-header'>
           <SettingsOptionDescription>
-            Install local plugins. If possible, prefer to install plugins from
-            the repository instead. <br />
-            This functionality will come with certain drawbacks and should be
-            preferred to be only used for plugin development.
+            Install local plugins or themes. If possible, prefer to install them
+            from the repository instead. <br />
+            This functionality will come with certain drawbacks.
           </SettingsOptionDescription>
 
           <SettingsOptionButton
-            text='Add new Plugin'
+            text='Add new Plugin or Theme'
             className='DI-plugins-button-add'
             onClick={() => this.addLocal()}
           />
