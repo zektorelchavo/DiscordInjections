@@ -8,6 +8,7 @@ const {
   SettingsOptionTitle: OptionTitle,
   SettingsOptionDescription: Description,
   SettingsList: List,
+  SettingsPaginator: Paginator,
   SettingsPanel
 } = require('elements')
 const {
@@ -18,6 +19,8 @@ const {
   npmFetch
 } = require('../../util')
 
+const ResultsPerPage = 3
+
 module.exports = class SettingsRepositoryPage extends React.PureComponent {
   constructor (props) {
     super(props)
@@ -27,7 +30,8 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
       keywords: 'di-plugin,di-theme',
       results: null,
       search: '',
-      plugins: props.plugin.manager.plugins
+      plugins: props.plugin.manager.plugins,
+      page: 0
     }
   }
 
@@ -38,10 +42,16 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
   async updateList () {
     this.setState({ loading: true })
     const text = 'keywords:' + this.state.keywords + ' ' + this.state.search
-    this.props.plugin.debug('Querying NPM with', text)
+    this.props.plugin.debug(
+      'Querying NPM with',
+      text,
+      'on page',
+      this.state.page
+    )
     const results = await npmFetch('/search', {
       query: {
-        size: 15,
+        size: ResultsPerPage,
+        from: ResultsPerPage * this.state.page,
         q: text
       }
     })
@@ -77,6 +87,7 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
 
   renderEntry (idx) {
     const entry = this.state.results.results[idx]
+    console.log(idx, entry, this.state.results)
 
     const repoLink = entry.package.repository
       ? repositoryLink(entry.package.repository)
@@ -201,6 +212,16 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
     })
   }
 
+  changePage (page) {
+    this.setState(
+      {
+        page: page - 1,
+        loading: true
+      },
+      () => this.updateList()
+    )
+  }
+
   render () {
     let content = (
       <div className='DI-plugins-spinner'>
@@ -225,11 +246,20 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
           </div>
         )
       } else {
+        const len = Math.min(
+          ResultsPerPage, // 25
+          this.state.results.total - this.state.page * ResultsPerPage
+        )
         content = (
-          <List
-            length={this.state.results.total}
-            itemRenderer={idx => this.renderEntry(idx)}
-          />
+          <div>
+            <List length={len} itemRenderer={idx => this.renderEntry(idx)} />
+            <Paginator
+              pages={Math.ceil(this.state.results.total / ResultsPerPage)}
+              onChange={page => this.changePage(page)}
+              current={this.state.page + 1}
+              wings={2}
+            />
+          </div>
         )
       }
     }

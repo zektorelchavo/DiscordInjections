@@ -22,6 +22,7 @@ exports.SettingsSubTitle = require('./SettingsSubTitle')
 exports.SettingsTabs = require('./SettingsTabs')
 exports.SettingsTab = require('./SettingsTab')
 exports.SettingsList = require('./SettingsList')
+exports.SettingsPaginator = require('./SettingsPaginator')
 
 // go as far up as possible
 let m = module
