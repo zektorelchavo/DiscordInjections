@@ -28,13 +28,32 @@ class PluginManager extends EventEmitter {
 
     this._mLoad = Module._load
     Module._load = (request, parent, isMain) => {
-      if (request === 'elements') {
-        console.debug('[PM] rewriting elements request', parent.filename)
-        // fetch entrypoint
-        const key = Object.keys(require.cache)
-          .filter(mod => mod.includes('elements') && mod.includes('index.js'))
-          .pop()
-        return this._mLoad(key, parent, isMain)
+      switch (request) {
+        case 'elements':
+        case 'react':
+          console.debug(
+            '[PM] rewriting',
+            request,
+            'request for',
+            parent.filename
+          )
+
+          // try the require resolve method
+          let newPath = request
+          try {
+            newPath = require.resolve(request)
+          } catch (err) {
+            // filter the current cache and hope for the best
+            newPath = Object.keys(require.cache)
+              .filter(
+                mod =>
+                  mod.includes(path.sep + request + path.sep) &&
+                  mod.includes('index.js')
+              )
+              .pop()
+          }
+          console.debug('[PM] resolved', request, 'to', newPath)
+          return this._mLoad(newPath, parent, isMain)
       }
       return this._mLoad(request, parent, isMain)
     }
