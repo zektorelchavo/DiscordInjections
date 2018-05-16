@@ -1,6 +1,9 @@
-const { parse, format } = require('url')
+const { parse, format, resolve } = require('url')
 const { isString } = require('util')
 const parseAuthor = require('parse-author')
+const querystring = require('querystring')
+// use node-fetch instead of window.fetch to ignore cors
+const fetch = require('node-fetch')
 
 exports.shortLink = function shortLink (longLink) {
   const link = parse(longLink)
@@ -68,4 +71,23 @@ exports.round = function round (num, digits = 2) {
   const exp = Math.pow(10, digits)
   const cut = Math.round(num * exp)
   return cut / exp
+}
+
+exports.npmFetch = async function npmFetch (url, options = {}) {
+  if (url[0] === '/') {
+    url = '/v2' + url
+  }
+
+  let fullUrl = resolve('https://api.npms.io', url)
+
+  if (options.query) {
+    const qs = querystring.stringify(options.query)
+    fullUrl += (fullUrl.includes('?') ? '&' : '?') + qs
+  }
+
+  const res = await fetch(fullUrl, options)
+  if (res.status !== 200) {
+    throw new Error('fetch returned ' + res.status + ' ' + res.statusText)
+  }
+  return res.json()
 }

@@ -10,9 +10,13 @@ const {
   SettingsList: List,
   SettingsPanel
 } = require('elements')
-const { shortLink, repositoryLink, parseAuthor, round } = require('../../util')
-
-const { json: npmFetch } = require('npm-registry-fetch')
+const {
+  shortLink,
+  repositoryLink,
+  parseAuthor,
+  round,
+  npmFetch
+} = require('../../util')
 
 module.exports = class SettingsRepositoryPage extends React.PureComponent {
   constructor (props) {
@@ -35,10 +39,10 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
     this.setState({ loading: true })
     const text = 'keywords:' + this.state.keywords + ' ' + this.state.search
     this.props.plugin.debug('Querying NPM with', text)
-    const results = await npmFetch('/-/v1/search', {
+    const results = await npmFetch('/search', {
       query: {
         size: 15,
-        text
+        q: text
       }
     })
     this.setState({ loading: false, results })
@@ -72,7 +76,7 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
   }
 
   renderEntry (idx) {
-    const entry = this.state.results.objects[idx]
+    const entry = this.state.results.results[idx]
 
     const repoLink = entry.package.repository
       ? repositoryLink(entry.package.repository)
@@ -166,8 +170,6 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
   }
 
   async install (pkg) {
-    // grab the package info
-    const info = await npmFetch('/' + encodeURI(pkg.name))
     if (
       dialog.showMessageBox(getCurrentWindow(), {
         type: 'question',
@@ -182,6 +184,11 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
     }
 
     this.props.plugin.debug('Installing', pkg.name)
+
+    // grab the package info
+    const info = await npmFetch(
+      'https://registry.npmjs.org/' + encodeURI(pkg.name)
+    )
     this.setState({ loading: true }, async () => {
       await this.props.plugin.install(
         pkg.name,

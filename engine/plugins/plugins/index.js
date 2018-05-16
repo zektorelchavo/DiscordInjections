@@ -3,7 +3,6 @@ const Promise = require('bluebird')
 const fs = require('fs-extra')
 const path = require('path')
 const glob = require('globby')
-const { json: npmFetch } = require('npm-registry-fetch')
 
 // make `npmi` happy
 const npmPath = require.resolve('npm')
@@ -70,7 +69,6 @@ module.exports = class plugins extends Plugin {
   async install (pkgName, pkgDownload = null, force = false) {
     try {
       let installPath = pkgName
-      pkgName = require(path.join(installPath, 'package.json')).name
 
       if (pkgDownload) {
         installPath = path.join(this.manager.basePath, pkgName)
@@ -79,6 +77,8 @@ module.exports = class plugins extends Plugin {
         await download(pkgDownload, dlPath, { extract: true })
         await fs.move(path.join(dlPath, 'package'), installPath)
         await fs.remove(dlPath)
+      } else {
+        pkgName = require(path.join(installPath, 'package.json')).name
       }
 
       this.debug('Installing deps for', pkgName, 'in', installPath)
