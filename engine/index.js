@@ -1,6 +1,6 @@
 const { app } = require('electron').remote
 const path = require('path')
-const fs = require('fs')
+const fs = require('fs-extra')
 const buble = require('buble')
 
 const postcss = require('postcss')
@@ -23,6 +23,24 @@ require.extensions['.jsx'] = (module, filename) => {
     target: { chrome: 52 }
   })
   return module._compile(transformed.code, filename)
+}
+
+if (conf.debug) {
+  const fname = path.join(__dirname, '..', 'console.log')
+  fs.remove(fname)
+  for (let key of ['log', 'debug', 'info', 'warn', 'error']) {
+    console['_' + key] = console[key].bind(console)
+    console[key] = (...args) => {
+      console['_' + key](...args)
+      fs.appendFile(
+        fname,
+        `[${new Date().toISOString()}] {${key.toUpperCase()}} ${args.join(
+          ' '
+        )}\n`,
+        'utf8'
+      )
+    }
+  }
 }
 
 // stage zero
