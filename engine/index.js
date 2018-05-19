@@ -25,9 +25,9 @@ require.extensions['.jsx'] = (module, filename) => {
   return module._compile(transformed.code, filename)
 }
 
+const fname = path.join(__dirname, '..', 'console.log')
+fs.remove(fname)
 if (conf.debug) {
-  const fname = path.join(__dirname, '..', 'console.log')
-  fs.remove(fname)
   for (let key of ['log', 'debug', 'info', 'warn', 'error']) {
     console['_' + key] = console[key].bind(console)
     console[key] = (...args) => {
