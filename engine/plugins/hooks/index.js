@@ -107,7 +107,6 @@ module.exports = class hooks extends Plugin {
 
             // we are only interested in the exports, ignore the metadata
             const mod = modDefinition.exports
-            this.debug('checking', mod)
 
             if (
               def.hooks.every(endpoint => {
