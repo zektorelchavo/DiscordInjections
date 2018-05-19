@@ -40,6 +40,22 @@ if (conf.debug) {
         'utf8'
       )
     }
+
+    process.on('uncaughtException', ev => {
+      fs.appendFile(
+        fname,
+        `[${new Date().toISOString()}] {EEXCEPTION} ${ev.error}\n`,
+        'utf8'
+      )
+    })
+
+    process.on('unhandledRejection', ev => {
+      fs.appendFile(
+        fname,
+        `[${new Date().toISOString()}] {EREJECTION} ${ev.reason}\n`,
+        'utf8'
+      )
+    })
   }
 }
 
@@ -130,6 +146,22 @@ Object.defineProperty(DI, 'postcss', {
 // stage two
 // post launch patching
 process.once('loaded', async () => {
+  window.addEventListener('error', ev => {
+    fs.appendFile(
+      fname,
+      `[${new Date().toISOString()}] {EXCEPTION} ${ev.error}\n`,
+      'utf8'
+    )
+  })
+
+  window.addEventListener('unhandledrejection', ev => {
+    fs.appendFile(
+      fname,
+      `[${new Date().toISOString()}] {REJECTION} ${ev.reason}\n`,
+      'utf8'
+    )
+  })
+
   // make sure process and require are available in the global scope
   // discord may have nodeintegration disabled which borks literally everything
   if (!global.process) {
