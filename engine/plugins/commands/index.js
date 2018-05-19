@@ -6,8 +6,6 @@ const { getCurrentWebContents } = require('electron').remote
 // => ability to hide commands
 // => ability to rename commands?
 
-const { Event } = window
-
 module.exports = class commands extends Plugin {
   preload () {
     this.convertLegacySettings()
