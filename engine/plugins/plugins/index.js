@@ -3,6 +3,8 @@ const Promise = require('bluebird')
 const fs = require('fs-extra')
 const path = require('path')
 const glob = require('globby')
+const fetch = require('node-fetch')
+const { clipboard, dialog, getCurrentWindow } = require('electron').remote
 
 // make `npmi` happy
 const npmPath = require.resolve('npm')
@@ -32,6 +34,20 @@ module.exports = class plugins extends Plugin {
         'Clears the whole local storage from Discord Injections and reloads Discord',
       func: this.resetLocalStorage.bind(this)
     })
+
+    this.registerCommand({
+      name: 'debug',
+      info: 'Toggle debug mode and reload discord',
+      func: this.toggleDebugMode.bind(this)
+    })
+
+    if (this.debugEnabled) {
+      this.registerCommand({
+        name: 'upload',
+        info: 'Upload the current log file',
+        func: this.uploadLog.bind(this)
+      })
+    }
   }
 
   get iconURL () {
@@ -187,5 +203,36 @@ module.exports = class plugins extends Plugin {
 
   removeLocal (id) {
     this.setPluginInfo(id, 'path', null)
+  }
+
+  async toggleDebugMode () {
+    const fname = path.join(__dirname, '..', '..', '..', 'config.json')
+    const config = Object.assign({}, this.DI.conf, {
+      debug: !this.DI.conf.debug
+    })
+    const json = JSON.stringify(config, '', 2)
+    await fs.writeFile(fname, json, 'utf8')
+    window.location.reload()
+  }
+
+  async uploadLog () {
+    const fname = path.join(__dirname, '..', '..', '..', 'console.log')
+    if (!await fs.pathExists(fname)) {
+      // do nothing without a log. maybe show a message?
+      return
+    }
+
+    const res = await fetch('https://hastebin.com/documents', {
+      method: 'POST',
+      body: await fs.readFile(fname, 'utf8')
+    })
+    const { key } = await res.json()
+    clipboard.writeText(`https://hastebin.com/raw/${key}.log`)
+
+    dialog.showMessageBox(getCurrentWindow(), {
+      type: 'info',
+      title: 'Log Upload',
+      message: `Your log has been successfully uploaded and the URL is in the clipboard`
+    })
   }
 }
