@@ -1,4 +1,6 @@
 const { Plugin } = require('elements')
+const Promise = require('bluebird')
+const { getCurrentWebContents } = require('electron').remote
 
 //! TODO: custom settings page
 // => ability to hide commands
@@ -252,34 +254,65 @@ module.exports = class commands extends Plugin {
     return this.autoComplete
   }
 
-  writeMessage (content = '', focus = true) {
-    if (focus) {
-      this.textarea.focus()
+  writeMessage (content = '') {
+    this.textarea.focus()
+
+    this.debug('clearing message area')
+
+    const wc = getCurrentWebContents()
+    wc.sendInputEvent({
+      type: 'keyDown',
+      modifiers: [],
+      keyCode: 'End'
+    })
+    wc.sendInputEvent({
+      type: 'keyUp',
+      modifiers: [],
+      keyCode: 'End'
+    })
+
+    wc.sendInputEvent({
+      type: 'keyDown',
+      modifiers: ['shift'],
+      keyCode: 'Home'
+    })
+    wc.sendInputEvent({
+      type: 'keyUp',
+      modifiers: ['shift'],
+      keyCode: 'Home'
+    })
+
+    wc.sendInputEvent({
+      type: 'keyDown',
+      modifiers: [],
+      keyCode: 'Delete'
+    })
+    wc.sendInputEvent({
+      type: 'keyUp',
+      modifiers: [],
+      keyCode: 'Delete'
+    })
+
+    if (content.length > 0) {
+      this.debug('writing new message', content)
+      content.split('').forEach(k => {
+        wc.sendInputEvent({
+          type: 'keyDown',
+          modifiers: [],
+          keyCode: k
+        })
+        wc.sendInputEvent({
+          type: 'char',
+          modifiers: [],
+          keyCode: k
+        })
+        wc.sendInputEvent({
+          type: 'keyUp',
+          modifiers: [],
+          keyCode: k
+        })
+      })
     }
-
-    this.textarea.textContent = content
-    this.textarea.value = content
-
-    // first, lets clear the full text area
-    this.textarea.selectionStart = this.textarea.value.length
-    this.textarea.selectionEnd = this.textarea.value.length
-
-    this.textarea.dispatchEvent(new Event('input'), {
-      bubbles: true,
-      cancelable: true
-    })
-    this.textarea.dispatchEvent(new Event('keydown'), {
-      bubbles: true,
-      cancelable: true
-    })
-    this.textarea.dispatchEvent(new Event('keypress'), {
-      bubbles: true,
-      cancelable: true
-    })
-    this.textarea.dispatchEvent(new Event('keyup'), {
-      bubbles: true,
-      cancelable: true
-    })
   }
 
   removeAC () {
