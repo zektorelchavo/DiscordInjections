@@ -1,0 +1,9 @@
+{
+  "name": "messageHandler",
+  "hooks": [
+    {
+      "name": "openPrivateChannel",
+      "type": "function"
+    }
+  ]
+}

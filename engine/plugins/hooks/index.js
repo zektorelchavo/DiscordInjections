@@ -6,6 +6,10 @@ module.exports = class hooks extends Plugin {
     return this.fetchModule(require('./messageHandler.json'))
   }
 
+  get guildHandler () {
+    return this.fetchModule(require('./guildHandler.json'))
+  }
+
   async preload () {
     this._hooks = new Map()
 
