@@ -19,7 +19,7 @@ const {
   npmFetch
 } = require('../../util')
 
-const ResultsPerPage = 3
+const ResultsPerPage = 15
 
 module.exports = class SettingsRepositoryPage extends React.PureComponent {
   constructor (props) {
