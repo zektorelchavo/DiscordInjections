@@ -66,7 +66,7 @@ module.exports = class hooks extends Plugin {
 
       return this.processWPLQueue(cb)
     } else {
-      return window.webpackJsonp([name], { [name]: cb }, name)
+      return window.webpackJsonp([name], { [name]: cb }, [name])
     }
   }
 
