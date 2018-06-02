@@ -10,6 +10,9 @@ Sorted alphabetically
   * Created new plugin manager dependency system
   * Took over development of v4+
 
+* **nycex**
+  * Added implementation for plugin reload
+
 * **Snazzah** <!-- 158049329150427136 -->
   * Added more components/react elements
   * Fixed bugs
