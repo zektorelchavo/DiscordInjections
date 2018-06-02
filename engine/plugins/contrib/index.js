@@ -25,6 +25,11 @@ module.exports = class hooks extends Plugin {
         )
       } else if (node.classList.contains('message-group')) {
         this.applyBadge(node)
+      } else if (
+        node.classList.contains('edit-container-outer') || // Entered message editor
+        node.classList.contains('old-h2') // Exited message editor
+      ) {
+        this.applyBadge(node.closest('.message-group'))
       }
     })
   }

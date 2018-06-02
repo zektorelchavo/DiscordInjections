@@ -64,6 +64,17 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
     })
   }
 
+async reload (id) {
+    await this.props.plugin.manager.unload(id)
+    await this.props.plugin.manager.loadFromCache(id, true)
+
+    // force refresh pluginlist (hopefully)
+    this.setState({
+      count: this.props.plugin.manager.plugins.size
+    })
+  }
+
+
   async delete (id) {
     if (
       dialog.showMessageBox(getCurrentWindow(), {
@@ -92,6 +103,12 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
     const checkboxDisabled =
       this.props.plugin.isSystemPlugin(entry.id) ||
       entry.reverseDependency.length > 0
+
+    const debugDisabled =
+      !this.props.plugin.debugEnabled
+
+    const pluginDisabled =
+      !this.props.plugin.isPluginEnabled(entry.id)
 
     const repoLink = entry.package.repository
       ? repositoryLink(entry.package.repository)
@@ -185,6 +202,15 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
                 text='🗑'
                 onClick={() => this.delete(entry.id)}
                 />}
+            {checkboxDisabled || debugDisabled || pluginDisabled
+              ? null
+              : <SettingsOptionButton
+              outline
+              className='DI-plugins-button-reload'
+              text=''
+              onClick={() => this.reload(entry.id)}
+              />}
+
           </div>
         </div>
       </SettingsPanel>
