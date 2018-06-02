@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Security
 
 
-## [4.0.0] - 2018-06-02
+## 4.0.0 - 2018-06-02
 This is a completly new release with a new base.
 It allows loading of Plugins and Themes and more.
 
@@ -24,4 +24,3 @@ It allows loading of Plugins and Themes and more.
 - Multiple stylesheets and more. Care, could break things horribly if done wrong
 
 [Unreleased]: https://github.com/DiscordInjections/compare/v4.0.0...HEAD
-[4.0.0]: https://github.com/DiscordInjections/DiscordInjections/compare/v4...v4.0.0
