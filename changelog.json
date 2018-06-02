@@ -9,8 +9,6 @@
     ],
     "Internal Fun Fact": "Discord Injections still doesn't edit any base files of Discord. It now doesn't add any script tags either and it doesn't use the dom-ready event anymore either. Everything is done in the preload script. Though we still need to add style tags so you can add your custom themes.",
     "Things to come": [
-      "Automatic resolvement of unmet dependencies",
-      "Theme file dependencies",
       "Possible plugin dependency tree unloading",
       "The ability to rename commands. Make DI fully yours!",
       "Automatic version updater"
