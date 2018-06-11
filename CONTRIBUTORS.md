@@ -12,6 +12,7 @@ Sorted alphabetically
 
 * **nycex** <!-- 248873741306560513 -->
   * Added implementation for plugin reload
+  * Add unloadCSS() to the plugin api
 
 * **Snazzah** <!-- 158049329150427136 -->
   * Added more components/react elements

@@ -354,6 +354,39 @@ class Plugin extends EventEmitter {
       this.error('Failed to import css file', this._name, err)
     }
   }
+
+  async unloadCSS (file, watch = false) {
+    if (watch && !this.watcher) {
+      this.watcher = new Watcher()
+
+      this.watcher.on('change', (fileName, identifier) =>
+        this._onFileChange(identifier, fileName)
+      )
+    }
+
+    const cssPath = path.resolve(this.meta.path, file)
+    try {
+      let el = document.querySelector(
+        `style[data-plugin="${this._id}"][data-filename="${file.replace(
+          /\\/g,
+          '\\\\'
+        )}"]`
+      )
+      if (el) {
+        this.info('Unloading css file', file)
+        while (el.firstChild) {
+          el.firstChild.remove()
+        }
+      }
+
+      if (watch) {
+        this.watcher.removeFile(cssPath)
+      }
+    } catch (err) {
+      this.error('Failed to unload css file', this._name, err)
+    }
+  }
+
   _createStyle (content, plugin, filename) {
     const style = document.createElement('style')
     style.dataset.plugin = plugin
