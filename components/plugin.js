@@ -72,9 +72,7 @@ class Plugin extends EventEmitter {
       this.DI.CommandHandler.unhookCommand(command.name)
     }
 
-    Array.from(
-      document.querySelectorAll(`style[data-plugin="${this._id}"]`)
-    ).forEach(el => el.remove())
+    this.unloadCSS()
 
     this.removeAllListeners()
 
@@ -356,31 +354,34 @@ class Plugin extends EventEmitter {
   }
 
   async unloadCSS (file, watch = false) {
-    if (watch && !this.watcher) {
-      this.watcher = new Watcher()
-
-      this.watcher.on('change', (fileName, identifier) =>
-        this._onFileChange(identifier, fileName)
-      )
-    }
-
-    const cssPath = path.resolve(this.meta.path, file)
     try {
-      let el = document.querySelector(
-        `style[data-plugin="${this._id}"][data-filename="${file.replace(
-          /\\/g,
-          '\\\\'
-        )}"]`
-      )
-      if (el) {
-        this.info('Unloading css file', file)
-        while (el.firstChild) {
-          el.firstChild.remove()
+      if (file) {
+        let el = document.querySelector(
+          `style[data-plugin="${this._id}"][data-filename="${file.replace(
+            /\\/g,
+            '\\\\'
+          )}"]`
+        )
+        if (el) {
+          this.info('Unloading css file', file)
+          el.remove()
         }
-      }
 
-      if (watch) {
-        this.watcher.removeFile(cssPath)
+        if (watch && this.watcher) {
+          const cssPath = path.resolve(this.meta.path, file)
+          this.watcher.removeFile(cssPath)
+        }
+      } else {
+        Array.from(
+          document.querySelectorAll(`style[data-plugin="${this._id}"]`)
+        ).forEach(el => {
+          el.remove()
+
+          if (watch && this.watcher) {
+            const cssPath = path.resolve(this.meta.path, el.getAttribute('data-filename'))
+            this.watcher.removeFile(cssPath)
+          }
+        })
       }
     } catch (err) {
       this.error('Failed to unload css file', this._name, err)
