@@ -353,7 +353,7 @@ class Plugin extends EventEmitter {
     }
   }
 
-  async unloadCSS (file, watch = false) {
+  async unloadCSS (file = null) {
     try {
       if (file) {
         let el = document.querySelector(
@@ -367,7 +367,7 @@ class Plugin extends EventEmitter {
           el.remove()
         }
 
-        if (watch && this.watcher) {
+        if (this.watcher) {
           const cssPath = path.resolve(this.meta.path, file)
           this.watcher.removeFile(cssPath)
         }
@@ -377,7 +377,7 @@ class Plugin extends EventEmitter {
         ).forEach(el => {
           el.remove()
 
-          if (watch && this.watcher) {
+          if (this.watcher) {
             const cssPath = path.resolve(this.meta.path, el.getAttribute('data-filename'))
             this.watcher.removeFile(cssPath)
           }
