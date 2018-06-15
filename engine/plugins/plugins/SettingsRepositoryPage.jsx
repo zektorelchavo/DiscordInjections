@@ -97,7 +97,7 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
       ? parseAuthor(entry.package.author)
       : null
 
-    const alreadyInstalled = this.state.plugins.has(entry.package.name)
+    const alreadyInstalled = this.state.plugins.get(entry.package.name)
 
     let debug = null
     if (this.props.plugin.debugEnabled) {
@@ -175,7 +175,13 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
 
           <div>
             {alreadyInstalled
-              ? null
+              ? alreadyInstalled.package.version !== entry.package.version
+                ? <Button
+                  outline
+                  className='DI-plugins-button-update'
+                  onClick={() => this.install(entry.package, true)}
+                />
+                : null
               : <Button
                 outline
                 className='DI-plugins-button-install'
@@ -188,21 +194,21 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
     )
   }
 
-  async install (pkg) {
+  async install (pkg, update = false) {
     if (
       dialog.showMessageBox(getCurrentWindow(), {
         type: 'question',
-        title: 'Install Plugin',
-        message: `Do you really want to install "${pkg.name}"?`,
+        title: `${update ? 'Update' : 'Install' } Plugin`,
+        message: `Do you really want to ${update ? 'update' : 'install'} "${pkg.name}"?`,
         buttons: ['Yes', 'No'],
         defaultId: 0,
         cancelId: 1
       }) !== 0
     ) {
-      return this.props.plugin.debug('Aborting install of', pkg.name)
+      return this.props.plugin.debug('Aborting', update ? 'update' : 'install', 'of', pkg.name)
     }
 
-    this.props.plugin.debug('Installing', pkg.name)
+    this.props.plugin.debug(update ? 'Updating...' : 'Installing', pkg.name)
 
     // grab the package info
     const info = await npmFetch(
@@ -211,7 +217,9 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
     this.setState({ loading: true }, async () => {
       await this.props.plugin.install(
         pkg.name,
-        info.versions[info['dist-tags'].latest].dist.tarball
+        info.versions[info['dist-tags'].latest].dist.tarball,
+        undefined,
+        update
       )
       this.setState({
         loading: false,
