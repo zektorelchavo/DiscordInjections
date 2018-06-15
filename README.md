@@ -44,7 +44,7 @@ This module optionally requires [git](https://git-scm.com/downloads) for easier 
 
 2. Download the files
 
-     #### With releases (currently no v4 realease has been released!)
+     #### With releases (currently no v4 release has been released!)
     1. Download the [latest release](https://github.com/DiscordInjections/DiscordInjections/releases)
     2. Extract to the desired location
 
