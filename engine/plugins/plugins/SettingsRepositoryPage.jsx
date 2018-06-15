@@ -123,9 +123,17 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
       <SettingsPanel>
         <div className='DI-plugin-infobox' data-plugin-id={entry.package.name}>
           <div className='DI-plugin-meta'>
-            <strong>
-              {entry.package.name} <em>v{entry.package.version}</em>
-            </strong>
+            
+          <strong
+            className={`DI-plugin-type-${entry.package.keywords.includes('di-theme') ? 'theme' : 'plugin'}`}
+            style={{
+              backgroundImage: `url(${entry.icon ||
+                'https://discordinjections.xyz/img/logo-alt-nobg.svg'}`
+            }}
+          >
+            {entry.package.name}
+          </strong>
+
 
             <p>
               {entry.package.description}
