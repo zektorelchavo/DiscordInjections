@@ -82,12 +82,16 @@ module.exports = class plugins extends Plugin {
     this.setPluginInfo(pkgName, 'path', installPath)
   }
 
-  async install (pkgName, pkgDownload = null, force = false) {
+  async install (pkgName, pkgDownload = null, force = false, update = false) {
     try {
       let installPath = pkgName
 
       if (pkgDownload) {
         installPath = path.join(this.manager.basePath, pkgName)
+        if (update) { // remove old plugin folder, if doing an update
+          await this.manager.unload(pkgName)
+          await fs.remove(installPath)
+        }
         const dlPath = path.join(this.manager.basePath, '_' + pkgName)
         this.debug('Downloading', pkgName, 'to', dlPath)
         await download(pkgDownload, dlPath, { extract: true })
