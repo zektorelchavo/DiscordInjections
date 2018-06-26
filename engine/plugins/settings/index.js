@@ -56,7 +56,10 @@ module.exports = class settings extends Plugin {
       Object.keys(this.map)
         .map(id => this.map[id])
         .filter(tab => tab.plugin._name === plugin)
-        .forEach(tab => delete this.map[tab.id])
+        .forEach(tab => {
+          delete this.map[tab.id]
+          this.order.splice(this.order.indexOf(tab.id), 1)
+        })
     })
   }
 
