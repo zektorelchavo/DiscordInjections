@@ -39,7 +39,20 @@ Object.assign(exports, {
             'new _electron.BrowserWindow(windowConfig);',
             `new _electron.BrowserWindow(Object.assign(windowConfig, { webPreferences: { preload: "${path
               .join(preloadPath, 'style.js')
-              .replace(/\\/g, '/')}" } }));`
+              .replace(/\\/g, '/')}" } }));
+
+              // disable csp
+              require("electron").session.defaultSession.webRequest.onHeadersReceived(function (details, done) {
+                const responseHeaders = {}
+                for (let k in details.responseHeaders) {
+                  if (!k.match(/^content-security/i)) {
+                    responseHeaders[k] = details.responseHeaders[k]
+                  }
+                }
+
+                done({ cancel: false, responseHeaders })
+              })
+              `
           )
 
         // main window patches
