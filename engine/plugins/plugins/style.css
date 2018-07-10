@@ -153,6 +153,22 @@
   min-height: 0;
 }
 
+.DI-plugins-button-update {
+  background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij4gICAgPHBhdGggZD0iTTE2IDEzaC0zVjNoLTJ2MTBIOGw0IDQgNC00ek00IDE5djJoMTZ2LTJINHoiIGZpbGw9IndoaXRlIi8+ICAgIDxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIGZpbGw9Im5vbmUiLz48L3N2Zz4=)
+    center center #ce72da;
+  background-repeat: no-repeat;
+  border-radius: 3px;
+  box-sizing: border-box;
+  height: 24px;
+  width: 24px;
+  font-size: 0;
+  transition: background-color ease .2s;
+  margin-bottom: 5px;
+  border: none;
+  min-width: 0;
+  min-height: 0;
+}
+
 #DI-plugins-plugin .DI-checkbox-unchecked {
   background-color: #333 !important;
   border-width: 2px;

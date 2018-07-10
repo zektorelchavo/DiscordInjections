@@ -72,9 +72,7 @@ class Plugin extends EventEmitter {
       this.DI.CommandHandler.unhookCommand(command.name)
     }
 
-    Array.from(
-      document.querySelectorAll(`style[data-plugin="${this._id}"]`)
-    ).forEach(el => el.remove())
+    this.unloadCSS()
 
     this.removeAllListeners()
 
@@ -354,6 +352,42 @@ class Plugin extends EventEmitter {
       this.error('Failed to import css file', this._name, err)
     }
   }
+
+  async unloadCSS (file = null) {
+    try {
+      if (file) {
+        let el = document.querySelector(
+          `style[data-plugin="${this._id}"][data-filename="${file.replace(
+            /\\/g,
+            '\\\\'
+          )}"]`
+        )
+        if (el) {
+          this.info('Unloading css file', file)
+          el.remove()
+        }
+
+        if (this.watcher) {
+          const cssPath = path.resolve(this.meta.path, file)
+          this.watcher.removeFile(cssPath)
+        }
+      } else {
+        Array.from(
+          document.querySelectorAll(`style[data-plugin="${this._id}"]`)
+        ).forEach(el => {
+          el.remove()
+
+          if (this.watcher) {
+            const cssPath = path.resolve(this.meta.path, el.getAttribute('data-filename'))
+            this.watcher.removeFile(cssPath)
+          }
+        })
+      }
+    } catch (err) {
+      this.error('Failed to unload css file', this._name, err)
+    }
+  }
+
   _createStyle (content, plugin, filename) {
     const style = document.createElement('style')
     style.dataset.plugin = plugin
