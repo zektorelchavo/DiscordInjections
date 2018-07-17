@@ -181,8 +181,8 @@ module.exports = class react extends Plugin {
           this.emit('chatClosed', mut)
         }
       } else if (
-        changed.classList &&
-        changed.classList.contains('channelTextArea-1LDbYG') &&
+        changed.className &&
+        changed.className.test(/\bchannelTextArea-/) &&
         added
       ) {
         this.emit('channelChanged', mut)
