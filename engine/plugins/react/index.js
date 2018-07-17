@@ -182,7 +182,7 @@ module.exports = class react extends Plugin {
         }
       } else if (
         changed.classList &&
-        changed.classList.contains('channelTextArea-1HTP3C') &&
+        changed.classList.contains('channelTextArea-1LDbYG') &&
         added
       ) {
         this.emit('channelChanged', mut)
