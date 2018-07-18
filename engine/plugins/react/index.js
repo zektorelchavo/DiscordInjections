@@ -182,7 +182,7 @@ module.exports = class react extends Plugin {
         }
       } else if (
         changed.className &&
-        (/\bchannelTextArea-/).test(changed.className) &&
+        changed.className.match(/\bchannelTextArea-/) &&
         added
       ) {
         this.emit('channelChanged', mut)
