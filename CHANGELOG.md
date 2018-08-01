@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 ### Security
 
+## [4.0.1] - 2018-08-01
+
+### Fixed
+- Not sure if you could call it "fixed", but removed the CSP header to allow loading external sources again
 
 ## 4.0.0 - 2018-06-02
 This is a completly new release with a new base.
@@ -23,4 +27,5 @@ It allows loading of Plugins and Themes and more.
 - CSS for splash screens
 - Multiple stylesheets and more. Care, could break things horribly if done wrong
 
-[Unreleased]: https://github.com/DiscordInjections/compare/v4.0.0...HEAD
+[Unreleased]: https://github.com/DiscordInjections/compare/v4.0.1...HEAD
+[4.0.1]: https://github.com/DiscordInjections/compare/v4.0.1...v4.0.0

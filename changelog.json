@@ -1,4 +1,7 @@
 {
+  "4.0.1": {
+    "Fixes": "This is just a hotfix release to allow plugins to work correctly again."
+  },
   "4.0.0": {
     "Rework": "DI got a whole rewrite. All your plugins are probably broken... <b>But</b> things should be more stable now! Also fully compatible with the latest <img style='width: 24px; height: 24px; display: inline' src='/assets/03f65a2b1b7367dc7647ffc6e995b82a.svg'> changes!",
     "Changes": [
