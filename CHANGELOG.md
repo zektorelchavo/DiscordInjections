@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Added
 ### Changed
+- New, backwards compatible injector script, that should be way better
 ### Deprecated
 ### Removed
 ### Fixed
