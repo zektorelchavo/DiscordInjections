@@ -5,5 +5,6 @@
   "author": "Kura",
   "description": "Display DI Changelog",
   "css": ["changelog.css"],
-  "pluginDependencies": ["commands"]
+  "pluginDependencies": ["commands"],
+  "keywords": ["di-plugin"]
 }

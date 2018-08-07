@@ -4,5 +4,6 @@
   "main": "index.js",
   "author": "Kura",
   "description": "Plugin Manager",
-  "css": ["style.css"]
+  "css": ["style.css"],
+  "keywords": ["di-plugin"]
 }

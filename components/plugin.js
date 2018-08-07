@@ -10,7 +10,7 @@ class Plugin extends EventEmitter {
     super()
 
     this.manager = pm
-    this.DI = pm.DI
+    this.DI = pm
     this.meta = meta
     if (this.constructor === Plugin) {
       throw new Error('Cannot instantiate an abstract class!')
@@ -378,7 +378,10 @@ class Plugin extends EventEmitter {
           el.remove()
 
           if (this.watcher) {
-            const cssPath = path.resolve(this.meta.path, el.getAttribute('data-filename'))
+            const cssPath = path.resolve(
+              this.meta.path,
+              el.getAttribute('data-filename')
+            )
             this.watcher.removeFile(cssPath)
           }
         })

@@ -182,6 +182,7 @@ module.exports = class react extends Plugin {
         }
       } else if (
         changed.className &&
+        changed.className.match &&
         changed.className.match(/\bchannelTextArea-/) &&
         added
       ) {

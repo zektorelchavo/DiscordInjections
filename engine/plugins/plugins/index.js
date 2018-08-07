@@ -88,7 +88,8 @@ module.exports = class plugins extends Plugin {
 
       if (pkgDownload) {
         installPath = path.join(this.manager.basePath, pkgName)
-        if (update) { // remove old plugin folder, if doing an update
+        if (update) {
+          // remove old plugin folder, if doing an update
           await this.manager.unload(pkgName)
           await fs.remove(installPath)
         }
@@ -191,18 +192,6 @@ module.exports = class plugins extends Plugin {
     const p = this.getPluginInfo(id)
     p[key] = value
     this.setSettingsNode(`plugins.${id}`, p)
-  }
-
-  isSystemPlugin (id) {
-    return fs.existsSync(path.join(__dirname, '..', id, 'package.json'))
-  }
-
-  isPluginEnabled (id) {
-    if (this.isSystemPlugin(id)) {
-      return true
-    }
-
-    return !this.getPluginInfo(id).disabled
   }
 
   removeLocal (id) {

@@ -5,6 +5,29 @@ const querystring = require('querystring')
 // use node-fetch instead of window.fetch to ignore cors
 const fetch = require('node-fetch')
 
+const Promise = require('bluebird')
+
+exports.webpackAvailable = async function webpackAvailable () {
+  while (!window.webpackJsonp) {
+    await Promise.delay(100)
+  }
+}
+
+exports.webpackRequireCache = function webpackRequireCache () {
+  // adjusted from https://github.com/joe27g/EnhancedDiscord/blob/beta/dom_shit.js#L87
+  const key = `${Date.now()}`
+  const wrc = window.webpackJsonp.push([
+    [],
+    {
+      [key]: (wpModule, wpExports, wpRequire) => (wpModule.exports = wpRequire)
+    },
+    [[key]]
+  ])
+  delete wrc.m[key]
+  delete wrc.c[key]
+  return wrc
+}
+
 exports.shortLink = function shortLink (longLink) {
   const link = parse(longLink)
 

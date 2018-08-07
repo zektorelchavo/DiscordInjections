@@ -52,12 +52,13 @@ electron.app.on('ready', () => {
   // patch webRequest session to ditch the CSP headers
   electron.session.defaultSession.webRequest.onHeadersReceived(
     (details, done) => {
+      const responseHeaders = Object.assign({}, details.responseHeaders)
       // delete the content security response headers
-      Object.keys(details.responseHeaders)
-        .filter(k => k.toLowerCase() === 'content-security-policy')
-        .forEach(k => delete details.responseHeaders[k])
+      Object.keys(responseHeaders)
+        .filter(k => k.toLowerCase().startsWith('content-security-policy'))
+        .forEach(k => delete responseHeaders[k])
 
-      done(Object.assign(details, { cancel: false }))
+      done({ cancel: false, responseHeaders: responseHeaders })
     }
   )
 

@@ -8,7 +8,6 @@ const { getCurrentWebContents } = require('electron').remote
 
 module.exports = class commands extends Plugin {
   preload () {
-    this.convertLegacySettings()
     this.settings = Object.assign({}, { commandPrefix: '//' }, this.settings)
     this.acRows = []
     this.currentSet = []
@@ -33,36 +32,6 @@ module.exports = class commands extends Plugin {
 
   get iconURL () {
     return '//discordinjections.xyz/img/logo.png'
-  }
-
-  convertLegacySettings () {
-    if (this.hasLegacySettings) {
-      const legacySettings = this.legacySettings
-      if (legacySettings.commandPrefix) {
-        // force overwrite everything!
-        const commandPrefix = legacySettings.commandPrefix
-        this.settings = { commandPrefix }
-
-        delete legacySettings.commandPrefix
-        this.DI.localStorage.setItem(
-          'DI-DiscordInjections',
-          JSON.stringify(legacySettings)
-        )
-      }
-    }
-  }
-
-  get legacySettings () {
-    const dinode = this.DI.localStorage.getItem('DI-DiscordInjections')
-    try {
-      return JSON.parse(dinode)
-    } catch (ex) {
-      return {}
-    }
-  }
-
-  get hasLegacySettings () {
-    return this.DI.localStorage.getItem('DI-DiscordInjections') !== null
   }
 
   get textarea () {

@@ -3,5 +3,6 @@
   "version": "0.0.1",
   "main": "index.js",
   "author": "Kura",
-  "description": "DI Settings Dialog"
+  "description": "DI Settings Dialog",
+  "keywords": ["di-plugin"]
 }

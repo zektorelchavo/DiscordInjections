@@ -26,7 +26,7 @@ exports.SettingsPaginator = require('./SettingsPaginator')
 
 // go as far up as possible
 let m = module
-while (m.parent && !m.filename.endsWith('pluginManager.js')) {
+while (m.parent && !m.filename.endsWith('core.js')) {
   m = m.parent
 }
 

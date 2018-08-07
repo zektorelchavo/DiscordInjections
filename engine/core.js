@@ -1,68 +1,20 @@
 const { EventEmitter } = require('eventemitter3')
 const fs = require('fs-extra')
 const path = require('path')
-const reload = require('require-reload')
 const Promise = require('bluebird')
 const { app, getCurrentWebContents } = require('electron').remote
-const Module = require('module')
-const elements = require('elements')
 const glob = require('globby')
+const Module = require('module')
 
-class PluginManager extends EventEmitter {
-  constructor (DI) {
-    super()
+const util = require('./util')
+const API = require('./api')
 
-    this.DI = DI
-    this._ready = false
-    this.plugins = new Map()
+const postcss = require('postcss')
+const postcssImport = require('postcss-import')
+const postcssUrl = require('postcss-url')
 
-    // clean session storage, just to be safe
-    DI.sessionStorage['DI-plugins'] = '{}'
-
-    this.pluginsEnabled = {}
-    if (DI.localStorage['DI-Plugins'] !== '') {
-      try {
-        this.pluginsEnabled = JSON.parse(DI.localStorage['DI-Plugins'])
-      } catch (ex) {}
-    }
-
-    this._mLoad = Module._load
-    Module._load = (request, parent, isMain) => {
-      switch (request) {
-        case 'elements':
-        case 'react':
-          console.debug(
-            '[PM] rewriting',
-            request,
-            'request for',
-            parent.filename
-          )
-
-          // try the require resolve method
-          let newPath = request
-          try {
-            newPath = require.resolve(request)
-          } catch (err) {
-            // filter the current cache and hope for the best
-            newPath = Object.keys(require.cache)
-              .filter(
-                mod =>
-                  mod.includes(path.sep + request + path.sep) &&
-                  mod.includes('index.js')
-              )
-              .pop()
-          }
-          console.debug('[PM] resolved', request, 'to', newPath)
-          return this._mLoad(newPath, parent, isMain)
-      }
-      return this._mLoad(request, parent, isMain)
-    }
-
-    this.basePath = this.expand(DI.conf.pluginPath || '%/plugins')
-    fs.ensureDirSync(this.basePath)
-  }
-
-  expand (basePath) {
+class Core extends EventEmitter {
+  static expand (basePath) {
     const discordPath = path.join(process.resourcesPath, '..', '..')
 
     fs.ensureDirSync(app.getPath('userData'))
@@ -78,114 +30,190 @@ class PluginManager extends EventEmitter {
       .replace(/^&\//, discordPath)
   }
 
+  constructor (conf, localStorage) {
+    super()
+
+    this.conf = conf
+    this._ready = false
+    this._readyCallbacks = []
+
+    this.localStorage = localStorage
+    this._webpackCache = util.webpackRequireCache()
+
+    this.plugins = new Map()
+    this.settings = {}
+
+    let settingsString = localStorage['DI']
+    if (settingsString) {
+      this.settings = JSON.parse(settingsString)
+    } else {
+      settingsString = localStorage['DI-plugins']
+      if (settingsString) {
+        this.settings = JSON.parse(settingsString)
+      }
+    }
+
+    this._mLoad = Module._load
+    Module._load = (request, parent, isMain) => {
+      switch (request) {
+        case 'elements':
+        case 'react':
+          // try the require resolve method
+          let newPath = request
+          try {
+            newPath = require.resolve(request)
+          } catch (err) {
+            // filter the current cache and hope for the best
+            newPath = Object.keys(require.cache)
+              .filter(
+                mod =>
+                  mod.includes(path.sep + request + path.sep) &&
+                  mod.includes('index.js')
+              )
+              .pop()
+          }
+
+          return this._mLoad(newPath, parent, isMain)
+      }
+      return this._mLoad(request, parent, isMain)
+    }
+
+    this.basePath = Core.expand(conf.pluginPath || '%/plugins')
+    fs.ensureDirSync(this.basePath)
+  }
+
+  get package () {
+    return require('../package.json')
+  }
+
+  get version () {
+    return this.package.version
+  }
+
+  get contributors () {
+    if (!this._contributors) {
+      Object.defineProperty(this, '_contributors', {})
+      this._contributors = {
+        configurable: false,
+        enumerable: false,
+        writable: false,
+        value: {}
+      }
+
+      fs
+        .readFileSync(path.join(__dirname, '..', 'CONTRIBUTORS.md'), 'utf-8')
+        .split('\n')
+        .filter(line => line.startsWith('*'))
+        .map(line => line.match(/\*\*(.+)\*\* <!-- (\d+) -->/))
+        .forEach(([_, name, id]) => (this._contributors[id] = name))
+    }
+
+    return this._contributors
+  }
+
+  get postcss () {
+    if (!this._postcss) {
+      this._postcss = postcss([
+        postcssImport(),
+        postcssUrl({
+          url: 'inline'
+        })
+      ])
+    }
+    return this._postcss
+  }
+
   async loadPluginPath () {
     // look through the plugin directory
     // first load all system plugins
-    const plugins = await glob(['**/package.json', '!**/node_modules'], {
+    const plugins = await glob(['** /package.json', '!**/node_modules'], {
       cwd: this.basePath,
       absolute: true
     })
-    console.info('[PM] loading plugins from', this.basePath)
-    console.debug('[PM] found following plugins', plugins)
+
+    console.info('[engine/core] loading plugins from', this.basePath)
+    console.debug('[engine/core] found following plugins', plugins)
 
     return Promise.each(plugins, plugin => this.loadByPath(plugin, false))
   }
 
-  async loadByPath (pluginPath, force = true, dependency = false) {
-    let pkg = {}
-
-    let fileName =
-      path.basename(pluginPath) === 'package.json'
-        ? pluginPath
-        : path.join(pluginPath, 'package.json')
-
-    let main = path.dirname(fileName)
-
-    try {
-      pkg = reload(fileName)
-    } catch (err) {
-      if (path.extname(pluginPath) !== '.css') {
-        console.error('[PM] failed to load requested plugin!', err)
-        throw new Error('plugin not found')
-      } else {
-        pkg = {
-          name: path.basename(pluginPath),
-          version: '1.0.0',
-          type: 'theme',
-          author: 'Unknown',
-          description: 'A css file',
-          css: [pluginPath]
-        }
-
-        main = pluginPath
-        fileName = pluginPath
-      }
+  onReady (cb) {
+    if (this._ready) {
+      cb()
+    } else {
+      this._readyCallbacks.push(cb)
     }
+  }
 
-    const id = pkg.name
-
-    if (this.plugins.has(id) && this.plugins.get(id).loaded) {
-      // no need to reload an already loaded plugin
-      if (
-        dependency &&
-        !this.plugins.get(id).reverseDependency.includes(dependency)
-      ) {
-        console.debug('[PM] adding reverse dependency', dependency, 'to', id)
-        this.plugins.get(id).reverseDependency.push(dependency)
-      }
-
-      console.debug('[PM] plugin already loaded, skipping!', id)
+  ready () {
+    if (this._ready) {
       return
     }
 
-    if (this.plugins.get(id) && this.plugins.get(id).loading) {
-      console.error('[PM] circular dependency, aborting', id)
-      throw new Error('circular dependency found, aborting')
-    }
-
-    const p = {
-      // the base path to the plugin
-      path: path.dirname(fileName),
-
-      // main class
-      main,
-
-      // package id
-      id,
-
-      // the package.json of the plugin
-      package: pkg,
-
-      // runtime metadata
-      loaded: false,
-      loading: true,
-
-      // class and instance of plugin
-      Cls: null,
-      inst: null,
-
-      // dependencies
-      dependency: [],
-      reverseDependency: []
-    }
-
-    // store the temporary plugin
-    this.plugins.set(id, p)
-
-    // chain into the loadFromCache logic
-    return this.loadFromCache(id, force, dependency)
+    this._ready = true
+    this.emit('ready')
+    return Promise.all(this._readyCallbacks.map(cb => cb())).then(() => {
+      this.emit('loaded')
+    })
   }
 
-  async load (plugin, force = true, dependency = false) {
-    const pluginPath = path.resolve(this.basePath, plugin)
-    if (!fs.existsSync(path.join(pluginPath, 'package.json'))) {
-      console.warn(`[PM] <${plugin}> not found in registry, asking repo`)
-      await this.system.install(plugin)
+  async load (plugin, force = true, dependency = null, formatProvider = null) {
+    // this is opinionated af
+    if (!formatProvider) {
+      formatProvider = API.defaultFormat
     }
 
-    return this.loadByPath(pluginPath, force, dependency)
+    const Provider = API.formats[formatProvider]
+
+    const pluginPath = Provider.resolve(plugin, [
+      path.join(__dirname, 'plugins'),
+      this.basePath
+    ])
+
+    return this.loadByPath(pluginPath, force, dependency, formatProvider)
   }
 
+  async loadByPath (
+    pluginPath,
+    force = true,
+    dependency = null,
+    formatProvider = null
+  ) {
+    let api = null
+    try {
+      if (!formatProvider) {
+        api = API.detectFormat(pluginPath)
+      } else {
+        api = API.loadFormat(formatProvider, pluginPath)
+      }
+    } catch (err) {
+      console.error('[engine/core] failed to load plugin!', pluginPath, err)
+      return
+    }
+
+    if (this.plugins.has(api.id)) {
+      // plugin with same id is already loaded!
+      console.debug(
+        `[engine/core] there is already a plugin <${api.id}> loaded, skipping load process.`
+      )
+
+      const p = this.plugins.get(api.id)
+      try {
+        p.use()
+        return p
+      } catch (err) {
+        console.error(`[engine/core] <${api.id}> failed to confirm load`, err)
+        return null
+      }
+    } else {
+      console.debug(`[engine/core] loading <${api.id}>`)
+      this.plugins.set(api.id, api)
+      api.connect(this)
+      return api.load(force, dependency)
+    }
+  }
+
+  /*
   async loadFromCache (plugin, force = true, dependency = false) {
     const p = this.plugins.get(plugin)
 
@@ -374,46 +402,74 @@ class PluginManager extends EventEmitter {
 
     return true
   }
+  */
 
-  ready () {
-    if (this._ready) {
+  get (name, raw = false) {
+    let plugin = null
+    if (this.plugins.has(name)) {
+      plugin = this.plugins.get(name)
+    }
+
+    if (!name.includes('#')) {
+      const possibleKeys = Array.from(this.plugins.keys()).filter(
+        k => k.split('#')[1] === name
+      )
+      plugin = this.plugins.get(possibleKeys[0])
+    }
+
+    if (plugin && raw) {
+      return plugin
+    } else {
+      return plugin ? plugin.instance : null
+    }
+  }
+
+  isSystemPlugin (fullID) {
+    let [format, id] = fullID.split('#')
+    if (format !== 'DI') {
+      return false
+    }
+
+    return fs.existsSync(path.join(__dirname, 'plugins', id, 'package.json'))
+  }
+
+  isPluginEnabled (id) {
+    if (this.isSystemPlugin(id)) {
+      return true
+    }
+
+    this.settings.plugins = Object.assign(
+      { [id]: { disabled: false } },
+      this.settings.plugins
+    )
+    return !this.settings.plugins[id].disabled
+  }
+
+  async loadPlugins () {
+    // first load all system plugins
+    const systemPlugins = await glob('plugins/*/package.json', {
+      cwd: __dirname,
+      absolute: true
+    })
+
+    await Promise.each(systemPlugins, pkg => this.loadByPath(pkg, true))
+
+    // now check the plugin path
+    await this.loadPluginPath()
+
+    // last, but not least, load the missing plugins
+    if (!this.settings.plugins) {
       return
     }
 
-    this._ready = true
-    this.emit('plugins-preloaded', Array.from(this.plugins.keys()))
-
-    const loaders = []
-    for (let p of this.plugins.values()) {
-      if (p.loaded && p.inst) {
-        loaders.push(p.inst._load())
-      }
-    }
-
-    return Promise.all(loaders).then(() =>
-      this.emit('plugins-loaded', Array.from(this.plugins.keys()))
-    )
-  }
-
-  get (name, raw = false) {
-    if (
-      !this.plugins ||
-      !this.plugins.has(name) ||
-      !this.plugins.get(name).loaded
-    ) {
-      return null
-    }
-
-    return raw ? this.plugins.get(name) : this.plugins.get(name).inst
+    return Object.keys(this.settings.plugins)
+      .map(k => this.settings.plugins[k])
+      .filter(p => p.path)
+      .forEach(p => this.loadByPath(p.path, false))
   }
 
   async initialize () {
-    // load the most important and initial plugin, me >:D
-    const { inst: system } = await this.loadByPath(
-      path.join(__dirname, 'plugins', 'plugins')
-    )
-    this.system = system
-    await system.loadPlugins()
+    await this.loadPlugins()
 
     if (document.readyState !== 'loading') {
       setImmediate(() => this.ready())
@@ -423,4 +479,4 @@ class PluginManager extends EventEmitter {
   }
 }
 
-module.exports = PluginManager
+module.exports = Core
