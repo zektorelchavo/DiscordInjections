@@ -10,7 +10,7 @@ This script aims to pick up where [BeautifulDiscord](https://github.com/leovoel/
 
 ## Important notice
 
-This is version 4 of Discord Injections. This software is now in Beta, breaking changes should not occur anymore, but no promises can be made.
+This is version 4 of Discord Injections.
 
 Please report any problems, bugs, suspicious behavior, etc to Github. Thank you very much!
 
@@ -50,7 +50,9 @@ This module optionally requires [git](https://git-scm.com/downloads) for easier 
 
      #### With git
     1. Type `git clone https://github.com/DiscordInjections/DiscordInjections folderName`
-    2. (optional) Type `git checkout tags/<VERSION>` to go to a specific version. This is recommended
+    2. Type `git checkout tags/<VERSION>` to go to a specific version. This is recommended
+    
+    **NOTE**: No support is giving for `HEAD` - it is in a constant changing and breaking state.
 
 3. Type `cd folderName`
 4. Run `npm install`
