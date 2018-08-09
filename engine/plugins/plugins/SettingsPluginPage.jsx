@@ -54,7 +54,7 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
   }
 
   async toggleDisable (id) {
-    const enabled = this.props.plugin.isPluginEnabled(id)
+    const enabled = this.props.plugin.manager.isPluginEnabled(id)
     // is enabled => true, disable(true) disables ;D
     await this.props.plugin.disable(id, enabled)
 
@@ -64,7 +64,7 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
     })
   }
 
-async reload (id) {
+  async reload (id) {
     await this.props.plugin.manager.unload(id)
     await this.props.plugin.manager.loadFromCache(id, true)
 
@@ -73,7 +73,6 @@ async reload (id) {
       count: this.props.plugin.manager.plugins.size
     })
   }
-
 
   async delete (id) {
     if (
@@ -104,11 +103,9 @@ async reload (id) {
       this.props.plugin.isSystemPlugin(entry.id) ||
       entry.reverseDependency.length > 0
 
-    const debugDisabled =
-      !this.props.plugin.debugEnabled
+    const debugDisabled = !this.props.plugin.debugEnabled
 
-    const pluginDisabled =
-      !this.props.plugin.isPluginEnabled(entry.id)
+    const pluginDisabled = !this.props.plugin.isPluginEnabled(entry.id)
 
     const repoLink = entry.package.repository
       ? repositoryLink(entry.package.repository)
@@ -205,12 +202,11 @@ async reload (id) {
             {checkboxDisabled || debugDisabled || pluginDisabled
               ? null
               : <SettingsOptionButton
-              outline
-              className='DI-plugins-button-reload'
-              text=''
-              onClick={() => this.reload(entry.id)}
-              />}
-
+                outline
+                className='DI-plugins-button-reload'
+                text=''
+                onClick={() => this.reload(entry.id)}
+                />}
           </div>
         </div>
       </SettingsPanel>

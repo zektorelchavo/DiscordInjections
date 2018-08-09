@@ -22,7 +22,6 @@
     "fs-extra": "^6.0.1",
     "globby": "^8.0.1",
     "node-fetch": "^2.1.2",
-    "npm": "^6.1.0",
     "npmi": "^4.0.0",
     "parse-author": "^2.0.0",
     "postcss": "^6.0.22",
@@ -32,6 +31,7 @@
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
     "require-reload": "^0.2.2",
-    "semver": "^5.5.0"
+    "semver": "^5.5.0",
+    "sweetalert-react": "^0.4.11"
   }
 }

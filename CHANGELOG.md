@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 ### Changed
 - New, backwards compatible injector script, that should be way better
+- New, backwards compatible plugin loader
+- Plugin Loader now supports different formats (in theory)
 ### Deprecated
 ### Removed
 ### Fixed

@@ -28,6 +28,16 @@ exports.webpackRequireCache = function webpackRequireCache () {
   return wrc
 }
 
+exports.defer = function defer () {
+  const d = {}
+  d.promise = new Promise((resolve, reject) => {
+    d.resolve = resolve
+    d.reject = reject
+  })
+
+  return d
+}
+
 exports.shortLink = function shortLink (longLink) {
   const link = parse(longLink)
 

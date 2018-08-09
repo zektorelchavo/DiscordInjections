@@ -90,7 +90,7 @@ module.exports = class plugins extends Plugin {
         installPath = path.join(this.manager.basePath, pkgName)
         if (update) {
           // remove old plugin folder, if doing an update
-          await this.manager.unload(pkgName)
+          await this.manager.unload('DI#' + pkgName)
           await fs.remove(installPath)
         }
         const dlPath = path.join(this.manager.basePath, '_' + pkgName)

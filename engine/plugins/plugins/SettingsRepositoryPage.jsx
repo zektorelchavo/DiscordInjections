@@ -16,12 +16,14 @@ const {
   repositoryLink,
   parseAuthor,
   round,
-  npmFetch
+  npmFetch,
+  defer
 } = require('../../util')
+const SweetAlert = require('sweetalert-react').default
 
 const ResultsPerPage = 15
 
-module.exports = class SettingsRepositoryPage extends React.PureComponent {
+module.exports = class SettingsRepositoryPage extends PureComponent {
   constructor (props) {
     super(props)
 
@@ -31,7 +33,10 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
       results: null,
       search: '',
       plugins: props.plugin.manager.plugins,
-      page: 0
+      page: 0,
+      showConfirmDialog: false,
+      confirmDialogPlugin: '',
+      confirmDialogPromise: null
     }
   }
 
@@ -87,7 +92,6 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
 
   renderEntry (idx) {
     const entry = this.state.results.results[idx]
-    console.log(idx, entry, this.state.results)
 
     const repoLink = entry.package.repository
       ? repositoryLink(entry.package.repository)
@@ -97,7 +101,7 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
       ? parseAuthor(entry.package.author)
       : null
 
-    const alreadyInstalled = this.state.plugins.get(entry.package.name)
+    const alreadyInstalled = this.state.plugins.get('DI#' + entry.package.name)
 
     let debug = null
     if (this.props.plugin.debugEnabled) {
@@ -123,17 +127,19 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
       <SettingsPanel>
         <div className='DI-plugin-infobox' data-plugin-id={entry.package.name}>
           <div className='DI-plugin-meta'>
-            
-          <strong
-            className={`DI-plugin-type-${entry.package.keywords.includes('di-theme') ? 'theme' : 'plugin'}`}
-            style={{
-              backgroundImage: `url(${entry.icon ||
-                'https://discordinjections.xyz/img/logo-alt-nobg.svg'}`
-            }}
-          >
-            {entry.package.name}
-          </strong>
-
+            <strong
+              className={`DI-plugin-type-${entry.package.keywords.includes(
+                'di-theme'
+              )
+                ? 'theme'
+                : 'plugin'}`}
+              style={{
+                backgroundImage: `url(${entry.icon ||
+                  'https://discordinjections.xyz/img/logo-alt-nobg.svg'}`
+              }}
+            >
+              {entry.package.name}
+            </strong>
 
             <p>
               {entry.package.description}
@@ -180,7 +186,7 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
                   outline
                   className='DI-plugins-button-update'
                   onClick={() => this.install(entry.package, true)}
-                />
+                  />
                 : null
               : <Button
                 outline
@@ -195,17 +201,20 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
   }
 
   async install (pkg, update = false) {
-    if (
-      dialog.showMessageBox(getCurrentWindow(), {
-        type: 'question',
-        title: `${update ? 'Update' : 'Install' } Plugin`,
-        message: `Do you really want to ${update ? 'update' : 'install'} "${pkg.name}"?`,
-        buttons: ['Yes', 'No'],
-        defaultId: 0,
-        cancelId: 1
-      }) !== 0
-    ) {
-      return this.props.plugin.debug('Aborting', update ? 'update' : 'install', 'of', pkg.name)
+    const d = defer()
+    this.setState({
+      showConfirmDialog: true,
+      confirmDialogPlugin: pkg.name + ' v' + pkg.version,
+      confirmDialogPromise: d
+    })
+
+    if (!await d.promise) {
+      return this.props.plugin.debug(
+        'Aborting',
+        update ? 'update' : 'install',
+        'of',
+        pkg.name
+      )
     }
 
     this.props.plugin.debug(update ? 'Updating...' : 'Installing', pkg.name)
@@ -218,7 +227,7 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
       await this.props.plugin.install(
         pkg.name,
         info.versions[info['dist-tags'].latest].dist.tarball,
-        undefined,
+        null,
         update
       )
       this.setState({
@@ -310,6 +319,28 @@ module.exports = class SettingsRepositoryPage extends React.PureComponent {
         </div>
 
         {content}
+
+        <SweetAlert
+          show={this.state.showConfirmDialog}
+          title='Install Plugin'
+          text={`Do you really want to install ${this.state
+            .confirmDialogPlugin}"?`}
+          showCancelButton
+          onConfirm={() =>
+            this.setState(
+              {
+                showConfirmDialog: false
+              },
+              () => this.state.confirmDialogPromise.resolve(true)
+            )}
+          onCancel={() =>
+            this.setState(
+              {
+                showConfirmDialog: false
+              },
+              () => this.state.confirmDialogPromise.resolve(false)
+            )}
+        />
       </div>
     )
   }

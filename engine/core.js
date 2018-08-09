@@ -49,8 +49,22 @@ class Core extends EventEmitter {
     } else {
       settingsString = localStorage['DI-plugins']
       if (settingsString) {
-        this.settings = JSON.parse(settingsString)
+        this.settings.plugins = {}
+        const settings = JSON.parse(settingsString)
+        settings.plugins = settings.plugins || {}
+
+        Object.keys(settings.plugins).forEach(pluginName => {
+          this.settings.plugins['DI#' + pluginName] = Object.assign(
+            settings.plugins[pluginName],
+            {
+              provider: 'DI',
+              name: pluginName
+            }
+          )
+        })
       }
+
+      localStorage['DI'] = JSON.stringify(this.settings)
     }
 
     this._mLoad = Module._load
@@ -126,7 +140,7 @@ class Core extends EventEmitter {
   async loadPluginPath () {
     // look through the plugin directory
     // first load all system plugins
-    const plugins = await glob(['** /package.json', '!**/node_modules'], {
+    const plugins = await glob(['**/package.json', '!**/node_modules'], {
       cwd: this.basePath,
       absolute: true
     })
@@ -191,6 +205,11 @@ class Core extends EventEmitter {
       return
     }
 
+    if (!this.isPluginEnabled(api.id) && !force) {
+      console.warn(`[engine/core] <${api.id}> disabled, skipping!`)
+      return
+    }
+
     if (this.plugins.has(api.id)) {
       // plugin with same id is already loaded!
       console.debug(
@@ -199,7 +218,7 @@ class Core extends EventEmitter {
 
       const p = this.plugins.get(api.id)
       try {
-        p.use()
+        await p.use(api.id)
         return p
       } catch (err) {
         console.error(`[engine/core] <${api.id}> failed to confirm load`, err)
@@ -438,14 +457,17 @@ class Core extends EventEmitter {
       return true
     }
 
-    this.settings.plugins = Object.assign(
-      { [id]: { disabled: false } },
-      this.settings.plugins
-    )
-    return !this.settings.plugins[id].disabled
+    if (!this.settings.plugins[id]) {
+      return true
+    } else {
+      return !this.settings.plugins[id].disabled
+    }
   }
 
   async loadPlugins () {
+    // force load plugin controller first
+    this.loadByPath(path.join(__dirname, 'plugins', 'plugins'), true)
+
     // first load all system plugins
     const systemPlugins = await glob('plugins/*/package.json', {
       cwd: __dirname,

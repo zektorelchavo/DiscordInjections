@@ -71,7 +71,7 @@ class Provider {
   }
 
   get Class () {
-    if (this.package.type === 'theme') {
+    if (this.package.type === 'theme' && !this.package.main) {
       return elements.Theme
     } else {
       return require(this.path)
@@ -82,14 +82,14 @@ class Provider {
     return `DI#${this.package.name}`
   }
 
-  use () {
+  use (dependency = null) {
     if (this.loading) {
       throw new Error(
         '[engine/api/discord-injections] already loading, most likely a circular dependency. aborting!'
       )
     }
 
-    console.debug('not implemented')
+    return this.load(true, dependency)
   }
 
   connect (DI) {
@@ -97,19 +97,25 @@ class Provider {
   }
 
   async load (force = false, dependency = null) {
+    if (dependency) {
+      console.debug(
+        `[engine/api/discord-injections] ${this
+          .id} got requested by ${dependency}`
+      )
+      // depdendency loads this
+      this.loadedBy.add(dependency)
+    }
+
+    if (this.loaded) {
+      return true
+    }
+
     this.loading = true
 
     if (!force && !this.DI.isPluginEnabled(this.id) && !dependency) {
       this.loading = false
-      throw new Error('[engine/api/discord-injections] plugin disabled')
-    }
-
-    if (dependency) {
-      console.debug(
-        `[engine/api/discord-injections] ${this.id} got loaded by ${dependency}`
-      )
-      // depdendency loads this
-      this.loadedBy.add(dependency)
+      console.log('[engine/api/discord-injections] plugin disabled')
+      return false
     }
 
     // check for dependencies
@@ -130,15 +136,21 @@ class Provider {
     }
 
     // preload the plugin
+    console.debug(
+      `[engine/api/discord-injections] <${this.id}> executing preload`
+    )
     await this.instance._preload()
     this.loaded = true
     this.loading = false
 
     // queue up loader
     this.DI.onReady(() => this._finishLoad())
+
+    return true
   }
 
   async _finishLoad () {
+    console.debug(`[engine/api/discord-injections] <${this.id}> executing load`)
     await this.instance._load()
     this.DI.emit('load', this)
   }
