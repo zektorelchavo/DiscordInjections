@@ -28,7 +28,7 @@
   border-radius: 3px;
   padding: 5px;
 }
-.di-autocomplete .command .selector{
+.di-autocomplete .command .selector {
   cursor: pointer;
 }
 
@@ -55,6 +55,7 @@
 }
 
 .di-autocomplete-commandname {
+  color: white;
   margin-left: 4px;
 }
 

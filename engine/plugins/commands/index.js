@@ -35,7 +35,13 @@ module.exports = class commands extends Plugin {
   }
 
   get textarea () {
-    return document.querySelector('.chat .content textarea')
+    if (!this._textarea || !this._textarea.isConnected) {
+      this._textarea = document.querySelector(
+        '[class*="chat-"] [class*="content-"] textarea'
+      )
+    }
+
+    return this._textarea
   }
 
   get autoComplete () {
