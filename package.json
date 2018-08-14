@@ -39,7 +39,7 @@
     "@commitlint/cli": "^7.0.0",
     "commitizen": "^2.10.1",
     "cz-emoji": "^1.1.2",
-    "husky": "^0.14.3",
+    "husky": "^1.0.0-rc.13",
     "standard-version": "^4.4.0"
   },
   "config": {
