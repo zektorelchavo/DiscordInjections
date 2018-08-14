@@ -22,6 +22,7 @@
     "fs-extra": "^6.0.1",
     "globby": "^8.0.1",
     "node-fetch": "^2.1.2",
+    "npm": "^6.3.0",
     "npmi": "^4.0.0",
     "parse-author": "^2.0.0",
     "postcss": "^6.0.22",
@@ -33,5 +34,125 @@
     "require-reload": "^0.2.2",
     "semver": "^5.5.0",
     "sweetalert-react": "^0.4.11"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^7.0.0",
+    "commitizen": "^2.10.1",
+    "cz-emoji": "^1.1.2",
+    "husky": "^0.14.3",
+    "standard-version": "^4.4.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-emoji"
+    },
+    "cz-emoji": {
+      "types": [
+        {
+          "emoji": "✨",
+          "code": ":sparkles:",
+          "description": "when adding features",
+          "name": "feat"
+        },
+        {
+          "emoji": "🎨",
+          "code": ":art:",
+          "description": "when improving the format/structure of the code",
+          "name": "format"
+        },
+        {
+          "emoji": "🏇",
+          "code": ":racehorse:",
+          "description": "when improving performance",
+          "name": "performance"
+        },
+        {
+          "emoji": "🚱",
+          "code": ":non-potable_water:",
+          "description": "when plugging memory leaks",
+          "name": "memoryleaks"
+        },
+        {
+          "emoji": "📝",
+          "code": ":memo:",
+          "description": "when writing docs",
+          "name": "docs"
+        },
+        {
+          "emoji": "🐧",
+          "code": ":penguin:",
+          "description": "when fixing something on linux",
+          "name": "linux"
+        },
+        {
+          "emoji": "🍎",
+          "code": ":apple:",
+          "description": "when fixing something on mac os",
+          "name": "macos"
+        },
+        {
+          "emoji": "🏁",
+          "code": ":checkered_flag:",
+          "description": "when fixing something on windows",
+          "name": "windows"
+        },
+        {
+          "emoji": "🐛",
+          "code": ":bug:",
+          "description": "when fixing a bug",
+          "name": "bug"
+        },
+        {
+          "emoji": "🔥",
+          "code": ":fire:",
+          "description": "when removing code or files",
+          "name": "delete"
+        },
+        {
+          "emoji": "💚",
+          "code": ":green_heart:",
+          "description": "when fixing the CI build",
+          "name": "ci"
+        },
+        {
+          "emoji": "✅",
+          "code": ":white_check_mark:",
+          "description": "when adding tests",
+          "name": "test"
+        },
+        {
+          "emoji": "🔒",
+          "code": ":lock:",
+          "description": "when dealing with security",
+          "name": "security"
+        },
+        {
+          "emoji": "⬆️",
+          "code": ":arrow_up:",
+          "description": "when upgrading dependencies",
+          "name": "upgrade"
+        },
+        {
+          "emoji": "⬇️️",
+          "code": ":arrow_down:",
+          "description": "when downgrading dependencies",
+          "name": "downgrade"
+        },
+        {
+          "emoji": "👕️",
+          "code": ":shirt:",
+          "description": "when removing linter warnings",
+          "name": "lint"
+        }
+      ]
+    }
+  },
+  "commitlint": {
+    "parserPreset": "conventional-changelog-atom"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
   }
 }
