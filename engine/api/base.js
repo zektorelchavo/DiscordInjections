@@ -20,6 +20,12 @@ class Base {
     throw new Error('not implemented')
   }
 
+  get package () {
+    return {
+      name: this.id
+    }
+  }
+
   use () {
     throw new Error('not implemented')
   }

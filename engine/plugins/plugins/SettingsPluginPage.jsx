@@ -100,12 +100,12 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
     const entry = Array.from(this.state.plugins.values())[index]
 
     const checkboxDisabled =
-      this.props.plugin.isSystemPlugin(entry.id) ||
-      entry.reverseDependency.length > 0
+      this.props.plugin.manager.isSystemPlugin(entry.id) ||
+      entry.loadedBy.length > 0
 
     const debugDisabled = !this.props.plugin.debugEnabled
 
-    const pluginDisabled = !this.props.plugin.isPluginEnabled(entry.id)
+    const pluginDisabled = !this.props.plugin.manager.isPluginEnabled(entry.id)
 
     const repoLink = entry.package.repository
       ? repositoryLink(entry.package.repository)
@@ -117,13 +117,14 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
     let debug = null
     if (this.props.plugin.debugEnabled) {
       const lines = `
-          ID:                   ${entry.id}
-          Load Path:            ${entry.path}
-          Main:                 ${entry.main}
-          L/L:                  ${entry.loading} / ${entry.loaded}
-          Dependencies:         ${entry.dependency.join(',')}
-          Reverse Dependencies: ${entry.reverseDependency.join(',')}
-          Type:                 ${entry.package.type || 'plugin'}
+          API:           ${entry.prototype.constructor.name}
+          ID:            ${entry.id}
+          Load Path:     ${entry.path}
+          Main:          ${entry.main}
+          L/L:           ${entry.loading} / ${entry.loaded}
+          Dependencies:  ${entry.dependency.join(',')}
+          Loaded By:     ${entry.loadedBy.join(',')}
+          Type:          ${entry.package.type || 'plugin'}
       `.replace(/^\s+/gm, '')
       debug = (
         <div className='DI-plugins-debug'>
@@ -139,7 +140,7 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
             virtual
             disabled={checkboxDisabled}
             onSave={newVal => this.toggleDisable(entry.id)}
-            defaultValue={this.props.plugin.isPluginEnabled(entry.id)}
+            defaultValue={this.props.plugin.manager.isPluginEnabled(entry.id)}
           />
           <div className='DI-plugin-meta'>
             <strong
