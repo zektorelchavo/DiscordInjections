@@ -4,7 +4,7 @@ const glob = require('globby')
 const elements = require('../../elements')
 const Promise = require('bluebird')
 
-class Provider {
+class DiscordInjectionsProvider {
   static normalizePath (pluginPath, includePackageJson = false) {
     let normalizedPath = pluginPath
     if (path.basename(normalizedPath) === 'package.json') {
@@ -18,7 +18,7 @@ class Provider {
     return normalizedPath
   }
   static supports (pluginPath) {
-    pluginPath = Provider.normalizePath(pluginPath, true)
+    pluginPath = DiscordInjectionsProvider.normalizePath(pluginPath, true)
 
     if (!fs.existsSync(pluginPath)) {
       return false
@@ -65,9 +65,13 @@ class Provider {
   }
 
   constructor (pluginPath) {
-    this.path = Provider.normalizePath(pluginPath)
+    this.path = DiscordInjectionsProvider.normalizePath(pluginPath)
     this.package = require(path.join(this.path, 'package.json'))
     this.loadedBy = new Set()
+  }
+
+  get dependencies () {
+    return (this.package.pluginDependencies || []).map(k => 'di#' + k)
   }
 
   get Class () {
@@ -156,4 +160,4 @@ class Provider {
   }
 }
 
-module.exports = Provider
+module.exports = DiscordInjectionsProvider

@@ -26,6 +26,10 @@ class Base {
     }
   }
 
+  get dependencies () {
+    return []
+  }
+
   use () {
     throw new Error('not implemented')
   }

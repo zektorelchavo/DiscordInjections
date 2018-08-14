@@ -117,13 +117,13 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
     let debug = null
     if (this.props.plugin.debugEnabled) {
       const lines = `
-          API:           ${entry.prototype.constructor.name}
+          API:           ${entry.constructor.name}
           ID:            ${entry.id}
           Load Path:     ${entry.path}
           Main:          ${entry.main}
           L/L:           ${entry.loading} / ${entry.loaded}
-          Dependencies:  ${entry.dependency.join(',')}
-          Loaded By:     ${entry.loadedBy.join(',')}
+          Dependencies:  ${entry.dependencies.join(',')}
+          Loaded By:     ${Array.from(entry.loadedBy).join(',')}
           Type:          ${entry.package.type || 'plugin'}
       `.replace(/^\s+/gm, '')
       debug = (

@@ -4,7 +4,7 @@ const glob = require('globby')
 const elements = require('../../elements')
 const Base = require('./base')
 
-class Provider extends Base {
+class CSSProvider extends Base {
   static supports (pluginPath) {
     if (!fs.existsSync(pluginPath)) {
       return false
@@ -88,4 +88,4 @@ class Provider extends Base {
   }
 }
 
-module.exports = Provider
+module.exports = CSSProvider
