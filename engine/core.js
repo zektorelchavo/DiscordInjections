@@ -301,14 +301,17 @@ class Core extends EventEmitter {
       return this.unload(name)
     }
   }
-
+*/
   async enable (name, load = false) {
     const pluginPath = path.resolve(this.basePath, name)
     if (!fs.existsSync(path.join(pluginPath, 'package.json'))) {
       throw new Error('plugin not found', name)
     }
 
-    this.pluginsEnabled[name] = true
+    this.settings.plugins[name] = this.settings.plugins[name] || {}
+    this.settings.plugins[name].disabled = false
+    this._save()
+
     if (load) {
       return this.load(name)
     }
@@ -322,14 +325,16 @@ class Core extends EventEmitter {
       throw new Error('plugin not found', name)
     }
 
-    this.pluginsEnabled[name] = false
+    this.settings.plugins[name] = this.settings.plugins[name] || {}
+    this.settings.plugins[name].disabled = true
+    this._save()
+
     if (unload) {
       return this.unload(name)
     }
 
     return true
   }
-  */
 
   get (name, raw = false) {
     let plugin = null
@@ -406,6 +411,11 @@ class Core extends EventEmitter {
     } else {
       getCurrentWebContents().on('dom-ready', () => this.ready())
     }
+  }
+
+  _save () {
+    const json = JSON.stringify(this.settings)
+    this.localStorage.setItem('DI', json)
   }
 }
 
