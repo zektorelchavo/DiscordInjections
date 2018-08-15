@@ -232,99 +232,6 @@ class Core extends EventEmitter {
     }
   }
 
-  /*
-  async loadFromCache (plugin, force = true, dependency = false) {
-    const p = this.plugins.get(plugin)
-
-    if (
-      this.system &&
-      !force &&
-      this.system.isPluginEnabled(plugin) === false
-    ) {
-      p.loading = false
-      p.loaded = false
-      // dont load disabled plugins
-      return
-    }
-
-    if (!this.plugins.has(plugin)) {
-      throw new Error(`<${plugin}> not found in cache!`)
-    }
-
-    if (dependency) {
-      console.debug('[PM] adding reverse dependency', dependency, 'to', plugin)
-      p.reverseDependency.push(dependency)
-    }
-
-    // check for dependencies
-    if (Array.isArray(p.package.pluginDependencies)) {
-      await Promise.each(p.package.pluginDependencies, async dep => {
-        console.debug('[PM] adding dependency', dep, 'to', plugin)
-
-        // is this a system plugin?
-        if (this.system.isSystemPlugin(dep)) {
-          await this.loadByPath(
-            path.join(__dirname, 'plugins', dep),
-            true,
-            plugin
-          )
-          p.dependency.push(dep)
-        } else {
-          this.load(dep, true, true)
-        }
-      })
-    }
-
-    // load the plugin
-    switch (p.package.type) {
-      case 'theme':
-        try {
-          p.Cls = reload(p.main)
-        } catch (err) {
-          // its a simple css theme without js extension
-          p.Cls = elements.Theme
-        }
-        break
-
-      case 'plugin':
-      default:
-        // default behavior
-        p.Cls = reload(p.main) // loads index.js or file defined in package.json > "main"
-
-        break
-    }
-
-    try {
-      p.inst = new p.Cls(this, p) // creates the plugin instance
-    } catch (err) {
-      console.error('[PM] failed to instanciate plugin', plugin, err)
-      throw err
-    }
-
-    if (!(p.inst instanceof elements.Plugin)) {
-      console.error('[PM] cannot instanciate an unkown module', plugin)
-      throw new Error('unkown module loaded!')
-    }
-
-    // preload the plugin
-    try {
-      await p.inst._preload()
-    } catch (err) {
-      console.error('[PM] failed to preload plugin', plugin, err)
-      throw err
-    }
-    p.loaded = true
-    p.loading = false
-
-    // if we are already running, load the module immediatly
-    if (this._ready) {
-      p.inst._load().then(() => this.emit('load', plugin))
-    }
-
-    // return the (partially) loaded plugin
-    return p
-  }
-
   async unload (id) {
     if (!this.plugins.has(id)) {
       return true
@@ -338,7 +245,7 @@ class Core extends EventEmitter {
       }
 
       // unload
-      await Promise.resolve(p.inst._unload())
+      await Promise.resolve(p.unload())
       p.inst = null
       p.loaded = false
     }
@@ -362,6 +269,7 @@ class Core extends EventEmitter {
     return await this.load(name)
   }
 
+  /*
   async uninstall (id) {
     const plugin = this.plugins.get(id)
     this.emit('before-uninstall', id)

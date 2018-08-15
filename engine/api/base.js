@@ -20,6 +20,10 @@ class Base {
     throw new Error('not implemented')
   }
 
+  get loaded () {
+    return false
+  }
+
   get package () {
     return {
       name: this.id
@@ -39,6 +43,10 @@ class Base {
   }
 
   load (force = false, dependency = null) {
+    throw new Error('not implemented')
+  }
+
+  unload () {
     throw new Error('not implemented')
   }
 }

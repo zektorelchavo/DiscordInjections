@@ -49,6 +49,13 @@ class CSSProvider extends Base {
     this.inject()
   }
 
+  async unload () {
+    let el = document.querySelector(`style[data-plugin-css="${this.id}"]`)
+    if (el && el.isConnected) {
+      el.remove()
+    }
+  }
+
   async inject () {
     const content = await fs.readFile(this.path, 'utf-8')
     this._css = await this.DI.postcss.process(content, {

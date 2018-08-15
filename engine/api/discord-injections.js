@@ -158,6 +158,10 @@ class DiscordInjectionsProvider {
     await this.instance._load()
     this.DI.emit('load', this)
   }
+
+  async unload() {
+    return this.instance._unload()
+  }
 }
 
 module.exports = DiscordInjectionsProvider
