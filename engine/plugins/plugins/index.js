@@ -127,6 +127,7 @@ module.exports = class plugins extends Plugin {
       // no worries about non existant plugins
       return
     }
+
     this.setPluginInfo(id, 'disabled', flag)
     const p = this.manager.plugins.get(id)
 
@@ -144,29 +145,6 @@ module.exports = class plugins extends Plugin {
     }
 
     return this.manager.uninstall(id)
-  }
-
-  async loadPlugins () {
-    // first load all system plugins
-    const systemPlugins = await glob('**/package.json', {
-      cwd: path.dirname(__dirname),
-      absolute: true
-    })
-
-    await Promise.each(systemPlugins, pkg => this.manager.loadByPath(pkg, true))
-
-    // now check the plugin path
-    this.manager.loadPluginPath()
-
-    // last, but not least, load the missing plugins
-    if (!this.settings.plugins) {
-      return
-    }
-
-    return Object.keys(this.settings.plugins)
-      .map(k => this.settings.plugins[k])
-      .filter(p => p.path)
-      .forEach(p => this.manager.loadByPath(p.path, false))
   }
 
   getPluginInfo (id) {
