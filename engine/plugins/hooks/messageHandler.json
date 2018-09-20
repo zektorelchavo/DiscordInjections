@@ -1,9 +1,0 @@
-{
-  "name": "messageHandler",
-  "hooks": [
-    {
-      "name": "receiveMessage",
-      "type": "function"
-    }
-  ]
-}
