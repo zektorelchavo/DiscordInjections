@@ -11,7 +11,7 @@ const conf = fs.existsSync(path.join(__dirname, 'config.json'))
   : {}
 const preloadPath = path.join(__dirname, 'engine')
 
-process.env.DI_DEBUG_LOG = path.join(__dirname, 'debug.log')
+process.env.DI_DEBUG_LOG = path.join(__dirname, `debug-${Date.now()}.log`)
 fs.removeSync(process.env.DI_DEBUG_LOG)
 
 // patch browser window to use custom options
