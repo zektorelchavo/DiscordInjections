@@ -33,6 +33,7 @@
     "react-dom": "^16.4.0",
     "require-reload": "^0.2.2",
     "semver": "^5.5.0",
+    "superstruct": "^0.5.4",
     "sweetalert-react": "^0.4.11"
   },
   "devDependencies": {
