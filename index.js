@@ -4,7 +4,7 @@ const path = require('path')
 const fs = require('fs-extra')
 const Module = require('module')
 const electron = require('electron')
-const { BrowserWindow } = electron
+const { BrowserWindow, ipcMain } = electron
 
 const conf = fs.existsSync(path.join(__dirname, 'config.json'))
   ? require(path.join(__dirname, 'config.json'))
@@ -14,9 +14,11 @@ const preloadPath = path.join(__dirname, 'engine')
 process.env.DI_DEBUG_LOG = path.join(__dirname, `debug-${Date.now()}.log`)
 fs.removeSync(process.env.DI_DEBUG_LOG)
 
+let DI_ORIG_PRELOAD = null
+
 // patch browser window to use custom options
 class PatchedBrowserWindow extends BrowserWindow {
-  constructor (originalOptions) {
+  constructor(originalOptions) {
     const options = Object.assign({}, originalOptions)
     options.webPreferences = options.webPreferences || {}
 
@@ -35,12 +37,18 @@ class PatchedBrowserWindow extends BrowserWindow {
       }
     }
 
-    process.env.DI_ORIG_PRELOAD = options.webPreferences.preload
+    DI_ORIG_PRELOAD = options.webPreferences.preload
     options.webPreferences.preload = path.join(preloadPath, 'index.js')
 
     return new BrowserWindow(options)
   }
 }
+
+ipcMain.on('di', (ev, arg) => {
+  if (arg === 'preload') {
+    ev.returnValue = DI_ORIG_PRELOAD
+  }
+})
 
 const cacheEntry = Object.keys(require.cache)
   .filter(k => k.match(/browser-window\.js$/i))
@@ -77,7 +85,7 @@ if (conf.chromeFlags && Array.isArray(conf.chromeFlags)) {
   })
 }
 
-exports.inject = function inject (appPath) {
+exports.inject = function inject(appPath) {
   const basePath = path.join(appPath, '..', 'app.asar')
 
   // fetch discord package.json

@@ -1,6 +1,7 @@
 const path = require('path')
 const fs = require('fs-extra')
 const util = require('./util')
+const { ipcRenderer } = require('electron')
 
 const conf = fs.existsSync(path.join(__dirname, '..', 'config.json'))
   ? require(path.join(__dirname, '..', 'config.json'))
@@ -14,8 +15,9 @@ require('./preload/console').run(conf)
 
 // stage zero
 // load original preload script if there is one
-if (process.env.DI_ORIG_PRELOAD) {
-  require(process.env.DI_ORIG_PRELOAD)
+const DI_ORIG_PRELOAD = ipcRenderer.sendSync('di', 'preload')
+if (DI_ORIG_PRELOAD) {
+  require(DI_ORIG_PRELOAD)
 }
 
 // stage one
