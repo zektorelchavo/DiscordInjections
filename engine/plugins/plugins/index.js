@@ -48,6 +48,13 @@ module.exports = class plugins extends Plugin {
         func: this.uploadLog.bind(this)
       })
     }
+
+    Object.values(this.settings.plugins).forEach(async plugin => {
+      let ext = path.extname(plugin.path);
+      if (ext === '.css')
+        this.addTheme(plugin.path)
+      else this.addPlugin(plugin.path, false)
+    })
   }
 
   get iconURL () {

@@ -23,7 +23,7 @@ module.exports = class settings extends Plugin {
 
       if (this.map.hasOwnProperty(type)) {
         const element = document.querySelector(
-          '[class*="layer"] .sidebar [class*=selected]'
+          '[class*="layer"] [class*=sidebar] [class*=selected]'
         )
         if (element) element.className = this.unselectedCss
         this.map[type].tab.className = this.selectedCss
@@ -35,7 +35,7 @@ module.exports = class settings extends Plugin {
             title: this.map[type].name,
             id: this.map[type].elementID
           }),
-          document.querySelector('[class*="layer"] .content-column div')
+          document.querySelector('[class*="layer"] [class*=contentColumn] div')
         )
       } else {
         for (const key in this.map) {
@@ -113,7 +113,7 @@ module.exports = class settings extends Plugin {
   }
 
   get settingsTabs () {
-    return document.querySelector('[class*="layer"] .sidebar [class*=side]')
+    return document.querySelector('[class*="layer"] [class*=scroller][class*=sidebar] [class*=sidebar] [class*=side]')
   }
 
   injectSettingsTab () {
@@ -126,8 +126,8 @@ module.exports = class settings extends Plugin {
       el.previousElementSibling.previousElementSibling.previousElementSibling
         .previousElementSibling.previousElementSibling // divider // logout // divider // changelog // divider
 
-    this.settingsTabs.insertBefore(this.divider, header)
-    this.settingsTabs.insertBefore(this.header, header)
+    header.parentElement.insertBefore(this.divider, header)
+    header.parentElement.insertBefore(this.header, header)
 
     this.order.forEach(key =>
       this.settingsTabs.insertBefore(this.map[key].tab, header)

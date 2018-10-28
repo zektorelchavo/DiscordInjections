@@ -45,7 +45,14 @@ module.exports = class hooks extends Plugin {
     this._fetchWebpackRequire()
   }
 
+  sleep(time = 1000) {
+    return new Promise(res => {
+      setTimeout(res, time);
+    })
+  }
+
   async load () {
+    await this.sleep(); // allow for modules to become populated before searching
     this.debug('Getting environment')
     this.environment = await this.fetchModule(
       m => m.Endpoints && m.DownloadLinks

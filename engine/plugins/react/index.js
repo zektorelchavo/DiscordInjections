@@ -151,7 +151,7 @@ module.exports = class react extends Plugin {
         )
         if (programSettings && changed.childNodes.length > 0) {
           const child = changed.childNodes[0]
-          if (child.className === 'ui-standard-sidebar-view') {
+          if (child.className.startsWith('standardSidebarView')) {
             if (added) {
               this.emit('settingsOpened', mut)
             } else {
