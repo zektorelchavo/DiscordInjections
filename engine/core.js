@@ -44,7 +44,7 @@ class Core extends EventEmitter {
     this.settings = {}
 
     let settingsString = localStorage['DI']
-    if (settingsString) {
+    if (settingsString && settingsString !== '{}') {
       this.settings = JSON.parse(settingsString)
     } else {
       settingsString = localStorage['DI-plugins']

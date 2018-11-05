@@ -50,13 +50,18 @@ ipcMain.on('di', (ev, arg) => {
   }
 })
 
-const cacheEntry = Object.keys(require.cache)
-  .filter(k => k.match(/browser-window\.js$/i))
-  .pop()
-
-require.cache[cacheEntry].exports = PatchedBrowserWindow
-
 electron.app.on('ready', () => {
+  // redefine electron exports because they're protected, so we can patch into BrowserWindow properly
+  // we do this on app:ready because some modules, e.g. powerMonitor, will cry if you access their getters before ready fires
+  const electronCacheEntry = require.cache[require.resolve('electron')]
+  Object.defineProperty(electronCacheEntry, 'exports', {
+    value: {
+      ...electronCacheEntry.exports
+    }
+  })
+
+  electronCacheEntry.exports.BrowserWindow = PatchedBrowserWindow
+
   // patch webRequest session to ditch the CSP headers
   electron.session.defaultSession.webRequest.onHeadersReceived(
     (details, done) => {
