@@ -54,10 +54,14 @@ electron.app.on('ready', () => {
   // redefine electron exports because they're protected, so we can patch into BrowserWindow properly
   // we do this on app:ready because some modules, e.g. powerMonitor, will cry if you access their getters before ready fires
   const electronCacheEntry = require.cache[require.resolve('electron')]
+
+  const newExports = {}
+  Object.keys(electronCacheEntry.exports).forEach(
+    k => (newExports[k] = electronCacheEntry.exports[k])
+  )
+
   Object.defineProperty(electronCacheEntry, 'exports', {
-    value: {
-      ...electronCacheEntry.exports
-    }
+    value: newExports
   })
 
   electronCacheEntry.exports.BrowserWindow = PatchedBrowserWindow
