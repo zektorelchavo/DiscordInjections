@@ -55,13 +55,8 @@ electron.app.on('ready', () => {
   // we do this on app:ready because some modules, e.g. powerMonitor, will cry if you access their getters before ready fires
   const electronCacheEntry = require.cache[require.resolve('electron')]
 
-  const newExports = {}
-  Object.keys(electronCacheEntry.exports).forEach(
-    k => (newExports[k] = electronCacheEntry.exports[k])
-  )
-
   Object.defineProperty(electronCacheEntry, 'exports', {
-    value: newExports
+    value: Object.assign({}, electronCacheEntry.exports)
   })
 
   electronCacheEntry.exports.BrowserWindow = PatchedBrowserWindow
