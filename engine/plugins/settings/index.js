@@ -4,7 +4,7 @@ const ReactDOM = require('react-dom')
 const util = require('util')
 
 module.exports = class settings extends Plugin {
-  preload () {
+  preload() {
     const r = (this.react = this.manager.get('react'))
 
     this.map = {}
@@ -63,13 +63,13 @@ module.exports = class settings extends Plugin {
     })
   }
 
-  load () {}
+  load() { }
 
-  get iconURL () {
+  get iconURL() {
     return '//discordinjections.xyz/img/logo.png'
   }
 
-  _registerSettingsTab (plugin, name, component, elementID) {
+  _registerSettingsTab(plugin, name, component, elementID) {
     if (arguments.length === 2) {
       component = name
       name = plugin._id
@@ -104,19 +104,19 @@ module.exports = class settings extends Plugin {
     this.order.push(id)
   }
 
-  get unselectedCss () {
+  get unselectedCss() {
     return 'itemDefault-3NDwnY item-3879bf notSelected-PgwTMa itemDefault-3Jdr52 item-PXvHYJ notSelected-1N1G5p'
   }
 
-  get selectedCss () {
+  get selectedCss() {
     return 'itemSelected-3XxAMf item-3879bf selected-eNoxEK itemSelected-1qLhcL item-PXvHYJ selected-3s45Ha'
   }
 
-  get settingsTabs () {
+  get settingsTabs() {
     return document.querySelector('[class*="layer"] [class*=scroller][class*=sidebar] [class*=sidebar] [class*=side]')
   }
 
-  injectSettingsTab () {
+  injectSettingsTab() {
     if (!this.settingsTabs) return
 
     const el = this.settingsTabs.querySelector('[class*="socialLinks"]')

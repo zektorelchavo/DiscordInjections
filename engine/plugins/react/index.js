@@ -3,11 +3,11 @@ const { Plugin } = require('elements')
 const { MutationObserver } = window
 
 module.exports = class react extends Plugin {
-  async preload () {
+  async preload() {
     this.observer = new MutationObserver(mutation => this.onMutate(mutation))
   }
 
-  load () {
+  load() {
     // start with a clean setup
     this.observer.disconnect()
     this.observer.observe(document.getElementById('app-mount'), {
@@ -19,22 +19,22 @@ module.exports = class react extends Plugin {
     })
   }
 
-  get iconURL () {
+  get iconURL() {
     return '//discordinjections.xyz/img/logo.png'
   }
 
-  getReactInstance (node) {
+  getReactInstance(node) {
     const key = Object.keys(node).find(key =>
       key.startsWith('__reactInternalInstance')
     )
     return node[key]
   }
 
-  createElement (text) {
+  createElement(text) {
     return document.createRange().createContextualFragment(text)
   }
 
-  createModal (content) {
+  createModal(content) {
     const root = document.querySelector('#app-mount')
 
     if (this._modal) this.destroyModal()
@@ -75,11 +75,11 @@ module.exports = class react extends Plugin {
     }, 1)
   }
 
-  _modalKeypress (e) {
+  _modalKeypress(e) {
     if (e.code === 'Escape') this.destroyModal()
   }
 
-  destroyModal () {
+  destroyModal() {
     if (this._modal) {
       let backdrop = this._modal.querySelector('.callout-backdrop')
       let inner = this._modal.querySelector('.DI-modal-inner')
@@ -99,7 +99,7 @@ module.exports = class react extends Plugin {
     }
   }
 
-  get settingsTabs () {
+  get settingsTabs() {
     return {
       'User Settings': 'userSettings',
       'My Account': 'userAccount',
@@ -122,7 +122,7 @@ module.exports = class react extends Plugin {
     }
   }
 
-  onMutate (muts) {
+  onMutate(muts) {
     this.emit('mutation', muts)
 
     // change of language.
@@ -144,14 +144,17 @@ module.exports = class react extends Plugin {
         : mut.removedNodes)[0]
       const added = mut.addedNodes.length > 0
 
+
       // Settings
       if (changed.classList && changed.matches('[class*=layer]')) {
         const programSettings = !!changed.querySelector(
           '[class*="socialLinks"]'
         )
+
         if (programSettings && changed.childNodes.length > 0) {
           const child = changed.childNodes[0]
-          if (child.className.startsWith('standardSidebarView')) {
+          let sidebarView = changed.querySelector('[class*="standardSidebarView"]');
+          if (sidebarView) {
             if (added) {
               this.emit('settingsOpened', mut)
             } else {
