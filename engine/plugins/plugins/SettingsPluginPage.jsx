@@ -55,7 +55,6 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
 
   async toggleDisable(id) {
     const enabled = this.props.plugin.manager.isPluginEnabled(id)
-    console.log(enabled);
     // is enabled => true, disable(true) disables ;D
     await this.props.plugin.disable(id, enabled)
 
@@ -99,7 +98,6 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
 
   renderItem(index) {
     const entry = Array.from(this.state.plugins.values())[index]
-    console.log(entry)
 
     const checkboxDisabled =
       this.props.plugin.manager.isSystemPlugin(entry.id) ||

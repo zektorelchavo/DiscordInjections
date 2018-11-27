@@ -183,8 +183,6 @@ class Core extends EventEmitter {
       formatProvider = API.defaultFormat
     }
 
-    console.log(plugin, force, dependency, formatProvider, API.formats)
-
     const Provider = API.formats[formatProvider]
 
     const pluginPath = Provider.resolve(plugin, [
@@ -212,6 +210,8 @@ class Core extends EventEmitter {
       console.error('[engine/core] failed to load plugin!', pluginPath, err)
       return
     }
+
+    console.log(api.id, this.isPluginEnabled(api.id), force)
 
     if (!this.isPluginEnabled(api.id) && !force) {
       console.warn(`[engine/core] <${api.id}> disabled, skipping!`)
@@ -274,7 +274,7 @@ class Core extends EventEmitter {
     }
 
     await this.unload(name)
-    return await this.load(name)
+    return this.load(name)
   }
 
   /*
@@ -384,8 +384,6 @@ class Core extends EventEmitter {
     }
 
     const settings = pluginsPlugin.instance.settings
-
-    console.log(settings.plugins[id])
 
     if (!settings.plugins[id]) {
       return true

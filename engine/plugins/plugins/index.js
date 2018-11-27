@@ -50,9 +50,9 @@ module.exports = class plugins extends Plugin {
     }
 
     Object.values(this.settings.plugins).forEach(async plugin => {
-      if (plugin.path) {
+      if (plugin && plugin.path) {
         let ext = path.extname(plugin.path)
-        if (ext === '.css') { this.addTheme(plugin.path) } else this.addPlugin(plugin.path, false)
+        if (ext === '.css') { this.addTheme(plugin.path, false) } else this.addPlugin(plugin.path, false)
       }
     })
   }
@@ -83,9 +83,9 @@ module.exports = class plugins extends Plugin {
     }
   }
 
-  async addTheme (installPath) {
+  async addTheme (installPath, force = true) {
     const pkgName = path.basename(installPath)
-    await this.manager.loadByPath(installPath)
+    await this.manager.loadByPath(installPath, force)
     const parts = pkgName.split('.')
     const id = 'CSS#' + parts.slice(0, parts.length - 1).join('_')
     this.setPluginInfo(id, 'path', installPath)
@@ -148,12 +148,23 @@ module.exports = class plugins extends Plugin {
     }
   }
 
-  delete (id) {
+  async delete (id) {
     if (!this.manager.plugins.has(id)) {
       return
     }
 
-    return this.manager.uninstall(id)
+    // const plugin = this.manager.plugins.get(id)
+
+    await this.manager.unload(id)
+    this.manager.plugins.delete(id)
+
+    if (this.settings.plugins[id].path) {
+      this.setSettingsNode(`plugins.${id}`, undefined)
+    } else {
+      // disable for now, need to figure out a way to delete plugins installed
+      // through the repo
+      this.setSettingsNode(`plugins.${id}`, { disabled: true })
+    }
   }
 
   getPluginInfo (id) {
