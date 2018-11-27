@@ -13,7 +13,7 @@ const path = require('path')
 const { shortLink, repositoryLink, parseAuthor } = require('../../util')
 
 module.exports = class SettingsPluginPage extends React.PureComponent {
-  constructor (props) {
+  constructor(props) {
     super(props)
 
     this.state = {
@@ -22,7 +22,7 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
     }
   }
 
-  async addLocal () {
+  async addLocal() {
     let fname = dialog
       .showOpenDialog({
         title: 'Select a plugin or theme',
@@ -53,8 +53,9 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
     })
   }
 
-  async toggleDisable (id) {
+  async toggleDisable(id) {
     const enabled = this.props.plugin.manager.isPluginEnabled(id)
+    console.log(enabled);
     // is enabled => true, disable(true) disables ;D
     await this.props.plugin.disable(id, enabled)
 
@@ -64,7 +65,7 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
     })
   }
 
-  async reload (id) {
+  async reload(id) {
     await this.props.plugin.manager.unload(id)
     await this.props.plugin.manager.loadFromCache(id, true)
 
@@ -74,7 +75,7 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
     })
   }
 
-  async delete (id) {
+  async delete(id) {
     if (
       dialog.showMessageBox(getCurrentWindow(), {
         type: 'question',
@@ -96,8 +97,9 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
     })
   }
 
-  renderItem (index) {
+  renderItem(index) {
     const entry = Array.from(this.state.plugins.values())[index]
+    console.log(entry)
 
     const checkboxDisabled =
       this.props.plugin.manager.isSystemPlugin(entry.id) ||
@@ -199,7 +201,7 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
                 className='DI-plugins-button-remove'
                 text='🗑'
                 onClick={() => this.delete(entry.id)}
-                />}
+              />}
             {checkboxDisabled || debugDisabled || pluginDisabled
               ? null
               : <SettingsOptionButton
@@ -207,14 +209,14 @@ module.exports = class SettingsPluginPage extends React.PureComponent {
                 className='DI-plugins-button-reload'
                 text=''
                 onClick={() => this.reload(entry.id)}
-                />}
+              />}
           </div>
         </div>
       </SettingsPanel>
     )
   }
 
-  render () {
+  render() {
     const renderer = this.renderItem.bind(this)
     return (
       <div>

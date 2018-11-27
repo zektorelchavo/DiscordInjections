@@ -82,7 +82,7 @@ class Core extends EventEmitter {
               .filter(
                 mod =>
                   mod.includes(path.sep + request + path.sep) &&
-                  mod.includes('index.js')
+                mod.includes('index.js')
               )
               .pop()
           }
@@ -171,11 +171,19 @@ class Core extends EventEmitter {
     })
   }
 
+  async loadFromCache (plugin, force = true) {
+    const p = this.plugins.get(plugin)
+
+    return this.loadByPath(p.path, force)
+  }
+
   async load (plugin, force = true, dependency = null, formatProvider = null) {
     // this is opinionated af
     if (!formatProvider) {
       formatProvider = API.defaultFormat
     }
+
+    console.log(plugin, force, dependency, formatProvider, API.formats)
 
     const Provider = API.formats[formatProvider]
 
@@ -247,7 +255,7 @@ class Core extends EventEmitter {
       // unload
       await Promise.resolve(p.unload())
       p.inst = null
-      p.loaded = false
+      p._loaded = false
     }
 
     return true
@@ -370,10 +378,19 @@ class Core extends EventEmitter {
       return true
     }
 
-    if (!this.settings.plugins[id]) {
+    const pluginsPlugin = this.plugins.get('DI#plugins')
+    if (!pluginsPlugin) {
+      return true
+    }
+
+    const settings = pluginsPlugin.instance.settings
+
+    console.log(settings.plugins[id])
+
+    if (!settings.plugins[id]) {
       return true
     } else {
-      return !this.settings.plugins[id].disabled
+      return !settings.plugins[id].disabled
     }
   }
 

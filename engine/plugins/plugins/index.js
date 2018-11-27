@@ -50,10 +50,10 @@ module.exports = class plugins extends Plugin {
     }
 
     Object.values(this.settings.plugins).forEach(async plugin => {
-      let ext = path.extname(plugin.path);
-      if (ext === '.css')
-        this.addTheme(plugin.path)
-      else this.addPlugin(plugin.path, false)
+      if (plugin.path) {
+        let ext = path.extname(plugin.path)
+        if (ext === '.css') { this.addTheme(plugin.path) } else this.addPlugin(plugin.path, false)
+      }
     })
   }
 
@@ -74,19 +74,21 @@ module.exports = class plugins extends Plugin {
     window.location.reload()
   }
 
-  unload () {}
+  unload () { }
 
   async addPlugin (installPath, skipInstall = false) {
     if (await this.install(installPath)) {
       const pkgName = require(path.join(installPath, 'package.json')).name
-      this.setPluginInfo(pkgName, 'path', installPath)
+      this.setPluginInfo('DI#' + pkgName, 'path', installPath)
     }
   }
 
   async addTheme (installPath) {
     const pkgName = path.basename(installPath)
     await this.manager.loadByPath(installPath)
-    this.setPluginInfo(pkgName, 'path', installPath)
+    const parts = pkgName.split('.')
+    const id = 'CSS#' + parts.slice(0, parts.length - 1).join('_')
+    this.setPluginInfo(id, 'path', installPath)
   }
 
   async install (pkgName, pkgDownload = null, force = false, update = false) {
