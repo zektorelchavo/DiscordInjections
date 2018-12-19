@@ -23,8 +23,8 @@ class Core extends EventEmitter {
       .replace(/^\.\//, path.join(__dirname, '..') + '/')
       .replace(/^~\//, app.getPath('home') + '/')
       .replace(
-      /^%%\//,
-      path.join(app.getPath('appData'), 'discordinjections') + '/'
+        /^%%\//,
+        path.join(app.getPath('appData'), 'discordinjections') + '/'
       )
       .replace(/^%\//, app.getPath('userData') + '/')
       .replace(/^&\//, discordPath)
@@ -80,9 +80,9 @@ class Core extends EventEmitter {
             // filter the current cache and hope for the best
             newPath = Object.keys(require.cache)
               .filter(
-              mod =>
-                mod.includes(path.sep + request + path.sep) &&
-                mod.includes('index.js')
+                mod =>
+                  mod.includes(path.sep + request + path.sep) &&
+                  mod.includes('index.js')
               )
               .pop()
           }
@@ -210,8 +210,6 @@ class Core extends EventEmitter {
       console.error('[engine/core] failed to load plugin!', pluginPath, err)
       return
     }
-
-    console.log(api.id, this.isPluginEnabled(api.id), force)
 
     if (!this.isPluginEnabled(api.id) && !force) {
       console.warn(`[engine/core] <${api.id}> disabled, skipping!`)
@@ -389,6 +387,7 @@ class Core extends EventEmitter {
     }
 
     const settings = pluginsPlugin.instance.settings
+    if (!settings.plugins) settings.plugins = {}
 
     if (!settings.plugins[id]) {
       return true
