@@ -15,7 +15,7 @@ const npmi = Promise.promisify(require('npmi'))
 const download = require('download')
 
 module.exports = class plugins extends Plugin {
-  async load () {
+  async load() {
     this.registerSettingsTab(
       'Customize DI',
       require('./SettingsRepositoryPage'),
@@ -57,11 +57,17 @@ module.exports = class plugins extends Plugin {
     })
   }
 
-  get iconURL () {
+  get defaultSettings() {
+    return {
+      plugins: {}
+    }
+  }
+
+  get iconURL() {
     return '//discordinjections.xyz/img/logo.png'
   }
 
-  resetLocalStorage () {
+  resetLocalStorage() {
     const ls = this.DI.localStorage
 
     for (let idx = 0; idx < ls.length; idx++) {
@@ -74,16 +80,16 @@ module.exports = class plugins extends Plugin {
     window.location.reload()
   }
 
-  unload () { }
+  unload() { }
 
-  async addPlugin (installPath, skipInstall = false) {
+  async addPlugin(installPath, skipInstall = false) {
     if (await this.install(installPath)) {
       const pkgName = require(path.join(installPath, 'package.json')).name
       this.setPluginInfo('DI#' + pkgName, 'path', installPath)
     }
   }
 
-  async addTheme (installPath, force = true) {
+  async addTheme(installPath, force = true) {
     const pkgName = path.basename(installPath)
     await this.manager.loadByPath(installPath, force)
     const parts = pkgName.split('.')
@@ -91,7 +97,7 @@ module.exports = class plugins extends Plugin {
     this.setPluginInfo(id, 'path', installPath)
   }
 
-  async install (pkgName, pkgDownload = null, force = false, update = false) {
+  async install(pkgName, pkgDownload = null, force = false, update = false) {
     try {
       let installPath = pkgName
 
@@ -130,7 +136,7 @@ module.exports = class plugins extends Plugin {
     }
   }
 
-  disable (id, flag = true) {
+  disable(id, flag = true) {
     // first fetch the raw plugin
     if (!this.manager.plugins.has(id)) {
       // no worries about non existant plugins
@@ -148,7 +154,7 @@ module.exports = class plugins extends Plugin {
     }
   }
 
-  async delete (id) {
+  async delete(id) {
     if (!this.manager.plugins.has(id)) {
       return
     }
@@ -167,7 +173,7 @@ module.exports = class plugins extends Plugin {
     }
   }
 
-  getPluginInfo (id) {
+  getPluginInfo(id) {
     if (!this.settings.plugins) {
       const s = this.settings
       s.plugins = s.plugins || {}
@@ -185,18 +191,18 @@ module.exports = class plugins extends Plugin {
     return this.settings.plugins[id]
   }
 
-  setPluginInfo (id, key, value) {
+  setPluginInfo(id, key, value) {
     id = id.replace(/\./g, '_')
     const p = this.getPluginInfo(id)
     p[key] = value
     this.setSettingsNode(`plugins.${id}`, p)
   }
 
-  removeLocal (id) {
+  removeLocal(id) {
     this.setPluginInfo(id, 'path', null)
   }
 
-  async toggleDebugMode () {
+  async toggleDebugMode() {
     const fname = path.join(__dirname, '..', '..', '..', 'config.json')
     const config = Object.assign({}, this.DI.conf, {
       debug: !this.DI.conf.debug
@@ -206,7 +212,7 @@ module.exports = class plugins extends Plugin {
     window.location.reload()
   }
 
-  async uploadLog () {
+  async uploadLog() {
     const fname = path.join(__dirname, '..', '..', '..', 'console.log')
     if (!await fs.pathExists(fname)) {
       // do nothing without a log. maybe show a message?

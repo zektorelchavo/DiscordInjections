@@ -6,7 +6,7 @@ const fs = require('fs-extra')
 const Promise = require('bluebird')
 
 class Plugin extends EventEmitter {
-  constructor (pm, meta) {
+  constructor(pm, meta) {
     super()
 
     this.manager = pm
@@ -24,7 +24,7 @@ class Plugin extends EventEmitter {
   /**
    * Overwrite to set a custom icon URL
    */
-  get iconURL () {
+  get iconURL() {
     if (!this.hash) {
       this.hash =
         this._name.split('').reduce(function (a, b) {
@@ -44,7 +44,7 @@ class Plugin extends EventEmitter {
     }
   }
 
-  async _preload () {
+  async _preload() {
     this.path = path
     this._verifyPackage()
     await Promise.resolve(this.preload())
@@ -52,12 +52,12 @@ class Plugin extends EventEmitter {
     this.log('preloaded')
   }
 
-  async _load () {
+  async _load() {
     this.load()
     this.log('loaded')
   }
 
-  _verifyPackage () {
+  _verifyPackage() {
     if (
       !this.meta.package.hasOwnProperty('author') ||
       !this.meta.package.hasOwnProperty('version') ||
@@ -67,7 +67,7 @@ class Plugin extends EventEmitter {
     }
   }
 
-  _unload () {
+  _unload() {
     for (const command of this._commands) {
       this.DI.CommandHandler.unhookCommand(command.name)
     }
@@ -85,31 +85,31 @@ class Plugin extends EventEmitter {
    *
    * During this stage, Discord and Plugins are probably not loaded.
    */
-  preload () {}
+  preload() { }
 
   /**
    * Functionality to call when the plugin is loaded
    */
-  load () {}
+  load() { }
 
   /**
    * Functionality to call when the plugin is unloaded
    */
-  unload () {}
+  unload() { }
 
   /**
    * Is called when settings changed
    */
-  settingsChanged () {}
+  settingsChanged() { }
 
   /**
    * Overwrite to customize plugin color
    */
-  get color () {
+  get color() {
     return 0x444444
   }
 
-  getSettingsNode (node, defaultValue) {
+  getSettingsNode(node, defaultValue) {
     let entry = this.settings
     let nodes = node.split('.')
     let current = entry
@@ -132,7 +132,7 @@ class Plugin extends EventEmitter {
     return current[nodes[nodes.length - 1]]
   }
 
-  setSettingsNode (node, value) {
+  setSettingsNode(node, value) {
     let entry = this.settings
     let nodes = node.split('.')
     let current = entry
@@ -147,56 +147,60 @@ class Plugin extends EventEmitter {
     this.settings = entry
   }
 
-  get settings () {
+  get defaultSettings() {
+    return {};
+  }
+
+  get settings() {
     try {
       let res = JSON.parse(this.DI.localStorage.getItem('DI-' + this._name))
       if (res === null) {
-        this.settings = {}
-        return {}
+        this.settings = this.defaultSettings
+        return this.settings
       } else return res
     } catch (err) {
-      this.settings = {}
-      return {}
+      this.settings = this.defaultSettings
+      return this.settings
     }
   }
 
-  get hasSettings () {
+  get hasSettings() {
     return this.DI.localStorage.getItem('DI-' + this._name) !== null
   }
 
-  set settings (val) {
+  set settings(val) {
     this.DI.localStorage.setItem('DI-' + this._name, JSON.stringify(val))
     this.settingsChanged()
   }
 
-  log (...args) {
+  log(...args) {
     this.console('log', ...args)
   }
 
-  get debugEnabled () {
+  get debugEnabled() {
     return !!this.DI.conf.debug
   }
 
-  debug (...args) {
+  debug(...args) {
     if (!this.debugEnabled) {
       return
     }
     this.console('debug', ...args)
   }
 
-  info (...args) {
+  info(...args) {
     this.console('info', ...args)
   }
 
-  warn (...args) {
+  warn(...args) {
     this.console('warn', ...args)
   }
 
-  error (...args) {
+  error(...args) {
     this.console('error', ...args)
   }
 
-  console (action, ...args) {
+  console(action, ...args) {
     console[action](
       `%c[${this._id}]`,
       `color: #${this.color}; font-weight: bold; `,
@@ -204,17 +208,17 @@ class Plugin extends EventEmitter {
     )
   }
 
-  get currentGuildID () {
+  get currentGuildID() {
     const pathParts = window.location.pathname.split('/')
     return +pathParts[2] || null // convert "@me" to null
   }
 
-  get currentChannelID () {
+  get currentChannelID() {
     const pathParts = window.location.pathname.split('/')
     return pathParts.length >= 4 ? pathParts[3] : null
   }
 
-  get deleteNode () {
+  get deleteNode() {
     const n = this.manager
       .get('react')
       .createElement(
@@ -232,16 +236,16 @@ class Plugin extends EventEmitter {
     return n
   }
 
-  registerCommand (options) {
+  registerCommand(options) {
     const command = new Command(this, options)
     this.manager.get('commands').hookCommand(command)
   }
 
-  registerSettingsTab (name, component, id = null) {
+  registerSettingsTab(name, component, id = null) {
     this.manager.get('settings')._registerSettingsTab(this, name, component, id)
   }
 
-  sendLocalMessage (message, channel = null) {
+  sendLocalMessage(message, channel = null) {
     const react = this.manager.get('hooks')
     const handler = react._messageHandler
 
@@ -292,11 +296,11 @@ class Plugin extends EventEmitter {
     grp.lastElementChild.appendChild(this.deleteNode)
   }
 
-  get watchCSSbyDefault () {
+  get watchCSSbyDefault() {
     return false
   }
 
-  loadCSSStack (watch = false) {
+  loadCSSStack(watch = false) {
     if (!this.meta.package.css) {
       return
     }
@@ -306,7 +310,7 @@ class Plugin extends EventEmitter {
     )
   }
 
-  async loadCSS (file, watch = false) {
+  async loadCSS(file, watch = false) {
     if (watch && !this.watcher) {
       this.watcher = new Watcher()
 
@@ -353,7 +357,7 @@ class Plugin extends EventEmitter {
     }
   }
 
-  async unloadCSS (file = null) {
+  async unloadCSS(file = null) {
     try {
       if (file) {
         let el = document.querySelector(
@@ -391,7 +395,7 @@ class Plugin extends EventEmitter {
     }
   }
 
-  _createStyle (content, plugin, filename) {
+  _createStyle(content, plugin, filename) {
     const style = document.createElement('style')
     style.dataset.plugin = plugin
     style.dataset.filename = filename
@@ -399,7 +403,7 @@ class Plugin extends EventEmitter {
     return style
   }
 
-  async _onFileChange (fileName, filePath) {
+  async _onFileChange(fileName, filePath) {
     this.loadCSS(fileName)
   }
 }
