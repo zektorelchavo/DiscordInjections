@@ -54,6 +54,7 @@ class CSSProvider extends Base {
     if (el && el.isConnected) {
       el.remove()
     }
+    this._loaded = false
   }
 
   async inject () {
@@ -85,6 +86,8 @@ class CSSProvider extends Base {
         this.inject()
       })
     }
+
+    this._loaded = true
   }
 
   _createStyle (content, plugin) {

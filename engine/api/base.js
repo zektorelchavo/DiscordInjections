@@ -10,6 +10,7 @@ class Base {
   constructor (pluginPath) {
     this.path = pluginPath
     this.loadedBy = new Set()
+    this._loaded = false
   }
 
   get Class () {
@@ -21,7 +22,7 @@ class Base {
   }
 
   get loaded () {
-    return false
+    return this._loaded
   }
 
   get package () {

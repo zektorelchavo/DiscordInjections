@@ -149,9 +149,11 @@ module.exports = class react extends Plugin {
         const programSettings = !!changed.querySelector(
           '[class*="socialLinks"]'
         )
+
         if (programSettings && changed.childNodes.length > 0) {
           const child = changed.childNodes[0]
-          if (child.className.startsWith('standardSidebarView')) {
+          let sidebarView = changed.querySelector('[class*="standardSidebarView"]')
+          if (sidebarView) {
             if (added) {
               this.emit('settingsOpened', mut)
             } else {

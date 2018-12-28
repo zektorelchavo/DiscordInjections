@@ -15,7 +15,7 @@ const npmi = Promise.promisify(require('npmi'))
 const download = require('download')
 
 module.exports = class plugins extends Plugin {
-  async load () {
+  async load() {
     this.registerSettingsTab(
       'Customize DI',
       require('./SettingsRepositoryPage'),
@@ -50,18 +50,24 @@ module.exports = class plugins extends Plugin {
     }
 
     Object.values(this.settings.plugins).forEach(async plugin => {
-      let ext = path.extname(plugin.path);
-      if (ext === '.css')
-        this.addTheme(plugin.path)
-      else this.addPlugin(plugin.path, false)
+      if (plugin && plugin.path) {
+        let ext = path.extname(plugin.path)
+        if (ext === '.css') { this.addTheme(plugin.path, false) } else this.addPlugin(plugin.path, false)
+      }
     })
   }
 
-  get iconURL () {
+  get defaultSettings() {
+    return {
+      plugins: {}
+    }
+  }
+
+  get iconURL() {
     return '//discordinjections.xyz/img/logo.png'
   }
 
-  resetLocalStorage () {
+  resetLocalStorage() {
     const ls = this.DI.localStorage
 
     for (let idx = 0; idx < ls.length; idx++) {
@@ -74,22 +80,24 @@ module.exports = class plugins extends Plugin {
     window.location.reload()
   }
 
-  unload () {}
+  unload() { }
 
-  async addPlugin (installPath, skipInstall = false) {
+  async addPlugin(installPath, skipInstall = false) {
     if (await this.install(installPath)) {
       const pkgName = require(path.join(installPath, 'package.json')).name
-      this.setPluginInfo(pkgName, 'path', installPath)
+      this.setPluginInfo('DI#' + pkgName, 'path', installPath)
     }
   }
 
-  async addTheme (installPath) {
+  async addTheme(installPath, force = true) {
     const pkgName = path.basename(installPath)
-    await this.manager.loadByPath(installPath)
-    this.setPluginInfo(pkgName, 'path', installPath)
+    await this.manager.loadByPath(installPath, force)
+    const parts = pkgName.split('.')
+    const id = 'CSS#' + parts.slice(0, parts.length - 1).join('_')
+    this.setPluginInfo(id, 'path', installPath)
   }
 
-  async install (pkgName, pkgDownload = null, force = false, update = false) {
+  async install(pkgName, pkgDownload = null, force = false, update = false) {
     try {
       let installPath = pkgName
 
@@ -128,7 +136,7 @@ module.exports = class plugins extends Plugin {
     }
   }
 
-  disable (id, flag = true) {
+  disable(id, flag = true) {
     // first fetch the raw plugin
     if (!this.manager.plugins.has(id)) {
       // no worries about non existant plugins
@@ -146,15 +154,26 @@ module.exports = class plugins extends Plugin {
     }
   }
 
-  delete (id) {
+  async delete(id) {
     if (!this.manager.plugins.has(id)) {
       return
     }
 
-    return this.manager.uninstall(id)
+    // const plugin = this.manager.plugins.get(id)
+
+    await this.manager.unload(id)
+    this.manager.plugins.delete(id)
+
+    if (this.settings.plugins[id].path) {
+      this.setSettingsNode(`plugins.${id}`, undefined)
+    } else {
+      // disable for now, need to figure out a way to delete plugins installed
+      // through the repo
+      this.setSettingsNode(`plugins.${id}`, { disabled: true })
+    }
   }
 
-  getPluginInfo (id) {
+  getPluginInfo(id) {
     if (!this.settings.plugins) {
       const s = this.settings
       s.plugins = s.plugins || {}
@@ -172,18 +191,18 @@ module.exports = class plugins extends Plugin {
     return this.settings.plugins[id]
   }
 
-  setPluginInfo (id, key, value) {
+  setPluginInfo(id, key, value) {
     id = id.replace(/\./g, '_')
     const p = this.getPluginInfo(id)
     p[key] = value
     this.setSettingsNode(`plugins.${id}`, p)
   }
 
-  removeLocal (id) {
+  removeLocal(id) {
     this.setPluginInfo(id, 'path', null)
   }
 
-  async toggleDebugMode () {
+  async toggleDebugMode() {
     const fname = path.join(__dirname, '..', '..', '..', 'config.json')
     const config = Object.assign({}, this.DI.conf, {
       debug: !this.DI.conf.debug
@@ -193,7 +212,7 @@ module.exports = class plugins extends Plugin {
     window.location.reload()
   }
 
-  async uploadLog () {
+  async uploadLog() {
     const fname = path.join(__dirname, '..', '..', '..', 'console.log')
     if (!await fs.pathExists(fname)) {
       // do nothing without a log. maybe show a message?

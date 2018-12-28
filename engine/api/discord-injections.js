@@ -68,6 +68,11 @@ class DiscordInjectionsProvider {
     this.path = DiscordInjectionsProvider.normalizePath(pluginPath)
     this.package = require(path.join(this.path, 'package.json'))
     this.loadedBy = new Set()
+    this._loaded = false
+  }
+
+  get loaded () {
+    return this._loaded
   }
 
   get dependencies () {
@@ -144,7 +149,7 @@ class DiscordInjectionsProvider {
       `[engine/api/discord-injections] <${this.id}> executing preload`
     )
     await this.instance._preload()
-    this.loaded = true
+    this._loaded = true
     this.loading = false
 
     // queue up loader
@@ -159,7 +164,7 @@ class DiscordInjectionsProvider {
     this.DI.emit('load', this)
   }
 
-  async unload() {
+  async unload () {
     return this.instance._unload()
   }
 }

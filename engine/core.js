@@ -14,7 +14,7 @@ const postcssImport = require('postcss-import')
 const postcssUrl = require('postcss-url')
 
 class Core extends EventEmitter {
-  static expand (basePath) {
+  static expand(basePath) {
     const discordPath = path.join(process.resourcesPath, '..', '..')
 
     fs.ensureDirSync(app.getPath('userData'))
@@ -30,7 +30,7 @@ class Core extends EventEmitter {
       .replace(/^&\//, discordPath)
   }
 
-  constructor (conf, localStorage) {
+  constructor(conf, localStorage) {
     super()
 
     this.conf = conf
@@ -96,15 +96,15 @@ class Core extends EventEmitter {
     fs.ensureDirSync(this.basePath)
   }
 
-  get package () {
+  get package() {
     return require('../package.json')
   }
 
-  get version () {
+  get version() {
     return this.package.version
   }
 
-  get contributors () {
+  get contributors() {
     if (!this._contributors) {
       Object.defineProperty(this, '_contributors', {})
       this._contributors = {
@@ -125,7 +125,7 @@ class Core extends EventEmitter {
     return this._contributors
   }
 
-  get postcss () {
+  get postcss() {
     if (!this._postcss) {
       this._postcss = postcss([
         postcssImport(),
@@ -137,7 +137,7 @@ class Core extends EventEmitter {
     return this._postcss
   }
 
-  async loadPluginPath () {
+  async loadPluginPath() {
     // look through the plugin directory
     // first load all system plugins
     const plugins = await glob(['**/package.json', '!**/node_modules'], {
@@ -151,7 +151,7 @@ class Core extends EventEmitter {
     return Promise.each(plugins, plugin => this.loadByPath(plugin, false))
   }
 
-  onReady (cb) {
+  onReady(cb) {
     if (this._ready) {
       cb()
     } else {
@@ -159,7 +159,7 @@ class Core extends EventEmitter {
     }
   }
 
-  ready () {
+  ready() {
     if (this._ready) {
       return
     }
@@ -171,7 +171,13 @@ class Core extends EventEmitter {
     })
   }
 
-  async load (plugin, force = true, dependency = null, formatProvider = null) {
+  async loadFromCache(plugin, force = true) {
+    const p = this.plugins.get(plugin)
+
+    return this.loadByPath(p.path, force)
+  }
+
+  async load(plugin, force = true, dependency = null, formatProvider = null) {
     // this is opinionated af
     if (!formatProvider) {
       formatProvider = API.defaultFormat
@@ -187,7 +193,7 @@ class Core extends EventEmitter {
     return this.loadByPath(pluginPath, force, dependency, formatProvider)
   }
 
-  async loadByPath (
+  async loadByPath(
     pluginPath,
     force = true,
     dependency = null,
@@ -207,6 +213,11 @@ class Core extends EventEmitter {
 
     if (!this.isPluginEnabled(api.id) && !force) {
       console.warn(`[engine/core] <${api.id}> disabled, skipping!`)
+      if (!this.plugins.has(api.id)) {
+        // add to plugins map anyways so it shows up in list
+        this.plugins.set(api.id, api)
+        api.connect(this)
+      }
       return
     }
 
@@ -232,7 +243,7 @@ class Core extends EventEmitter {
     }
   }
 
-  async unload (id) {
+  async unload(id) {
     if (!this.plugins.has(id)) {
       return true
     }
@@ -247,13 +258,13 @@ class Core extends EventEmitter {
       // unload
       await Promise.resolve(p.unload())
       p.inst = null
-      p.loaded = false
+      p._loaded = false
     }
 
     return true
   }
 
-  async reload (name, recursive = false) {
+  async reload(name, recursive = false) {
     if (!this.plugins[name]) {
       return this.load(name, true)
     }
@@ -266,7 +277,7 @@ class Core extends EventEmitter {
     }
 
     await this.unload(name)
-    return await this.load(name)
+    return this.load(name)
   }
 
   /*
@@ -302,7 +313,7 @@ class Core extends EventEmitter {
     }
   }
 */
-  async enable (name, load = false) {
+  async enable(name, load = false) {
     const pluginPath = path.resolve(this.basePath, name)
     if (!fs.existsSync(path.join(pluginPath, 'package.json'))) {
       throw new Error('plugin not found', name)
@@ -319,7 +330,7 @@ class Core extends EventEmitter {
     return true
   }
 
-  async disable (name, unload = false) {
+  async disable(name, unload = false) {
     const pluginPath = path.resolve(this.basePath, name)
     if (!fs.existsSync(path.join(pluginPath, 'package.json'))) {
       throw new Error('plugin not found', name)
@@ -336,7 +347,7 @@ class Core extends EventEmitter {
     return true
   }
 
-  get (name, raw = false) {
+  get(name, raw = false) {
     let plugin = null
     if (this.plugins.has(name)) {
       plugin = this.plugins.get(name)
@@ -356,7 +367,7 @@ class Core extends EventEmitter {
     }
   }
 
-  isSystemPlugin (fullID) {
+  isSystemPlugin(fullID) {
     let [format, id] = fullID.split('#')
     if (format !== 'DI') {
       return false
@@ -365,19 +376,27 @@ class Core extends EventEmitter {
     return fs.existsSync(path.join(__dirname, 'plugins', id, 'package.json'))
   }
 
-  isPluginEnabled (id) {
+  isPluginEnabled(id) {
     if (this.isSystemPlugin(id)) {
       return true
     }
 
-    if (!this.settings.plugins[id]) {
+    const pluginsPlugin = this.plugins.get('DI#plugins')
+    if (!pluginsPlugin) {
+      return true
+    }
+
+    const settings = pluginsPlugin.instance.settings
+    if (!settings.plugins) settings.plugins = {}
+
+    if (!settings.plugins[id]) {
       return true
     } else {
-      return !this.settings.plugins[id].disabled
+      return !settings.plugins[id].disabled
     }
   }
 
-  async loadPlugins () {
+  async loadPlugins() {
     // force load plugin controller first
     this.loadByPath(path.join(__dirname, 'plugins', 'plugins'), true)
 
@@ -403,7 +422,7 @@ class Core extends EventEmitter {
       .forEach(p => this.loadByPath(p.path, false))
   }
 
-  async initialize () {
+  async initialize() {
     await this.loadPlugins()
 
     if (document.readyState !== 'loading') {
@@ -413,7 +432,7 @@ class Core extends EventEmitter {
     }
   }
 
-  _save () {
+  _save() {
     const json = JSON.stringify(this.settings)
     this.localStorage.setItem('DI', json)
   }
