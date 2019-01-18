@@ -41,6 +41,12 @@ module.exports = class plugins extends Plugin {
       func: this.toggleDebugMode.bind(this)
     })
 
+    this.registerCommand({
+      name: 'toggle',
+      info: 'Toggles a plugin between enabled and disabled',
+      func: this.togglePlugin.bind(this)
+    })
+
     if (this.debugEnabled) {
       this.registerCommand({
         name: 'upload',
@@ -231,5 +237,14 @@ module.exports = class plugins extends Plugin {
       title: 'Log Upload',
       message: `Your log has been successfully uploaded and the URL is in the clipboard`
     })
+  }
+
+  async togglePlugin([id]) {
+    if (!this.manager.plugins.has(id)) {
+      this.error('no plugin found with id', id)
+      return
+    }
+    const enabled = this.manager.isPluginEnabled(id)
+    this.disable(id, enabled);
   }
 }
