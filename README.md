@@ -1,3 +1,9 @@
+# VERY MUCH IMPORTANT ANNOUNCEMENT!!!
+
+**AS YOU CAN SEE IN THE YELLOW BAR ON TOP, THIS PROJECT HAS BEEN ARCHIVED AND THUS IS DEAD.**
+
+**IF YOU WANT TO REVIVE IT, PLEASE CONTAT KURA ON THE DTINKER DISCORD. BUT BE PREPARED TO EITHER SPEND MANPOWER OR MONEY.**
+
 # DiscordInjections
 
 [![latest release](https://img.shields.io/github/release/DiscordInjections/DiscordInjections.svg)](https://github.com/DiscordInjections/DiscordInjections/releases)
